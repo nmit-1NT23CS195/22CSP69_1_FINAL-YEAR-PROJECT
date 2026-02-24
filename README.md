@@ -8,6 +8,6 @@
 
 ### 👥 Team  
 - **Rishwik Mishra** (1NT23CS195)  
-- **Kopal Vajpayee** (1NT23CS196)
+- **Kopal Vajpayee** (1NT23CS114)
 
 ---
