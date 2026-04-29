@@ -1,98 +1,71 @@
 import re
+from app.services.skill_loader import load_skills
 
-# -------------------------------
-# CLEAN TEXT
-# -------------------------------
-def clean_text(text: str) -> str:
+
+def extract_skills(text, custom_skills=None):
     text = text.lower()
-    text = re.sub(r"[^a-z0-9+.# ]", " ", text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
+
+    skills_db = load_skills()
+    
+    # Inject specific role requirements dynamically if provided
+    if custom_skills:
+        skills_db.extend([s.lower() for s in custom_skills])
+        skills_db = list(set(skills_db))
+
+    extracted = []
+
+    for skill in skills_db:
+        # 🔥 exact word match (fixes false positives and handles special chars like c++)
+        pattern = r'(?<![a-z0-9])' + re.escape(skill) + r'(?![a-z0-9])'
+
+        if re.search(pattern, text):
+            extracted.append(skill)
+
+    return list(set(extracted))
 
 
 # -------------------------------
-# GENERATE VARIATIONS
+# ADVANCED NLP FEATURES
 # -------------------------------
-def generate_variations(skill):
-    skill = skill.lower()
-    variations = set()
 
-    variations.add(skill)
-    variations.add(skill.replace(" ", ""))
+def extract_soft_skills(text):
+    text = text.lower()
+    
+    # Industry-standard soft skills dictionary
+    soft_skills_db = [
+        "leadership", "communication", "teamwork", "problem solving", 
+        "critical thinking", "adaptability", "time management", "conflict resolution",
+        "agile", "scrum", "mentoring", "collaboration", "creativity", "innovation",
+        "analytical", "attention to detail", "decision making", "presentation",
+        "public speaking", "negotiation", "empathy", "project management"
+    ]
+    
+    extracted = []
+    for skill in soft_skills_db:
+        # Avoid substring matches (e.g. "team" in "teaming")
+        pattern = r'(?<![a-z])' + re.escape(skill) + r'(?![a-z])'
+        if re.search(pattern, text):
+            extracted.append(skill.title())
+            
+    return list(set(extracted))
 
-    # Short forms
-    if "machine learning" in skill:
-        variations.add("ml")
-    if "deep learning" in skill:
-        variations.add("dl")
-    if "javascript" in skill:
-        variations.add("js")
-    if "typescript" in skill:
-        variations.add("ts")
-
-    # DB shortcuts
-    if "database" in skill or "db" in skill:
-        variations.add("sql")
-
-    variations.add(skill.replace("-", " "))
-    variations.add(skill.replace(".", ""))
-
-    return variations
-
-
-# -------------------------------
-# BUILD SKILL MAP
-# -------------------------------
-def build_skill_map(skill_list):
-    skill_map = {}
-
-    for skill in skill_list:
-        variations = generate_variations(skill)
-
-        for var in variations:
-            skill_map[var] = skill
-
-    return skill_map
-
-
-# -------------------------------
-# EXTRACT SKILLS
-# -------------------------------
-def extract_skills(text, skill_map):
-    text = clean_text(text)
-    words = text.split()
-
-    found_skills = set()
-
-    for i in range(len(words)):
-
-        # single word
-        if words[i] in skill_map:
-            found_skills.add(skill_map[words[i]])
-
-        # bigram
-        if i < len(words) - 1:
-            phrase = words[i] + " " + words[i + 1]
-            if phrase in skill_map:
-                found_skills.add(skill_map[phrase])
-
-        # trigram
-        if i < len(words) - 2:
-            phrase = words[i] + " " + words[i + 1] + " " + words[i + 2]
-            if phrase in skill_map:
-                found_skills.add(skill_map[phrase])
-
-    return sorted(found_skills)
-
-
-# -------------------------------
-# SIMILARITY
-# -------------------------------
-def compute_similarity(resume_skills, jd_skills):
-    r = set(resume_skills)
-    j = set(jd_skills)
-
-    if not j:
-        return 0
-
-    return len(r.intersection(j)) / len(r.union(j))
+def extract_action_verbs(text):
+    text = text.lower()
+    
+    # High-impact action verbs
+    action_verbs_db = [
+        "architected", "spearheaded", "engineered", "developed", "managed",
+        "orchestrated", "implemented", "designed", "led", "optimized",
+        "streamlined", "transformed", "modernized", "pioneered", "launched",
+        "executed", "directed", "formulated", "conceptualized", "mentored",
+        "delivered", "resolved", "automated", "maximized", "accelerated",
+        "reduced", "increased", "improved", "negotiated", "secured"
+    ]
+    
+    extracted = []
+    for verb in action_verbs_db:
+        pattern = r'\b' + re.escape(verb) + r'\b'
+        if re.search(pattern, text):
+            extracted.append(verb.title())
+            
+    return list(set(extracted))

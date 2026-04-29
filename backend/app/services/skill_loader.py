@@ -1,5 +1,10 @@
 import csv
+import pandas as pd
 
+
+# -------------------------------
+# ORIGINAL (WORKING EXTRACTION)
+# -------------------------------
 def load_skills():
     skills = []
 
@@ -14,3 +19,19 @@ def load_skills():
             skills.append(skill)
 
     return list(set(skills))
+
+
+# -------------------------------
+# NEW (WEIGHTS)
+# -------------------------------
+def load_priority_skills():
+    df = pd.read_csv("app/data/priority_skills.csv")
+
+    return set(
+        df["skill"]
+        .dropna()
+        .astype(str)
+        .str.lower()
+        .str.strip()
+        .unique()
+    )
