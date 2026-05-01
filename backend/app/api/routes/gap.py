@@ -21,15 +21,18 @@ async def gap_analysis(
     # RESUME
     # -------------------------------
     resume_bytes = await resume.read()
+    resume_filename = getattr(resume, "filename", "")
 
     # -------------------------------
     # MANUAL JD FILE (NO VALIDATION)
     # -------------------------------
     jd_bytes = None
+    jd_filename = ""
     jd_file = form.get("jd_file")
 
     if jd_file and hasattr(jd_file, "filename") and jd_file.filename:
         jd_bytes = await jd_file.read()
+        jd_filename = jd_file.filename
 
     # -------------------------------
     # CLEAN INPUTS
@@ -45,12 +48,22 @@ async def gap_analysis(
     # -------------------------------
     result = run_pipeline(
         resume_bytes=resume_bytes,
+        resume_filename=resume_filename,
         jd_text=jd_text,
         jd_bytes=jd_bytes,
+        jd_filename=jd_filename,
         role=role
     )
 
+    # Handle error case from pipeline
+    if "error" in result:
+        return {"error": result["error"], "missing_skills": [], "matched_skills": []}
+
+    # Extract from the correct keys in the pipeline response
+    # Pipeline returns: result["technical_skills"]["matched"] and result["technical_skills"]["missing"]
+    technical = result.get("technical_skills", {})
+
     return {
-        "missing_skills": result.get("missing_skills", []),
-        "matched_skills": result.get("matched_skills", [])
+        "missing_skills": technical.get("missing", []),
+        "matched_skills": technical.get("matched", [])
     }

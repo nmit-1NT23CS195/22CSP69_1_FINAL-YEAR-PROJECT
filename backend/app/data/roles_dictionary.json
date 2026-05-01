@@ -1,0 +1,4891 @@
+{
+  "admin big data": {
+    "display_name": "ADMIN BIG DATA",
+    "skills": [
+      "Big Data Management",
+      "Hadoop",
+      "Spark",
+      "Data Warehousing",
+      "SQL"
+    ],
+    "certifications": [
+      "Cloudera Certified Administrator (CCA)",
+      "Google Cloud Professional Data Engineer"
+    ]
+  },
+  "ansible operations engineer": {
+    "display_name": "Ansible Operations Engineer",
+    "skills": [
+      "Ansible",
+      "Linux",
+      "Automation",
+      "Cloud Platforms",
+      "CI/CD",
+      "Infrastructure as Code",
+      "Kubernetes",
+      "Docker",
+      "AWS",
+      "Terraform",
+      "Python",
+      "Scripting",
+      "Networking"
+    ],
+    "certifications": [
+      "Red Hat Certified Specialist in Ansible Automation",
+      "AWS Certified DevOps Engineer – Professional"
+    ]
+  },
+  "artifactory administrator": {
+    "display_name": "ARTIFACTORY ADMINISTRATOR",
+    "skills": [
+      "Artifactory",
+      "Repository Management",
+      "DevOps Tools",
+      "CI/CD Pipelines"
+    ],
+    "certifications": [
+      "JFrog Certified DevOps Engineer",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "artificial intelligence / machine learning leader": {
+    "display_name": "ARTIFICIAL INTELLIGENCE / MACHINE LEARNING LEADER",
+    "skills": [
+      "AI/ML Frameworks",
+      "Leadership",
+      "Strategic Planning",
+      "Data Science"
+    ],
+    "certifications": [
+      "Google TensorFlow Developer Certificate",
+      "Microsoft Certified: Azure AI Engineer Associate",
+      "AWS Certified Machine Learning - Specialty"
+    ]
+  },
+  "artificial intelligence / machine learning sr.leader": {
+    "display_name": "ARTIFICIAL INTELLIGENCE / MACHINE LEARNING SR.LEADER",
+    "skills": [
+      "Advanced AI/ML",
+      "Leadership",
+      "Strategic Vision",
+      "Team Management"
+    ],
+    "certifications": [
+      "Google TensorFlow Developer Certificate",
+      "Microsoft Certified: Azure AI Engineer Associate",
+      "AWS Certified Machine Learning - Specialty"
+    ]
+  },
+  "artificial intelligence architect": {
+    "display_name": "ARTIFICIAL INTELLIGENCE ARCHITECT",
+    "skills": [
+      "AI/ML Frameworks",
+      "System Architecture",
+      "Cloud Computing",
+      "Data Modeling"
+    ],
+    "certifications": [
+      "Google Professional Machine Learning Engineer",
+      "Microsoft Certified: Azure AI Engineer Associate"
+    ]
+  },
+  "artificial intelligence researcher": {
+    "display_name": "ARTIFICIAL INTELLIGENCE RESEARCHER",
+    "skills": [
+      "Research Methodologies",
+      "AI/ML Algorithms",
+      "Python",
+      "Data Analysis"
+    ],
+    "certifications": [
+      "IBM AI Engineering Professional Certificate",
+      "Stanford AI Certificate (Online)"
+    ]
+  },
+  "big data architect": {
+    "display_name": "BIG DATA ARCHITECT",
+    "skills": [
+      "Big Data Technologies",
+      "Hadoop",
+      "Spark",
+      "Data Warehousing",
+      "System Design"
+    ],
+    "certifications": [
+      "Google Cloud Professional Data Engineer",
+      "Cloudera Certified Data Engineer",
+      "AWS Certified Big Data - Specialty"
+    ]
+  },
+  "big data engineer": {
+    "display_name": "BIG DATA ENGINEER",
+    "skills": [
+      "Hadoop",
+      "Spark",
+      "ETL Processes",
+      "Data Processing",
+      "Database Management"
+    ],
+    "certifications": [
+      "Google Cloud Professional Data Engineer",
+      "Cloudera Certified Data Engineer",
+      "AWS Certified Big Data - Specialty"
+    ]
+  },
+  "big data specialist": {
+    "display_name": "BIG DATA SPECIALIST",
+    "skills": [
+      "Big Data Technologies",
+      "Data Analysis",
+      "SQL",
+      "Data Mining"
+    ],
+    "certifications": [
+      "Google Cloud Professional Data Engineer",
+      "Cloudera Certified Data Engineer",
+      "AWS Certified Big Data - Specialty"
+    ]
+  },
+  "build and release engineer": {
+    "display_name": "BUILD AND RELEASE ENGINEER",
+    "skills": [
+      "CI/CD Pipelines",
+      "Build Systems",
+      "Automation",
+      "Configuration Management"
+    ],
+    "certifications": [
+      "AWS Certified DevOps Engineer - Professional",
+      "Google Cloud DevOps Engineer"
+    ]
+  },
+  "build engineer": {
+    "display_name": "BUILD ENGINEER",
+    "skills": [
+      "Build Systems",
+      "Scripting",
+      "Automation",
+      "Software Configuration Management"
+    ],
+    "certifications": [
+      "AWS Certified DevOps Engineer - Professional",
+      "Google Cloud DevOps Engineer"
+    ]
+  },
+  "chef operations engineer": {
+    "display_name": "CHEF OPERATIONS ENGINEER",
+    "skills": [
+      "Chef",
+      "Automation",
+      "Infrastructure Management",
+      "Ruby"
+    ],
+    "certifications": [
+      "Chef Certified Developer",
+      "Chef Certified Automation Engineer"
+    ]
+  },
+  "data analysts": {
+    "display_name": "Data Analysts",
+    "skills": [
+      "SQL",
+      "Excel",
+      "Data Visualization",
+      "Power BI",
+      "Python",
+      "R",
+      "Statistics",
+      "Data Mining",
+      "Data Cleansing",
+      "Tableau",
+      "ETL",
+      "Data Modeling"
+    ],
+    "certifications": [
+      "Microsoft Certified: Data Analyst Associate",
+      "Tableau Desktop Specialist"
+    ]
+  },
+  "data architect": {
+    "display_name": "DATA ARCHITECT",
+    "skills": [
+      "Data Modeling",
+      "Database Design",
+      "ETL Processes",
+      "Data Warehousing"
+    ],
+    "certifications": [
+      "Google Professional Data Engineer",
+      "AWS Certified Data Analytics - Specialty"
+    ]
+  },
+  "devops architect": {
+    "display_name": "DEVOPS ARCHITECT",
+    "skills": [
+      "DevOps Practices",
+      "Cloud Computing",
+      "Automation",
+      "System Architecture"
+    ],
+    "certifications": [
+      "AWS Certified DevOps Engineer - Professional",
+      "Google Cloud DevOps Engineer"
+    ]
+  },
+  "devops engineer": {
+    "display_name": "DEVOPS ENGINEER",
+    "skills": [
+      "Automation",
+      "CI/CD",
+      "Cloud Computing",
+      "Scripting"
+    ],
+    "certifications": [
+      "HashiCorp Certified Terraform Associate",
+      "Kubernetes Certified Administrator (CKA)",
+      "AWS Certified DevOps Engineer"
+    ]
+  },
+  "elk engineer": {
+    "display_name": "ELK ENGINEER",
+    "skills": [
+      "ELK Stack",
+      "Log Management",
+      "Data Analysis",
+      "System Monitoring"
+    ],
+    "certifications": [
+      "Elastic Certified Engineer"
+    ]
+  },
+  "gerrit administrator": {
+    "display_name": "GERRIT ADMINISTRATOR",
+    "skills": [
+      "Gerrit",
+      "Code Review",
+      "Git",
+      "Version Control"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Google Cloud Professional DevOps Engineer"
+    ]
+  },
+  "jenkins engineer": {
+    "display_name": "JENKINS ENGINEER",
+    "skills": [
+      "Jenkins",
+      "CI/CD Pipelines",
+      "Build Automation",
+      "DevOps Practices"
+    ],
+    "certifications": [
+      "Certified Jenkins Engineer (CJE)"
+    ]
+  },
+  "jira administrator": {
+    "display_name": "JIRA ADMINISTRATOR",
+    "skills": [
+      "Jira",
+      "Atlassian Suite",
+      "Workflow Configuration",
+      "Project Management"
+    ],
+    "certifications": [
+      "Atlassian Certified Jira Administrator"
+    ]
+  },
+  "kubernetes operations engineer": {
+    "display_name": "KUBERNETES OPERATIONS ENGINEER",
+    "skills": [
+      "Kubernetes",
+      "Container Orchestration",
+      "Cloud Computing",
+      "DevOps Practices"
+    ],
+    "certifications": [
+      "Kubernetes Certified Administrator (CKA)",
+      "Certified Kubernetes Security Specialist (CKS)"
+    ]
+  },
+  "machine learning architect": {
+    "display_name": "MACHINE LEARNING ARCHITECT",
+    "skills": [
+      "Machine Learning Algorithms",
+      "System Architecture",
+      "Cloud Computing",
+      "Data Modeling"
+    ],
+    "certifications": [
+      "AWS Certified Machine Learning - Specialty",
+      "Google Professional Data Engineer"
+    ]
+  },
+  "machine learning engineer": {
+    "display_name": "MACHINE LEARNING ENGINEER",
+    "skills": [
+      "Machine Learning Algorithms",
+      "Python",
+      "Data Analysis",
+      "Model Deployment"
+    ],
+    "certifications": [
+      "TensorFlow Developer Certificate",
+      "Microsoft Certified: Azure AI Engineer Associate"
+    ]
+  },
+  "operations engineer": {
+    "display_name": "OPERATIONS ENGINEER",
+    "skills": [
+      "System Administration",
+      "Linux/Windows Servers",
+      "Troubleshooting",
+      "Scripting"
+    ],
+    "certifications": [
+      "ITIL 4 Foundation",
+      "AWS Certified SysOps Administrator"
+    ]
+  },
+  "principle engineer in artificial intelligence": {
+    "display_name": "PRINCIPLE ENGINEER IN ARTIFICIAL INTELLIGENCE",
+    "skills": [
+      "AI/ML Architecture",
+      "Leadership",
+      "Strategic Planning",
+      "Deep Learning"
+    ],
+    "certifications": [
+      "TensorFlow Developer Certificate",
+      "AWS Certified Machine Learning - Specialty",
+      "Google Professional Data Engineer"
+    ]
+  },
+  "principle engineer in big data": {
+    "display_name": "PRINCIPLE ENGINEER IN BIG DATA",
+    "skills": [
+      "Big Data Architecture",
+      "Hadoop",
+      "Spark",
+      "Data Warehousing"
+    ],
+    "certifications": [
+      "Google Professional Data Engineer",
+      "AWS Certified Big Data - Specialty"
+    ]
+  },
+  "principle engineer in data analysis": {
+    "display_name": "PRINCIPLE ENGINEER IN DATA ANALYSIS",
+    "skills": [
+      "Data Analysis",
+      "Statistical Modeling",
+      "Data Visualization",
+      "Leadership"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Data Scientist Associate",
+      "Google Data Analytics Professional Certificate"
+    ]
+  },
+  "principle engineer in machine learning": {
+    "display_name": "PRINCIPLE ENGINEER IN MACHINE LEARNING",
+    "skills": [
+      "Machine Learning Algorithms",
+      "Model Development",
+      "Deployment",
+      "Leadership"
+    ],
+    "certifications": [
+      "TensorFlow Developer Certificate",
+      "Microsoft Certified: Azure AI Engineer Associate"
+    ]
+  },
+  "production support engineer": {
+    "display_name": "PRODUCTION SUPPORT ENGINEER",
+    "skills": [
+      "Troubleshooting",
+      "Incident Management",
+      "System Monitoring",
+      "Technical Support"
+    ],
+    "certifications": [
+      "ITIL 4 Foundation",
+      "AWS Certified SysOps Administrator"
+    ]
+  },
+  "puppet operations engineer": {
+    "display_name": "PUPPET OPERATIONS ENGINEER",
+    "skills": [
+      "Puppet",
+      "Configuration Management",
+      "Automation",
+      "Infrastructure as Code"
+    ],
+    "certifications": [
+      "ITIL 4 Foundation",
+      "AWS Certified SysOps Administrator"
+    ]
+  },
+  "senior build and release engineer": {
+    "display_name": "SENIOR BUILD AND RELEASE ENGINEER",
+    "skills": [
+      "CI/CD Pipelines",
+      "Build Systems",
+      "Automation",
+      "Configuration Management"
+    ],
+    "certifications": [
+      "Puppet Certified Professional"
+    ]
+  },
+  "senior build engineer": {
+    "display_name": "SENIOR BUILD ENGINEER",
+    "skills": [
+      "Build Systems",
+      "Scripting",
+      "Automation",
+      "Software Configuration Management"
+    ],
+    "certifications": [
+      "Certified Jenkins Engineer (CJE)",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "senior devops engineer": {
+    "display_name": "SENIOR DEVOPS ENGINEER",
+    "skills": [
+      "DevOps Practices",
+      "Cloud Computing",
+      "Automation",
+      "System Architecture"
+    ],
+    "certifications": [
+      "Certified Jenkins Engineer (CJE)",
+      "Kubernetes Certified Administrator (CKA)"
+    ]
+  },
+  "site reliability engineer (kubernetes – docker)": {
+    "display_name": "Site Reliability Engineer (Kubernetes – Docker)",
+    "skills": [
+      "SRE",
+      "Kubernetes",
+      "Docker",
+      "Linux",
+      "Cloud Computing",
+      "Monitoring",
+      "Automation",
+      "CI/CD",
+      "Networking",
+      "Troubleshooting"
+    ],
+    "certifications": [
+      "Certified Kubernetes Administrator (CKA)",
+      "Docker Certified Associate"
+    ]
+  },
+  "splunk engineer": {
+    "display_name": "SPLUNK ENGINEER",
+    "skills": [
+      "Splunk",
+      "Log Management",
+      "Data Analysis",
+      "System Monitoring"
+    ],
+    "certifications": [
+      "Kubernetes Certified Administrator (CKA)",
+      "Docker Certified Associate"
+    ]
+  },
+  ".net developer": {
+    "display_name": ".NET Developer",
+    "skills": [
+      ".NET",
+      "C#",
+      "ASP.NET",
+      "SQL Server",
+      "Web API",
+      "MVC",
+      "Entity Framework",
+      "LINQ",
+      "Git",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "Microsoft Certified: .NET Developer",
+      "MCP: Programming in C#"
+    ]
+  },
+  "accessibility specialist": {
+    "display_name": "ACCESSIBILITY SPECIALIST",
+    "skills": [
+      "Web Accessibility Guidelines",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "User Experience Design"
+    ],
+    "certifications": [
+      "IAAP Certified Professional in Accessibility Core Competencies (CPACC)",
+      "Web Accessibility Specialist (WAS)"
+    ]
+  },
+  "agile project manager": {
+    "display_name": "AGILE PROJECT MANAGER",
+    "skills": [
+      "Agile Methodologies",
+      "Scrum",
+      "Kanban",
+      "Project Management Tools",
+      "Leadership"
+    ],
+    "certifications": [
+      "PMI Agile Certified Practitioner (PMI-ACP)",
+      "Certified Scrum Master (CSM)",
+      "SAFe Agilist Certification"
+    ]
+  },
+  "android developer": {
+    "display_name": "ANDROID DEVELOPER",
+    "skills": [
+      "Java",
+      "Kotlin",
+      "Android SDK",
+      "Mobile App Development",
+      "UI/UX Design"
+    ],
+    "certifications": [
+      "Google Associate Android Developer",
+      "Meta Android Developer Professional Certificate"
+    ]
+  },
+  "ansible automation engineer": {
+    "display_name": "ANSIBLE AUTOMATION ENGINEER",
+    "skills": [
+      "Ansible",
+      "Automation Scripts",
+      "Linux",
+      "Networking",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "Red Hat Certified Specialist in Ansible Automation",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "appdynamics engineer": {
+    "display_name": "AppDynamics Engineer",
+    "skills": [
+      "AppDynamics",
+      "Application Performance Monitoring",
+      "Troubleshooting",
+      "Java",
+      ".NET",
+      "Cloud Computing",
+      "Metrics",
+      "Alerting"
+    ],
+    "certifications": [
+      "AppDynamics Certification",
+      "Cisco Application Centric Infrastructure (ACI)"
+    ]
+  },
+  "application security engineer": {
+    "display_name": "APPLICATION SECURITY ENGINEER",
+    "skills": [
+      "Security Protocols",
+      "Penetration Testing",
+      "Secure Coding Practices",
+      "Compliance"
+    ],
+    "certifications": [
+      "Certified Ethical Hacker (CEH)",
+      "Certified Information Systems Security Professional (CISSP)",
+      "Offensive Security Certified Professional (OSCP)"
+    ]
+  },
+  "artifactory engineer": {
+    "display_name": "ARTIFACTORY ENGINEER",
+    "skills": [
+      "Artifactory",
+      "DevOps Practices",
+      "Continuous Integration",
+      "Software Packaging"
+    ],
+    "certifications": [
+      "JFrog Certified DevOps Engineer",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "aws devops engineer": {
+    "display_name": "AWS DEVOPS ENGINEER",
+    "skills": [
+      "AWS Services",
+      "DevOps Practices",
+      "CI/CD Pipelines",
+      "Automation"
+    ],
+    "certifications": [
+      "AWS Certified DevOps Engineer - Professional",
+      "AWS Certified Solutions Architect - Associate"
+    ]
+  },
+  "aws solutions architect": {
+    "display_name": "AWS SOLUTIONS ARCHITECT",
+    "skills": [
+      "AWS Services",
+      "Cloud Architecture",
+      "Solution Design",
+      "Cost Optimization"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect - Associate / Professional"
+    ]
+  },
+  "azure devops engineer": {
+    "display_name": "AZURE DEVOPS ENGINEER",
+    "skills": [
+      "Azure Services",
+      "DevOps Practices",
+      "CI/CD Pipelines",
+      "Automation"
+    ],
+    "certifications": [
+      "Microsoft Certified: DevOps Engineer Expert",
+      "Azure Administrator Associate"
+    ]
+  },
+  "bamboo engineer": {
+    "display_name": "BAMBOO ENGINEER",
+    "skills": [
+      "Bamboo",
+      "CI/CD Pipelines",
+      "Build Automation",
+      "Software Configuration Management"
+    ],
+    "certifications": [
+      "Atlassian Bamboo Certification (if available)",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "bitbucket engineer": {
+    "display_name": "BITBUCKET ENGINEER",
+    "skills": [
+      "Bitbucket",
+      "Git",
+      "Version Control",
+      "CI/CD Integration"
+    ],
+    "certifications": [
+      "Atlassian Certified Bitbucket Administrator"
+    ]
+  },
+  "blockchain developer": {
+    "display_name": "BLOCKCHAIN DEVELOPER",
+    "skills": [
+      "Blockchain Technologies",
+      "Solidity",
+      "Cryptography",
+      "Smart Contracts"
+    ],
+    "certifications": [
+      "Certified Blockchain Developer (CBDE)",
+      "Ethereum Developer Certification (Consensys Academy)"
+    ]
+  },
+  "business systems analyst": {
+    "display_name": "BUSINESS SYSTEMS ANALYST",
+    "skills": [
+      "Requirements Gathering",
+      "Process Analysis",
+      "System Design",
+      "Documentation"
+    ],
+    "certifications": [
+      "IIBA Certified Business Analysis Professional (CBAP)",
+      "PMI Professional in Business Analysis (PMI-PBA)"
+    ]
+  },
+  "c# developer": {
+    "display_name": "C# DEVELOPER",
+    "skills": [
+      "C#",
+      ".NET Framework",
+      "ASP.NET",
+      "Software Development",
+      "Object-Oriented Programming"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Developer Associate",
+      "MCSD: App Builder (Retired but relevant)"
+    ]
+  },
+  "chef inspec engineer": {
+    "display_name": "CHEF INSPEC ENGINEER",
+    "skills": [
+      "Chef Inspec",
+      "Compliance Automation",
+      "Infrastructure Testing",
+      "Ruby"
+    ],
+    "certifications": [
+      "Chef Certified Developer",
+      "Chef Certified Automation Engineer"
+    ]
+  },
+  "cloud administrator": {
+    "display_name": "CLOUD ADMINISTRATOR",
+    "skills": [
+      "Cloud Platforms",
+      "System Administration",
+      "Virtualization",
+      "Networking"
+    ],
+    "certifications": [
+      "AWS Certified SysOps Administrator",
+      "Microsoft Certified: Azure Administrator Associate"
+    ]
+  },
+  "cloud architect": {
+    "display_name": "CLOUD ARCHITECT",
+    "skills": [
+      "Cloud Platforms",
+      "System Architecture",
+      "Cloud Security",
+      "DevOps"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect - Professional",
+      "Google Professional Cloud Architect"
+    ]
+  },
+  "cloud automation engineer": {
+    "display_name": "CLOUD AUTOMATION ENGINEER",
+    "skills": [
+      "Cloud Automation Tools",
+      "Scripting",
+      "Configuration Management",
+      "DevOps"
+    ],
+    "certifications": [
+      "AWS Certified DevOps Engineer - Professional",
+      "HashiCorp Certified Terraform Associate"
+    ]
+  },
+  "cloud engineer": {
+    "display_name": "Cloud engineer",
+    "skills": [
+      "Cloud Computing",
+      "AWS",
+      "Azure",
+      "Google Cloud",
+      "Linux",
+      "Networking",
+      "Security",
+      "Automation",
+      "Scripting",
+      "Virtualization"
+    ],
+    "certifications": [
+      "Google Cloud Associate Cloud Engineering",
+      "CompTIA Cloud+"
+    ]
+  },
+  "cloud network engineer": {
+    "display_name": "CLOUD NETWORK ENGINEER",
+    "skills": [
+      "Cloud Networking",
+      "Virtual Networks",
+      "Network Security",
+      "Cloud Platforms"
+    ],
+    "certifications": [
+      "Google Professional Cloud Network Engineer",
+      "AWS Certified Advanced Networking - Specialty"
+    ]
+  },
+  "cloud security engineer": {
+    "display_name": "CLOUD SECURITY ENGINEER",
+    "skills": [
+      "Cloud Security",
+      "Security Protocols",
+      "Compliance",
+      "Cloud Platforms"
+    ],
+    "certifications": [
+      "AWS Certified Security - Specialty",
+      "Google Professional Cloud Security Engineer"
+    ]
+  },
+  "cnc programmer": {
+    "display_name": "CNC PROGRAMMER",
+    "skills": [
+      "CNC Machines",
+      "CAD/CAM Software",
+      "G-Code",
+      "Manufacturing Processes"
+    ],
+    "certifications": [
+      "Siemens NX Certification",
+      "Autodesk Fusion 360 CAM Certification"
+    ]
+  },
+  "coder": {
+    "display_name": "CODER",
+    "skills": [
+      "Programming Languages",
+      "Scripting",
+      "Problem Solving",
+      "Software Development"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "AWS Certified Developer - Associate",
+      "Microsoft Certified: Azure Fundamentals"
+    ]
+  },
+  "computer graphics animator": {
+    "display_name": "COMPUTER GRAPHICS ANIMATOR",
+    "skills": [
+      "Animation Software",
+      "3D Modeling",
+      "Visual Effects",
+      "Graphic Design"
+    ],
+    "certifications": [
+      "Autodesk Maya Certified User",
+      "Adobe Certified Expert (ACE)"
+    ]
+  },
+  "computer hardware engineer": {
+    "display_name": "COMPUTER HARDWARE ENGINEER",
+    "skills": [
+      "Hardware Design",
+      "Circuit Design",
+      "Embedded Systems",
+      "Testing"
+    ],
+    "certifications": [
+      "CompTIA A+",
+      "Cisco Certified Technician (CCT)",
+      "Microsoft Certified: Windows Server Hybrid Administrator Associate"
+    ]
+  },
+  "computer network architect": {
+    "display_name": "COMPUTER NETWORK ARCHITECT",
+    "skills": [
+      "Network Design",
+      "Network Protocols",
+      "Security",
+      "System Architecture"
+    ],
+    "certifications": [
+      "Cisco Certified Network Professional (CCNP)",
+      "AWS Certified Advanced Networking - Specialty",
+      "Juniper Networks Certified Expert (JNCIE)"
+    ]
+  },
+  "computer programmer": {
+    "display_name": "COMPUTER PROGRAMMER",
+    "skills": [
+      "Programming Languages",
+      "Algorithms",
+      "Software Development",
+      "Debugging"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Oracle Certified Associate (OCA) - Java",
+      "Microsoft Certified: Azure Developer Associate"
+    ]
+  },
+  "computer research scientist": {
+    "display_name": "COMPUTER RESEARCH SCIENTIST",
+    "skills": [
+      "Research Methodologies",
+      "Data Analysis",
+      "Programming",
+      "Scientific Writing"
+    ],
+    "certifications": [
+      "Google TensorFlow Developer Certificate",
+      "IBM AI Engineering Professional Certificate"
+    ]
+  },
+  "computer systems analyst": {
+    "display_name": "COMPUTER SYSTEMS ANALYST",
+    "skills": [
+      "Systems Analysis",
+      "Requirements Gathering",
+      "Process Improvement",
+      "IT Consulting"
+    ],
+    "certifications": [
+      "Certified Information Systems Auditor (CISA)",
+      "PMI Professional in Business Analysis (PMI-PBA)"
+    ]
+  },
+  "confluence engineer": {
+    "display_name": "CONFLUENCE ENGINEER",
+    "skills": [
+      "Confluence",
+      "Atlassian Suite",
+      "Documentation",
+      "Collaboration Tools"
+    ],
+    "certifications": [
+      "Atlassian Confluence Administrator Certification"
+    ]
+  },
+  "consul engineer": {
+    "display_name": "CONSUL ENGINEER",
+    "skills": [
+      "Consul",
+      "Service Discovery",
+      "Infrastructure Automation",
+      "Networking"
+    ],
+    "certifications": [
+      "HashiCorp Certified Consul Associate"
+    ]
+  },
+  "coverage.py engineer": {
+    "display_name": "COVERAGE.PY ENGINEER",
+    "skills": [
+      "Coverage.py",
+      "Python Testing",
+      "Test Coverage Analysis",
+      "Software Quality"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Python Institute�s PCPP-32-2 (Advanced Python Programming)"
+    ]
+  },
+  "data analyst": {
+    "display_name": "DATA ANALYST",
+    "skills": [
+      "Data Analysis",
+      "SQL",
+      "Data Visualization",
+      "Statistical Analysis"
+    ],
+    "certifications": [
+      "Google Data Analytics Professional Certificate",
+      "Microsoft Certified: Power BI Data Analyst Associate"
+    ]
+  },
+  "data engineer": {
+    "display_name": "DATA ENGINEER",
+    "skills": [
+      "ETL Processes",
+      "Data Warehousing",
+      "Big Data Technologies",
+      "Database Management"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Data Engineer Associate",
+      "Databricks Certified Data Engineer"
+    ]
+  },
+  "data modeler": {
+    "display_name": "DATA MODELER",
+    "skills": [
+      "Data Modeling Techniques",
+      "Database Design",
+      "Data Governance",
+      "Data Analysis"
+    ],
+    "certifications": [
+      "DAMA Certified Data Management Professional (CDMP)",
+      "IBM Certified Data Architect"
+    ]
+  },
+  "data scientist": {
+    "display_name": "DATA SCIENTIST",
+    "skills": [
+      "Machine Learning",
+      "Statistical Analysis",
+      "Data Mining",
+      "Programming"
+    ],
+    "certifications": [
+      "IBM Data Science Professional Certificate",
+      "AWS Certified Machine Learning - Specialty"
+    ]
+  },
+  "database administrator": {
+    "display_name": "DATABASE ADMINISTRATOR",
+    "skills": [
+      "Database Management",
+      "SQL",
+      "Performance Tuning",
+      "Backup and Recovery"
+    ],
+    "certifications": [
+      "Oracle Certified Professional (OCP) Database Administrator",
+      "Microsoft Certified: Azure Database Administrator Associate"
+    ]
+  },
+  "datadog engineer": {
+    "display_name": "DATADOG ENGINEER",
+    "skills": [
+      "Datadog",
+      "Monitoring",
+      "System Performance",
+      "Cloud Infrastructure"
+    ],
+    "certifications": [
+      "Datadog Fundamentals Certification"
+    ]
+  },
+  "developer": {
+    "display_name": "Developer",
+    "skills": [
+      "Programming",
+      "Algorithms",
+      "Data Structures",
+      "Debugging",
+      "Software Development",
+      "Python",
+      "Java",
+      "C++"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      ".NET Developer Certification"
+    ]
+  },
+  "devops manager": {
+    "display_name": "DEVOPS MANAGER",
+    "skills": [
+      "DevOps Practices",
+      "Team Leadership",
+      "Project Management",
+      "Automation"
+    ],
+    "certifications": [
+      "SAFe DevOps Practitioner (SDP)",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "devsecops architect": {
+    "display_name": "DEVSECOPS ARCHITECT",
+    "skills": [
+      "DevSecOps Practices",
+      "Security Automation",
+      "Cloud Security",
+      "System Architecture"
+    ],
+    "certifications": [
+      "Certified DevSecOps Professional (CDP)",
+      "AWS Certified Security - Specialty"
+    ]
+  },
+  "devsecops engineer": {
+    "display_name": "DEVSECOPS ENGINEER",
+    "skills": [
+      "Security Automation",
+      "CI/CD",
+      "Cloud Security",
+      "Scripting"
+    ],
+    "certifications": [
+      "Certified Kubernetes Security Specialist (CKS)",
+      "GIAC Cloud Security Automation (GCSA)"
+    ]
+  },
+  "director of engineering": {
+    "display_name": "DIRECTOR OF ENGINEERING",
+    "skills": [
+      "Leadership",
+      "Software Development",
+      "Project Management",
+      "Team Management"
+    ],
+    "certifications": [
+      "Certified Agile Leadership (CAL)",
+      "PMI Agile Certified Practitioner (PMI-ACP)"
+    ]
+  },
+  "docker engineer": {
+    "display_name": "DOCKER ENGINEER",
+    "skills": [
+      "Docker",
+      "Containerization",
+      "Orchestration",
+      "DevOps"
+    ],
+    "certifications": [
+      "Docker Certified Associate",
+      "Kubernetes Certified Administrator (CKA)"
+    ]
+  },
+  "embedded software engineer": {
+    "display_name": "EMBEDDED SOFTWARE ENGINEER",
+    "skills": [
+      "Embedded Systems",
+      "C/C++",
+      "Firmware Development",
+      "Hardware Interfaces"
+    ],
+    "certifications": [
+      "Arm Accredited Engineer (AAE)",
+      "IEEE Certified Embedded Systems Engineer"
+    ]
+  },
+  "entry level developer": {
+    "display_name": "ENTRY LEVEL DEVELOPER",
+    "skills": [
+      "Programming Basics",
+      "Software Development",
+      "Problem Solving",
+      "Learning Agility"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Microsoft Technology Associate (MTA): Software Development Fundamentals"
+    ]
+  },
+  "entry level network engineer": {
+    "display_name": "ENTRY LEVEL NETWORK ENGINEER",
+    "skills": [
+      "Networking Basics",
+      "Troubleshooting",
+      "System Administration",
+      "Learning Agility"
+    ],
+    "certifications": [
+      "Cisco Certified Network Associate (CCNA)",
+      "Juniper Networks Certified Associate (JNCIA)"
+    ]
+  },
+  "entry level programmer": {
+    "display_name": "ENTRY LEVEL PROGRAMMER",
+    "skills": [
+      "Programming Basics",
+      "Software Development",
+      "Problem Solving",
+      "Learning Agility"
+    ],
+    "certifications": [
+      "Google IT Automation with Python",
+      "Microsoft Certified: Azure Fundamentals"
+    ]
+  },
+  "entry level software developer": {
+    "display_name": "Entry Level Software Developer",
+    "skills": [
+      "JavaScript",
+      "Java",
+      "Python",
+      "Git",
+      "SQL",
+      "HTML",
+      "CSS",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Coding Bootcamp Certificates"
+    ]
+  },
+  "entry level software engineer": {
+    "display_name": "Entry Level Software Engineer",
+    "skills": [
+      "JavaScript",
+      "Java",
+      "Python",
+      "Git",
+      "SQL",
+      "HTML",
+      "CSS",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Coding Bootcamp Certificates"
+    ]
+  },
+  "entry level web developer": {
+    "display_name": "ENTRY LEVEL WEB DEVELOPER",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Basic Web Development",
+      "Learning Agility"
+    ],
+    "certifications": [
+      "Meta Front-End Developer Certificate",
+      "Google Mobile Web Specialist"
+    ]
+  },
+  "envoy engineer": {
+    "display_name": "ENVOY ENGINEER",
+    "skills": [
+      "Envoy Proxy",
+      "Service Mesh",
+      "Load Balancing",
+      "Networking"
+    ],
+    "certifications": [
+      "Kubernetes and Cloud-Native Associate (KCNA)",
+      "Linux Foundation Certified Kubernetes Security Specialist (CKS)"
+    ]
+  },
+  "falco engineer": {
+    "display_name": "FALCO ENGINEER",
+    "skills": [
+      "Falco",
+      "Kubernetes Security",
+      "Cloud Security",
+      "System Monitoring"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Certified Kubernetes Security Specialist (CKS)",
+      "GIAC Cloud Security Automation (GCSA)"
+    ]
+  },
+  "fluentd engineer": {
+    "display_name": "FLUENTD ENGINEER",
+    "skills": [
+      "Fluentd",
+      "Log Aggregation",
+      "Data Collection",
+      "System Monitoring"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Kubernetes and Cloud-Native Associate (KCNA)"
+    ]
+  },
+  "fortify engineer": {
+    "display_name": "FORTIFY ENGINEER",
+    "skills": [
+      "Fortify",
+      "Static Code Analysis",
+      "Application Security",
+      "Secure Coding"
+    ],
+    "certifications": [
+      "Fortify Security Software Certification",
+      "Certified Secure Software Lifecycle Professional (CSSLP)"
+    ]
+  },
+  "frameworks specialist": {
+    "display_name": "FRAMEWORKS SPECIALIST",
+    "skills": [
+      "Software Frameworks",
+      "Programming Languages",
+      "Problem Solving",
+      "System Design"
+    ],
+    "certifications": [
+      "Varies based on framework; recommended: AWS Certified Developer",
+      "Google Cloud Professional Developer"
+    ]
+  },
+  "front end developer": {
+    "display_name": "FRONT END DEVELOPER",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "UI/UX Design",
+      "Responsive Design"
+    ],
+    "certifications": [
+      "Meta Front-End Developer Certificate",
+      "Google Mobile Web Specialist"
+    ]
+  },
+  "front end web developer": {
+    "display_name": "Front End Web Developer",
+    "skills": [
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "React",
+      "Angular",
+      "Vue.js",
+      "Node.js",
+      "TypeScript",
+      "Sass",
+      "UI/UX Design"
+    ],
+    "certifications": [
+      "JavaScript Developer Certificate",
+      "Front-End Web Developer Nanodegree"
+    ]
+  },
+  "full stack developer": {
+    "display_name": "FULL STACK DEVELOPER",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Back-End Technologies",
+      "Database Management"
+    ],
+    "certifications": [
+      "AWS Certified Developer - Associate",
+      "Meta Full Stack Developer Certificate"
+    ]
+  },
+  "full stack java developer/programmer/engineer": {
+    "display_name": "FULL STACK JAVA DEVELOPER/PROGRAMMER/ENGINEER",
+    "skills": [
+      "Java",
+      "Spring",
+      "Hibernate",
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "certifications": [
+      "Oracle Certified Professional (OCP) - Java SE",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "full stack python developer/programmer/engineer": {
+    "display_name": "FULL STACK PYTHON DEVELOPER/PROGRAMMER/ENGINEER",
+    "skills": [
+      "Python",
+      "Django",
+      "Flask",
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "certifications": [
+      "Python Institute PCEP & PCAP",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "game developer": {
+    "display_name": "GAME DEVELOPER",
+    "skills": [
+      "C++",
+      "C#",
+      "Game Engines",
+      "3D Modeling",
+      "Game Design"
+    ],
+    "certifications": [
+      "Unity Certified Programmer",
+      "Unreal Engine Certified Developer"
+    ]
+  },
+  "gcp devops engineer": {
+    "display_name": "GCP DEVOPS ENGINEER",
+    "skills": [
+      "Google Cloud Platform",
+      "DevOps Practices",
+      "CI/CD Pipelines",
+      "Automation"
+    ],
+    "certifications": [
+      "Google Cloud Professional DevOps Engineer"
+    ]
+  },
+  "gerrit engineer": {
+    "display_name": "Gerrit Engineer",
+    "skills": [
+      "Gerrit",
+      "Git",
+      "Code Review",
+      "Linux",
+      "Automation",
+      "Scripting",
+      "Version Control"
+    ],
+    "certifications": [
+      "Gerrit Code Review Certification (if available)",
+      "GitHub Proficiency Certifications"
+    ]
+  },
+  "git engineer": {
+    "display_name": "GIT ENGINEER",
+    "skills": [
+      "Git",
+      "Version Control",
+      "Branching Strategies",
+      "Collaboration"
+    ],
+    "certifications": [
+      "GitHub Certified Developer",
+      "GitLab Certified Associate"
+    ]
+  },
+  "github engineer": {
+    "display_name": "GITHUB ENGINEER",
+    "skills": [
+      "GitHub",
+      "Git",
+      "Collaboration Tools",
+      "CI/CD Integration"
+    ],
+    "certifications": [
+      "GitHub Advanced Security Certification",
+      "GitHub Actions Professional"
+    ]
+  },
+  "gitlab engineer": {
+    "display_name": "GITLAB ENGINEER",
+    "skills": [
+      "GitLab",
+      "Git",
+      "CI/CD Pipelines",
+      "DevOps Practices"
+    ],
+    "certifications": [
+      "GitLab Certified Associate",
+      "GitLab Certified DevOps Professional"
+    ]
+  },
+  "gradle engineer": {
+    "display_name": "GRADLE ENGINEER",
+    "skills": [
+      "Gradle",
+      "Build Automation",
+      "Java",
+      "Software Configuration Management"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Oracle Certified Professional (OCP) - Java",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "grafana engineer": {
+    "display_name": "GRAFANA ENGINEER",
+    "skills": [
+      "Grafana",
+      "Data Visualization",
+      "Monitoring",
+      "System Performance"
+    ],
+    "certifications": [
+      "Grafana Cloud Certified Specialist"
+    ]
+  },
+  "groovy engineer": {
+    "display_name": "GROOVY ENGINEER",
+    "skills": [
+      "Groovy",
+      "Scripting",
+      "Automation",
+      "Software Development"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Oracle Certified Professional (OCP) - Java",
+      "Apache Groovy Developer Certificate"
+    ]
+  },
+  "information architect": {
+    "display_name": "INFORMATION ARCHITECT",
+    "skills": [
+      "Information Architecture",
+      "User Experience Design",
+      "Content Strategy",
+      "Taxonomy"
+    ],
+    "certifications": [
+      "TOGAF Certified Enterprise Architect",
+      "IAAP Certified Professional in Accessibility Core Competencies (CPACC)"
+    ]
+  },
+  "information security analyst": {
+    "display_name": "INFORMATION SECURITY ANALYST",
+    "skills": [
+      "Security Protocols",
+      "Threat Analysis",
+      "Compliance",
+      "Incident Response"
+    ],
+    "certifications": [
+      "Certified Information Systems Security Professional (CISSP)",
+      "Certified Ethical Hacker (CEH)",
+      "CompTIA Security+"
+    ]
+  },
+  "interaction design": {
+    "display_name": "INTERACTION DESIGN",
+    "skills": [],
+    "certifications": []
+  },
+  "er": {
+    "display_name": "ER",
+    "skills": [
+      "Interaction Design",
+      "UI/UX Design",
+      "Prototyping",
+      "User Research",
+      "Wireframing",
+      "Usability Testing"
+    ],
+    "certifications": [
+      "Interaction Design Foundation Certifications",
+      "Certified Usability Analyst (CUA)"
+    ]
+  },
+  "ios developer": {
+    "display_name": "IOS DEVELOPER",
+    "skills": [
+      "Swift",
+      "Objective-C",
+      "iOS SDK",
+      "Mobile App Development",
+      "UI/UX Design"
+    ],
+    "certifications": [
+      "Apple Certified iOS Developer",
+      "Meta iOS Developer Certificate"
+    ]
+  },
+  "istio engineer": {
+    "display_name": "ISTIO ENGINEER",
+    "skills": [
+      "Istio",
+      "Service Mesh",
+      "Traffic Management",
+      "Security"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Kubernetes Certified Administrator (CKA)",
+      "Certified Kubernetes Security Specialist (CKS)"
+    ]
+  },
+  "it manager": {
+    "display_name": "IT MANAGER",
+    "skills": [
+      "IT Management",
+      "Team Leadership",
+      "Project Management",
+      "Budgeting"
+    ],
+    "certifications": [
+      "ITIL 4 Managing Professional",
+      "Certified Information Technology Manager (CITM)"
+    ]
+  },
+  "jacoco engineer": {
+    "display_name": "JACOCO ENGINEER",
+    "skills": [
+      "JaCoCo",
+      "Code Coverage",
+      "Java Testing",
+      "Software Quality"
+    ],
+    "certifications": [
+      "No direct certification; recommended: ISTQB Certified Tester - Advanced Level",
+      "Java Certified Developer"
+    ]
+  },
+  "java developer": {
+    "display_name": "JAVA DEVELOPER",
+    "skills": [
+      "Java",
+      "Spring",
+      "Hibernate",
+      "Software Development",
+      "Object-Oriented Programming"
+    ],
+    "certifications": [
+      "Oracle Certified Professional (OCP) - Java SE",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "javascript developer": {
+    "display_name": "JavaScript Developer",
+    "skills": [
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "React",
+      "Angular",
+      "Vue.js",
+      "Node.js",
+      "TypeScript",
+      "Sass",
+      "UI/UX Design"
+    ],
+    "certifications": [
+      "JavaScript Developer Certificate",
+      "Certified JavaScript Developer"
+    ]
+  },
+  "jira engineer": {
+    "display_name": "JIRA Engineer",
+    "skills": [
+      "Jira",
+      "Atlassian Suite",
+      "Agile Methodologies",
+      "Workflow Configuration",
+      "User Management",
+      "Project Management"
+    ],
+    "certifications": [
+      "Atlassian Jira Administration Certification",
+      "AgilePM Certification"
+    ]
+  },
+  "jr developer": {
+    "display_name": "Jr Developer",
+    "skills": [
+      "JavaScript",
+      "Java",
+      "Python",
+      "Git",
+      "SQL",
+      "HTML",
+      "CSS",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Coding Bootcamp Certificates"
+    ]
+  },
+  "junior developer": {
+    "display_name": "Junior Developer",
+    "skills": [
+      "JavaScript",
+      "Java",
+      "Python",
+      "Git",
+      "SQL",
+      "HTML",
+      "CSS",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Coding Bootcamp Certificates"
+    ]
+  },
+  "junior front end developer": {
+    "display_name": "JUNIOR FRONT END DEVELOPER",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Basic Web Development",
+      "Learning Agility"
+    ],
+    "certifications": [
+      "Google Mobile Web Specialist",
+      "Meta Front-End Developer Certificate"
+    ]
+  },
+  "junior ios developer": {
+    "display_name": "JUNIOR IOS DEVELOPER",
+    "skills": [
+      "Swift",
+      "Objective-C",
+      "iOS SDK",
+      "Basic Mobile App Development",
+      "Learning Agility"
+    ],
+    "certifications": [
+      "Apple Certified iOS Developer",
+      "Meta iOS Developer Certificate"
+    ]
+  },
+  "junior software developer": {
+    "display_name": "Junior Software Developer",
+    "skills": [
+      "JavaScript",
+      "Java",
+      "Python",
+      "Git",
+      "SQL",
+      "HTML",
+      "CSS",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Coding Bootcamp Certificates"
+    ]
+  },
+  "junior software engineer": {
+    "display_name": "Junior Software Engineer",
+    "skills": [
+      "JavaScript",
+      "Java",
+      "Python",
+      "Git",
+      "SQL",
+      "HTML",
+      "CSS",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Coding Bootcamp Certificates"
+    ]
+  },
+  "junior web developer": {
+    "display_name": "Junior Web Developer",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Git",
+      "Web Development Fundamentals",
+      "UI/UX Basics"
+    ],
+    "certifications": [
+      "HTML/CSS/JavaScript Certifications",
+      "Front-End Web Development Bootcamp"
+    ]
+  },
+  "junit engineer": {
+    "display_name": "JUNIT ENGINEER",
+    "skills": [
+      "JUnit",
+      "Java Testing",
+      "Test Automation",
+      "Software Quality"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Oracle Certified Professional (OCP) - Java",
+      "ISTQB Certified Tester"
+    ]
+  },
+  "kubernetes administrator": {
+    "display_name": "kubernetes Administrator",
+    "skills": [
+      "Kubernetes",
+      "Docker",
+      "Linux",
+      "Cloud Computing",
+      "AWS",
+      "Azure",
+      "Networking",
+      "CI/CD",
+      "Automation",
+      "Security"
+    ],
+    "certifications": [
+      "Certified Kubernetes Administrator (CKA)/Certified Kubernetes Security Specialist (CKS)/AWS Certified Kubernetes Specialist /Red Hat Certified Specialist in OpenShift"
+    ]
+  },
+  "kubernetes engineer": {
+    "display_name": "Kubernetes Engineer",
+    "skills": [
+      "Kubernetes",
+      "Docker",
+      "Linux",
+      "Cloud Computing",
+      "AWS",
+      "Azure",
+      "Networking",
+      "CI/CD",
+      "Automation",
+      "Security"
+    ],
+    "certifications": [
+      "Certified Kubernetes Administrator (CKA)",
+      "Docker Certified Associate"
+    ]
+  },
+  "maven engineer": {
+    "display_name": "MAVEN ENGINEER",
+    "skills": [
+      "Maven",
+      "Build Automation",
+      "Java",
+      "Software Configuration Management"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Apache Maven Fundamentals",
+      "Oracle Certified Professional - Java"
+    ]
+  },
+  "micro services / api lead designer": {
+    "display_name": "Micro services / API Lead Designer",
+    "skills": [
+      "Microservices",
+      "API Design",
+      "REST APIs",
+      "SOA",
+      "Cloud Computing",
+      "Java",
+      "Python",
+      "Security"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect/Google Professional Cloud Architect",
+      "Microsoft Certified-Azure Solutions Architect Expert/API Design & Management certifications"
+    ]
+  },
+  "mobile app developer": {
+    "display_name": "MOBILE APP DEVELOPER",
+    "skills": [
+      "Mobile App Development",
+      "iOS/Android SDKs",
+      "UI/UX Design",
+      "Programming Languages"
+    ],
+    "certifications": [
+      "Google Associate Android Developer",
+      "Apple Certified iOS Developer"
+    ]
+  },
+  "mobile application developer": {
+    "display_name": "Mobile Application Developer",
+    "skills": [
+      "Android SDK",
+      "Java",
+      "Kotlin",
+      "iOS",
+      "Swift",
+      "Objective-C",
+      "React Native",
+      "Flutter",
+      "Mobile Development",
+      "UI/UX Design"
+    ],
+    "certifications": [
+      "Google Associate Android Developer",
+      "Apple Certified iOS Developer"
+    ]
+  },
+  "mulesoft developer": {
+    "display_name": "MULESOFT DEVELOPER",
+    "skills": [
+      "MuleSoft Anypoint Platform",
+      "API Integration",
+      "Java",
+      "Integration Patterns"
+    ],
+    "certifications": [
+      "MuleSoft Certified Developer - Level 1"
+    ]
+  },
+  "nagios engineer": {
+    "display_name": "NAGIOS ENGINEER",
+    "skills": [
+      "Nagios",
+      "System Monitoring",
+      "Linux",
+      "Networking"
+    ],
+    "certifications": [
+      "Nagios Certified Administrator"
+    ]
+  },
+  "network and systems administrator": {
+    "display_name": "NETWORK AND SYSTEMS ADMINISTRATOR",
+    "skills": [
+      "Networking",
+      "System Administration",
+      "Linux/Windows Servers",
+      "Troubleshooting"
+    ],
+    "certifications": [
+      "Cisco Certified Network Associate (CCNA)",
+      "CompTIA Network+"
+    ]
+  },
+  "network engineer": {
+    "display_name": "NETWORK ENGINEER",
+    "skills": [
+      "Networking Protocols",
+      "Cisco/Juniper Devices",
+      "Network Security",
+      "Troubleshooting"
+    ],
+    "certifications": [
+      "Cisco Certified Network Professional (CCNP)",
+      "Juniper Networks Certified Associate (JNCIA)"
+    ]
+  },
+  "new grad software engineer": {
+    "display_name": "New Grad Software Engineer",
+    "skills": [
+      "JavaScript",
+      "Java",
+      "Python",
+      "Git",
+      "SQL",
+      "HTML",
+      "CSS",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Coding Bootcamp Certificates"
+    ]
+  },
+  "new relic engineer": {
+    "display_name": "NEW RELIC ENGINEER",
+    "skills": [
+      "New Relic",
+      "Application Performance Monitoring",
+      "Troubleshooting",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "New Relic Performance Monitoring Certification"
+    ]
+  },
+  "nexus engineer": {
+    "display_name": "NEXUS ENGINEER",
+    "skills": [
+      "Nexus Repository Manager",
+      "Artifact Management",
+      "DevOps Practices"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Sonatype Nexus Administration Training"
+    ]
+  },
+  "nomad engineer": {
+    "display_name": "NOMAD ENGINEER",
+    "skills": [
+      "Nomad",
+      "Container Orchestration",
+      "HashiCorp Tools",
+      "Infrastructure Automation"
+    ],
+    "certifications": [
+      "HashiCorp Certified: Nomad Associate"
+    ]
+  },
+  "notary engineer": {
+    "display_name": "NOTARY ENGINEER",
+    "skills": [
+      "Notary",
+      "Container Security",
+      "Docker",
+      "Cryptography"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Certified Kubernetes Security Specialist (CKS)"
+    ]
+  },
+  "octopus deploy engineer": {
+    "display_name": "OCTOPUS DEPLOY ENGINEER",
+    "skills": [
+      "Octopus Deploy",
+      "Deployment Automation",
+      ".NET",
+      "PowerShell"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Certified Jenkins Engineer (CJE)",
+      "CI/CD Pipelines Specialist"
+    ]
+  },
+  "openshift engineer": {
+    "display_name": "OPENSHIFT ENGINEER",
+    "skills": [
+      "OpenShift",
+      "Kubernetes",
+      "Containerization",
+      "DevOps Practices"
+    ],
+    "certifications": [
+      "Red Hat Certified Specialist in OpenShift Administration"
+    ]
+  },
+  "openstack engineer": {
+    "display_name": "OPENSTACK ENGINEER",
+    "skills": [
+      "OpenStack",
+      "Cloud Computing",
+      "Virtualization",
+      "System Administration"
+    ],
+    "certifications": [
+      "Certified OpenStack Administrator (COA)"
+    ]
+  },
+  "oracle developer": {
+    "display_name": "ORACLE DEVELOPER",
+    "skills": [
+      "Oracle Database",
+      "SQL",
+      "PL/SQL",
+      "Database Development"
+    ],
+    "certifications": [
+      "Oracle Certified Professional (OCP) - Java SE",
+      "Oracle Database SQL Certified Associate"
+    ]
+  },
+  "oracle sql developer": {
+    "display_name": "ORACLE SQL DEVELOPER",
+    "skills": [
+      "Oracle SQL",
+      "PL/SQL",
+      "Data Modeling",
+      "Database Design"
+    ],
+    "certifications": [
+      "Oracle Database SQL Certified Associate"
+    ]
+  },
+  "packer engineer": {
+    "display_name": "PACKER ENGINEER",
+    "skills": [
+      "Packer",
+      "Infrastructure as Code",
+      "Cloud Computing",
+      "Automation"
+    ],
+    "certifications": [
+      "HashiCorp Certified: Packer Associate"
+    ]
+  },
+  "php developer": {
+    "display_name": "PHP DEVELOPER",
+    "skills": [
+      "PHP",
+      "MySQL",
+      "Web Development",
+      "Frameworks (Laravel",
+      "Symfony)"
+    ],
+    "certifications": [
+      "Zend Certified PHP Engineer",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "powershell engineer": {
+    "display_name": "POWERSHELL ENGINEER",
+    "skills": [
+      "PowerShell",
+      "Automation",
+      "Windows Server Administration",
+      "Scripting"
+    ],
+    "certifications": [
+      "Microsoft Certified: Power Platform Developer Associate",
+      "Microsoft Certified: Azure Administrator Associate"
+    ]
+  },
+  "product manager": {
+    "display_name": "PRODUCT MANAGER",
+    "skills": [
+      "Product Strategy",
+      "Market Analysis",
+      "Requirements Gathering",
+      "Product Roadmap"
+    ],
+    "certifications": [
+      "Certified Scrum Product Owner (CSPO)",
+      "PMI Agile Certified Practitioner (PMI-ACP)"
+    ]
+  },
+  "programmer": {
+    "display_name": "Programmer",
+    "skills": [
+      "Programming",
+      "Algorithms",
+      "Data Structures",
+      "Debugging",
+      "Software Development",
+      "Python",
+      "Java",
+      "C++"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Microsoft Certified: Azure Fundamentals",
+      "Oracle Certified Associate (OCA) in Java/Python",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "programmer analyst": {
+    "display_name": "Programmer Analyst",
+    "skills": [
+      "Programming",
+      "Data Analysis",
+      "Requirements Gathering",
+      "SQL",
+      "Data Modeling",
+      "Process Improvement"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Microsoft Certified: Azure Fundamentals",
+      "Oracle Certified Associate (OCA) in Java/Python",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "prometheus engineer": {
+    "display_name": "Prometheus Engineer",
+    "skills": [
+      "Prometheus",
+      "Monitoring",
+      "Alerting",
+      "Metrics",
+      "Kubernetes",
+      "Docker",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "Certified Kubernetes Administrator (CKA)",
+      "Grafana Cloud Monitoring Certification",
+      "Prometheus Certified Associate (PCA)"
+    ]
+  },
+  "puppet engineer": {
+    "display_name": "Puppet Engineer",
+    "skills": [
+      "Puppet",
+      "Ruby",
+      "Automation",
+      "Configuration Management",
+      "Linux",
+      "Cloud Computing",
+      "AWS",
+      "Azure",
+      "Infrastructure as Code"
+    ],
+    "certifications": [
+      "Puppet Certified Professional",
+      "Red Hat Certified Specialist in Configuration Management",
+      "AWS Certified DevOps Engineer"
+    ]
+  },
+  "pytest engineer": {
+    "display_name": "PyTest Engineer",
+    "skills": [
+      "PyTest",
+      "Python",
+      "Testing",
+      "Unit Testing",
+      "Test Automation",
+      "CI/CD"
+    ],
+    "certifications": [
+      "ISTQB Certified Tester",
+      "Certified Python Developer (PCAP",
+      "PCPP)",
+      "Selenium WebDriver with Python Certification"
+    ]
+  },
+  "python developer": {
+    "display_name": "PYTHON DEVELOPER",
+    "skills": [
+      "Python",
+      "Web Frameworks (Django",
+      "Flask)",
+      "Data Analysis",
+      "Scripting"
+    ],
+    "certifications": [
+      "PCEP (Certified Entry-Level Python Programmer)",
+      "PCAP (Certified Associate in Python Programming)"
+    ]
+  },
+  "qa engineer": {
+    "display_name": "QA Engineer",
+    "skills": [
+      "Automation Testing",
+      "Selenium",
+      "JUnit",
+      "TestNG",
+      "CI/CD",
+      "Python",
+      "Git",
+      "Jenkins",
+      "Test Automation",
+      "Agile Testing",
+      "Performance Testing"
+    ],
+    "certifications": [
+      "ISTQB Foundation Level",
+      "Certified Software Quality Analyst (CSQA)",
+      "Certified Software Test Engineer (CSTE)"
+    ]
+  },
+  "react developer": {
+    "display_name": "React Developer",
+    "skills": [
+      "JavaScript",
+      "React",
+      "HTML",
+      "CSS",
+      "Node.js",
+      "Redux",
+      "UI/UX Design",
+      "Git"
+    ],
+    "certifications": [
+      "Meta Front-End Developer Certificate",
+      "React Nanodegree (Udacity)",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "robotics engineer": {
+    "display_name": "Robotics Engineer",
+    "skills": [
+      "Robotics",
+      "C++",
+      "Python",
+      "ROS",
+      "Embedded Systems",
+      "Control Systems",
+      "Sensors",
+      "Actuators"
+    ],
+    "certifications": [
+      "Certified LabVIEW Developer (CLD)",
+      "ROS (Robot Operating System) Certification",
+      "Siemens Mechatronic Systems Certification"
+    ]
+  },
+  "ruby on rails developer": {
+    "display_name": "RUBY ON RAILS DEVELOPER",
+    "skills": [
+      "Ruby on Rails",
+      "Ruby",
+      "SQL",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "REST APIs",
+      "Git"
+    ],
+    "certifications": [
+      "Ruby Association Certified Ruby Programmer",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "salesforce developer": {
+    "display_name": "Salesforce Developer",
+    "skills": [
+      "Salesforce",
+      "Apex",
+      "Visualforce",
+      "Lightning",
+      "SOQL",
+      "Salesforce Administration",
+      "REST APIs"
+    ],
+    "certifications": [
+      "Salesforce Certified Platform Developer I & II",
+      "Salesforce Certified Administrator"
+    ]
+  },
+  "search engine optimization": {
+    "display_name": "Search Engine Optimization",
+    "skills": [
+      "SEO",
+      "Keyword Research",
+      "On-Page Optimization",
+      "Off-Page Optimization",
+      "Content Marketing",
+      "Analytics"
+    ],
+    "certifications": [
+      "Google Analytics Certification",
+      "HubSpot Content Marketing Certification",
+      "SEMrush SEO Fundamentals Certification"
+    ]
+  },
+  "security specialist": {
+    "display_name": "SECURITY SPECIALIST",
+    "skills": [
+      "Security Protocols",
+      "Threat Analysis",
+      "Compliance",
+      "Risk Management"
+    ],
+    "certifications": [
+      "GIAC Security Essentials Certification (GSEC)",
+      "Certified Cloud Security Professional (CCSP)"
+    ]
+  },
+  "selenium engineer": {
+    "display_name": "Selenium Engineer",
+    "skills": [
+      "Selenium",
+      "Test Automation",
+      "Java",
+      "Python",
+      "WebDriver",
+      "CI/CD",
+      "Testing Frameworks"
+    ],
+    "certifications": [
+      "ISTQB Advanced Test Automation Engineer",
+      "Certified Selenium Professional",
+      "Test Automation Engineer (TAE) Certification"
+    ]
+  },
+  "senior ansible development engineer": {
+    "display_name": "Senior Ansible Development Engineer",
+    "skills": [
+      "Ansible",
+      "Automation",
+      "Infrastructure as Code",
+      "Cloud Computing",
+      "AWS",
+      "Azure",
+      "Linux",
+      "Python",
+      "Scripting",
+      "Networking",
+      "Leadership"
+    ],
+    "certifications": [
+      "Red Hat Certified Specialist in Ansible Automation",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "senior cloud architect": {
+    "display_name": "Senior Cloud Architect",
+    "skills": [
+      "Cloud Architecture",
+      "AWS",
+      "Azure",
+      "Google Cloud",
+      "Microservices",
+      "Kubernetes",
+      "Docker",
+      "Security",
+      "Leadership"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect - Professional",
+      "Google Professional Cloud Architect",
+      "Microsoft Certified: Azure Solutions Architect Expert"
+    ]
+  },
+  "senior devops architect": {
+    "display_name": "Senior DevOps Architect",
+    "skills": [
+      "Cloud Computing",
+      "AWS",
+      "Azure",
+      "Google Cloud",
+      "Docker",
+      "Kubernetes",
+      "Terraform",
+      "Ansible",
+      "CI/CD",
+      "Automation",
+      "Security",
+      "Networking",
+      "Leadership"
+    ],
+    "certifications": [
+      "AWS Certified DevOps Engineer - Professional",
+      "Google Professional Cloud DevOps Engineer",
+      "Certified Kubernetes Administrator (CKA)"
+    ]
+  },
+  "senior devsecops architect": {
+    "display_name": "Senior DevSecOps Architect",
+    "skills": [
+      "DevSecOps",
+      "Cloud Security",
+      "Kubernetes",
+      "Docker",
+      "Terraform",
+      "Ansible",
+      "CI/CD",
+      "Security Automation",
+      "Vulnerability Management",
+      "Leadership"
+    ],
+    "certifications": [
+      "Certified DevSecOps Professional (CDP)",
+      "AWS Certified Security - Specialty",
+      "Certified Kubernetes Security Specialist (CKS)"
+    ]
+  },
+  "senior sre architect": {
+    "display_name": "Senior SRE Architect",
+    "skills": [
+      "SRE",
+      "Monitoring",
+      "Kubernetes",
+      "Docker",
+      "Cloud Platforms",
+      "Linux",
+      "Automation",
+      "DevOps",
+      "CI/CD",
+      "Python",
+      "Networking",
+      "Leadership"
+    ],
+    "certifications": [
+      "Google Professional Cloud DevOps Engineer",
+      "Certified Kubernetes Administrator (CKA)",
+      "AWS Certified Solutions Architect - Professional"
+    ]
+  },
+  "senior sre engineer": {
+    "display_name": "Senior SRE Engineer",
+    "skills": [
+      "SRE",
+      "Monitoring",
+      "Kubernetes",
+      "Docker",
+      "Cloud Platforms",
+      "Linux",
+      "Automation",
+      "DevOps",
+      "CI/CD",
+      "Python",
+      "Networking",
+      "Leadership"
+    ],
+    "certifications": [
+      "Google Professional Cloud DevOps Engineer",
+      "Certified Kubernetes Administrator (CKA)",
+      "AWS Certified Solutions Architect - Professional"
+    ]
+  },
+  "sharepoint developer": {
+    "display_name": "Sharepoint Developer",
+    "skills": [
+      "SharePoint",
+      ".NET",
+      "C#",
+      "JavaScript",
+      "PowerShell",
+      "SharePoint Framework",
+      "REST APIs"
+    ],
+    "certifications": [
+      "Microsoft Certified: SharePoint Developer",
+      "Microsoft 365 Certified: Developer Associate"
+    ]
+  },
+  "software developer": {
+    "display_name": "Software Developer",
+    "skills": [
+      "Programming",
+      "Algorithms",
+      "Data Structures",
+      "Debugging",
+      "Software Development",
+      "Python",
+      "Java",
+      "C++"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Developer Associate",
+      "AWS Certified Developer - Associate",
+      "Oracle Certified Professional Java SE Developer"
+    ]
+  },
+  "software engineer": {
+    "display_name": "Software Engineer",
+    "skills": [
+      "Java",
+      "C++",
+      "Python",
+      "Algorithms",
+      "Data Structures",
+      "Software Design",
+      "Git",
+      "Jenkins",
+      "CI/CD",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Developer Associate",
+      "AWS Certified Developer - Associate",
+      "Oracle Certified Professional Java SE Developer"
+    ]
+  },
+  "sonarqube engineer": {
+    "display_name": "SonarQube Engineer",
+    "skills": [
+      "SonarQube",
+      "Code Quality",
+      "Static Code Analysis",
+      "Java",
+      ".NET",
+      "Security",
+      "CI/CD"
+    ],
+    "certifications": [
+      "Certified Secure Software Lifecycle Professional (CSSLP)",
+      "OWASP Top 10 Security Testing Certifications"
+    ]
+  },
+  "splunk enterprise security engineer": {
+    "display_name": "Splunk Enterprise Security Engineer",
+    "skills": [
+      "Splunk Enterprise Security",
+      "Security Information and Event Management (SIEM)",
+      "Threat Detection",
+      "Incident Response",
+      "Security Analysis"
+    ],
+    "certifications": [
+      "Splunk Core Certified User",
+      "Splunk Core Certified Power User",
+      "Splunk Enterprise Security Certified Admin"
+    ]
+  },
+  "sql developer": {
+    "display_name": "SQL Developer",
+    "skills": [
+      "SQL",
+      "T-SQL",
+      "SQL Server",
+      "Database Design",
+      "Performance Tuning",
+      "ETL",
+      "SSRS",
+      "SSIS",
+      "Data Modeling"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Data Engineer Associate",
+      "Oracle Database SQL Certified Associate"
+    ]
+  },
+  "sre architect": {
+    "display_name": "SRE Architect",
+    "skills": [
+      "SRE",
+      "Cloud Architecture",
+      "Kubernetes",
+      "Docker",
+      "Monitoring",
+      "Incident Management",
+      "Automation",
+      "CI/CD",
+      "Networking"
+    ],
+    "certifications": [
+      "Google Professional Cloud DevOps Engineer",
+      "Certified Kubernetes Administrator (CKA)",
+      "AWS Certified Solutions Architect - Professional"
+    ]
+  },
+  "sre engineer": {
+    "display_name": "SRE Engineer",
+    "skills": [
+      "SRE",
+      "Monitoring",
+      "Kubernetes",
+      "Docker",
+      "Cloud Platforms",
+      "Linux",
+      "Automation",
+      "DevOps",
+      "CI/CD",
+      "Python"
+    ],
+    "certifications": [
+      "Google Professional Cloud DevOps Engineer",
+      "Certified Kubernetes Administrator (CKA)",
+      "AWS Certified Solutions Architect - Professional"
+    ]
+  },
+  "systems administrator": {
+    "display_name": "SYSTEMS ADMINISTRATOR",
+    "skills": [
+      "Linux Administration",
+      "Windows Server Administration",
+      "Networking",
+      "Troubleshooting",
+      "Scripting",
+      "Virtualization"
+    ],
+    "certifications": [
+      "CompTIA Linux+",
+      "Red Hat Certified System Administrator (RHCSA)",
+      "Microsoft Certified: Windows Server Hybrid Administrator Associate"
+    ]
+  },
+  "systems engineer": {
+    "display_name": "SYSTEMS ENGINEER",
+    "skills": [
+      "Systems Design",
+      "Linux Administration",
+      "Windows Server Administration",
+      "Networking",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "CompTIA Server+",
+      "Microsoft Certified: Azure Solutions Architect Expert",
+      "Red Hat Certified Engineer (RHCE)"
+    ]
+  },
+  "teamcity engineer": {
+    "display_name": "TeamCity Engineer",
+    "skills": [
+      "TeamCity",
+      "CI/CD",
+      "Build Automation",
+      "Version Control",
+      "Git"
+    ],
+    "certifications": [
+      "JetBrains TeamCity Certification (if available)",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "tech sales engineer": {
+    "display_name": "Tech Sales Engineer",
+    "skills": [
+      "Technical Sales",
+      "Product Knowledge",
+      "Customer Engagement",
+      "Networking Technologies"
+    ],
+    "certifications": [
+      "AWS Certified Cloud Practitioner",
+      "Google Cloud Digital Leader",
+      "Microsoft Certified: Azure Fundamentals"
+    ]
+  },
+  "technical account manager": {
+    "display_name": "TECHNICAL ACCOUNT MANAGER",
+    "skills": [
+      "Customer Relationship Management",
+      "Technical Support",
+      "Account Management",
+      "Sales"
+    ],
+    "certifications": [
+      "AWS Certified Cloud Practitioner",
+      "Google Cloud Digital Leader"
+    ]
+  },
+  "technical lead": {
+    "display_name": "TECHNICAL LEAD",
+    "skills": [
+      "Technical Leadership",
+      "Software Development",
+      "Team Leadership",
+      "Mentoring"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect",
+      "Google Professional Cloud Architect"
+    ]
+  },
+  "terraform engineer": {
+    "display_name": "Terraform Engineer",
+    "skills": [
+      "Terraform",
+      "Infrastructure as Code (IaC)",
+      "AWS",
+      "Azure",
+      "Google Cloud"
+    ],
+    "certifications": [
+      "HashiCorp Certified: Terraform Associate",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "tfs engineer": {
+    "display_name": "TFS Engineer",
+    "skills": [
+      "TFS (Team Foundation Server)",
+      ".NET Development Tools",
+      ".NET Framework"
+    ],
+    "certifications": [
+      "Microsoft Certified: DevOps Engineer Expert",
+      "Azure DevOps Solutions Certification"
+    ]
+  },
+  "udeploy engineer": {
+    "display_name": "UDeploy Engineer",
+    "skills": [
+      "UDeploy (UrbanCode Deploy)",
+      "CI/CD",
+      "Automation",
+      "Deployment Strategies",
+      "Version Control"
+    ],
+    "certifications": [
+      "IBM UrbanCode Deploy Certification",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "ui designer": {
+    "display_name": "UI DESIGNER",
+    "skills": [
+      "UI Design Principles",
+      "Wireframing",
+      "Prototyping",
+      "Adobe Creative Suite",
+      "Figma",
+      "User Testing"
+    ],
+    "certifications": [
+      "Google UX Design Professional Certificate",
+      "Nielsen Norman Group UX Certification",
+      "Adobe Certified Expert (ACE)"
+    ]
+  },
+  "ui developer": {
+    "display_name": "UI Developer",
+    "skills": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "jQuery",
+      "Responsive Design",
+      "AngularJS",
+      "ReactJS"
+    ],
+    "certifications": [
+      "Meta Front-End Developer Certificate",
+      "AWS Certified Developer - Associate",
+      "React Nanodegree (Udacity)"
+    ]
+  },
+  "unity developer": {
+    "display_name": "Unity Developer",
+    "skills": [
+      "Unity3D Engine",
+      "C#",
+      "Game Development Principles",
+      "3D Modeling",
+      "Animation"
+    ],
+    "certifications": [
+      "Unity Certified Associate: Game Developer",
+      "Unity Certified Expert Programmer"
+    ]
+  },
+  "ux designer": {
+    "display_name": "UX DESIGNER",
+    "skills": [
+      "User Experience Design Principles",
+      "User Research",
+      "Wireframing",
+      "Prototyping",
+      "Usability Testing",
+      "Interaction Design"
+    ],
+    "certifications": [
+      "Google UX Design Professional Certificate",
+      "Nielsen Norman Group UX Certification",
+      "Adobe Certified Expert (ACE)"
+    ]
+  },
+  "vault engineer": {
+    "display_name": "Vault Engineer",
+    "skills": [
+      "HashiCorp Vault",
+      "Secrets Management",
+      "Encryption",
+      "Access Control",
+      "Cloud Security"
+    ],
+    "certifications": [
+      "HashiCorp Certified: Vault Associate",
+      "AWS Certified Security - Specialty"
+    ]
+  },
+  "web designer (ui/ux designer)": {
+    "display_name": "Web Designer (UI/UX Designer)",
+    "skills": [
+      "UI/UX Design",
+      "Wireframing",
+      "Prototyping",
+      "Adobe Creative Suite",
+      "Figma"
+    ],
+    "certifications": [
+      "Google UX Design Certificate",
+      "Adobe Certified Expert (ACE)",
+      "Nielsen Norman Group UX Certification"
+    ]
+  },
+  "web developer": {
+    "display_name": "WEB DEVELOPER",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Web Development",
+      "Frameworks"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Developer Associate",
+      "Google Mobile Web Specialist"
+    ]
+  },
+  "wordpress developer": {
+    "display_name": "WordPress Developer",
+    "skills": [
+      "WordPress",
+      "PHP",
+      "MySQL",
+      "HTML5",
+      "CSS3",
+      "JavaScript"
+    ],
+    "certifications": [
+      "Yoast SEO Certification",
+      "Google Mobile Sites Certification",
+      "WP Elevation Certification"
+    ]
+  },
+  "xl deploy engineer": {
+    "display_name": "XL DEPLOY ENGINEER",
+    "skills": [
+      "XL Deploy",
+      "Deployment Automation",
+      "DevOps Practices",
+      "Configuration Management"
+    ],
+    "certifications": [
+      "Splunk Core Certified User",
+      "Splunk Enterprise Certified Admin"
+    ]
+  },
+  "zabbix engineer": {
+    "display_name": "ZABBIX ENGINEER",
+    "skills": [
+      "Zabbix",
+      "System Monitoring",
+      "Network Monitoring",
+      "Alerting"
+    ],
+    "certifications": [
+      "No direct certification; recommended: Kubernetes Certified Administrator (CKA)",
+      "CI/CD Pipelines Specialist"
+    ]
+  },
+  "interaction designer": {
+    "display_name": "INTERACTION DESIGNER",
+    "skills": [
+      "Interaction Design",
+      "User Research",
+      "Prototyping",
+      "Usability Testing"
+    ],
+    "certifications": [
+      "Nielsen Norman Group UX Certification",
+      "Google UX Design Professional Certificate"
+    ]
+  },
+  "site reliability engineer (kubernetes â€ï¿½ docker)": {
+    "display_name": "SITE RELIABILITY ENGINEER (KUBERNETES Â€ï¿½ DOCKER)",
+    "skills": [
+      "Kubernetes",
+      "Docker",
+      "System Reliability",
+      "Automation",
+      "Monitoring"
+    ],
+    "certifications": [
+      "AWS Certified DevOps Engineer - Professional",
+      "Kubernetes Certified Administrator (CKA)"
+    ]
+  },
+  "api developer": {
+    "display_name": "API DEVELOPER",
+    "skills": [
+      "API Design",
+      "RESTful Services",
+      "Programming Languages",
+      "Security"
+    ],
+    "certifications": [
+      "Zabbix Certified Specialist"
+    ]
+  },
+  "automation specialist": {
+    "display_name": "AUTOMATION SPECIALIST",
+    "skills": [
+      "Automation Tools",
+      "Scripting",
+      "Process Improvement",
+      "Testing"
+    ],
+    "certifications": [
+      "Google Apigee Certification",
+      "AWS Certified Developer - Associate"
+    ]
+  },
+  "business intelligence analyst": {
+    "display_name": "BUSINESS INTELLIGENCE ANALYST",
+    "skills": [
+      "Data Analysis",
+      "SQL",
+      "Data Visualization",
+      "Business Acumen"
+    ],
+    "certifications": [
+      "UiPath Certified Professional",
+      "Automation Anywhere Certified Advanced RPA Professional"
+    ]
+  },
+  "cloud migration specialist": {
+    "display_name": "CLOUD MIGRATION SPECIALIST",
+    "skills": [
+      "Cloud Platforms",
+      "Migration Tools",
+      "System Migration",
+      "Project Management"
+    ],
+    "certifications": [
+      "Microsoft Certified: Power BI Data Analyst Associate",
+      "Tableau Desktop Specialist"
+    ]
+  },
+  "cybersecurity analyst": {
+    "display_name": "CYBERSECURITY ANALYST",
+    "skills": [
+      "Security Protocols",
+      "Threat Analysis",
+      "Compliance",
+      "Incident Response"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect - Associate",
+      "Google Professional Cloud Architect"
+    ]
+  },
+  "data quality engineer": {
+    "display_name": "DATA QUALITY ENGINEER",
+    "skills": [
+      "Data Quality Tools",
+      "Data Profiling",
+      "SQL",
+      "Data Governance"
+    ],
+    "certifications": [
+      "CompTIA Security+",
+      "Certified Information Systems Security Professional (CISSP)"
+    ]
+  },
+  "digital transformation consultant": {
+    "display_name": "DIGITAL TRANSFORMATION CONSULTANT",
+    "skills": [
+      "Digital Strategy",
+      "Technology Consulting",
+      "Business Process Improvement",
+      "Change Management"
+    ],
+    "certifications": [
+      "Certified Data Management Professional (CDMP)",
+      "Microsoft Certified: Azure Data Engineer Associate"
+    ]
+  },
+  "e-commerce developer": {
+    "display_name": "E-COMMERCE DEVELOPER",
+    "skills": [
+      "E-Commerce Platforms",
+      "Web Development",
+      "Payment Gateways",
+      "Security"
+    ],
+    "certifications": [
+      "TOGAF Certified Enterprise Architect",
+      "PMI Agile Certified Practitioner (PMI-ACP)"
+    ]
+  },
+  "embedded systems engineer": {
+    "display_name": "EMBEDDED SYSTEMS ENGINEER",
+    "skills": [
+      "Embedded Systems",
+      "C/C++",
+      "Firmware Development",
+      "Hardware Interfaces"
+    ],
+    "certifications": [
+      "Magento Certified Developer",
+      "Shopify Partner Academy Certification"
+    ]
+  },
+  "erp consultant": {
+    "display_name": "ERP CONSULTANT",
+    "skills": [
+      "ERP Systems",
+      "Business Process Analysis",
+      "Implementation",
+      "Training"
+    ],
+    "certifications": [
+      "Arm Certified Embedded Systems Engineer",
+      "Certified LabVIEW Developer"
+    ]
+  },
+  "geographic information systems (gis) analyst": {
+    "display_name": "GEOGRAPHIC INFORMATION SYSTEMS (GIS) ANALYST",
+    "skills": [
+      "GIS Software",
+      "Spatial Analysis",
+      "Cartography",
+      "Data Visualization"
+    ],
+    "certifications": [
+      "SAP Certified Application Associate",
+      "Oracle ERP Cloud Certification"
+    ]
+  },
+  "help desk technician": {
+    "display_name": "HELP DESK TECHNICIAN",
+    "skills": [
+      "Technical Support",
+      "Troubleshooting",
+      "Customer Service",
+      "Hardware/Software"
+    ],
+    "certifications": [
+      "Esri GIS Certification",
+      "GISP (Certified GIS Professional)"
+    ]
+  },
+  "identity and access management specialist": {
+    "display_name": "IDENTITY AND ACCESS MANAGEMENT SPECIALIST",
+    "skills": [
+      "IAM Systems",
+      "Security Protocols",
+      "Authentication",
+      "Authorization"
+    ],
+    "certifications": [
+      "CompTIA A+",
+      "Microsoft 365 Certified: Modern Desktop Administrator Associate"
+    ]
+  },
+  "infrastructure architect": {
+    "display_name": "INFRASTRUCTURE ARCHITECT",
+    "skills": [
+      "System Architecture",
+      "Cloud Computing",
+      "Networking",
+      "Security"
+    ],
+    "certifications": [
+      "Certified Identity and Access Manager (CIAM)",
+      "Okta Certified Professional"
+    ]
+  },
+  "internet of things (iot) developer": {
+    "display_name": "INTERNET OF THINGS (IoT) DEVELOPER",
+    "skills": [
+      "IoT Platforms",
+      "Embedded Systems",
+      "Sensor Technology",
+      "Programming Languages"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect - Professional",
+      "Google Professional Cloud Architect"
+    ]
+  },
+  "it auditor": {
+    "display_name": "IT AUDITOR",
+    "skills": [
+      "IT Auditing",
+      "Compliance",
+      "Risk Management",
+      "Security"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure IoT Developer Specialty",
+      "AWS Certified IoT Specialty"
+    ]
+  },
+  "java architect": {
+    "display_name": "JAVA ARCHITECT",
+    "skills": [
+      "Java",
+      "System Architecture",
+      "Design Patterns",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "Certified Information Systems Auditor (CISA)"
+    ]
+  },
+  "linux administrator": {
+    "display_name": "LINUX ADMINISTRATOR",
+    "skills": [
+      "Linux Servers",
+      "System Administration",
+      "Scripting",
+      "Troubleshooting"
+    ],
+    "certifications": [
+      "Oracle Certified Master (OCM) - Java EE Enterprise Architect"
+    ]
+  },
+  "mainframe developer": {
+    "display_name": "MAINFRAME DEVELOPER",
+    "skills": [
+      "Mainframe Systems",
+      "COBOL",
+      "JCL",
+      "VSAM"
+    ],
+    "certifications": [
+      "Red Hat Certified System Administrator (RHCSA)",
+      "Linux Professional Institute Certification (LPIC-1)"
+    ]
+  },
+  "microsoft dynamics developer": {
+    "display_name": "MICROSOFT DYNAMICS DEVELOPER",
+    "skills": [
+      "Microsoft Dynamics",
+      "CRM",
+      ".NET",
+      "Development"
+    ],
+    "certifications": [
+      "IBM Certified System Administrator - z/OS",
+      "IBM Mainframe Application Developer Certification"
+    ]
+  },
+  "mobile security specialist": {
+    "display_name": "MOBILE SECURITY SPECIALIST",
+    "skills": [
+      "Mobile Security",
+      "Penetration Testing",
+      "Security Protocols",
+      "Risk Management"
+    ],
+    "certifications": [
+      "Microsoft Certified: Dynamics 365 Developer Associate"
+    ]
+  },
+  "natural language processing engineer": {
+    "display_name": "NATURAL LANGUAGE PROCESSING ENGINEER",
+    "skills": [
+      "NLP Algorithms",
+      "Python",
+      "Machine Learning",
+      "Text Analysis"
+    ],
+    "certifications": [
+      "Certified Mobile Device Security Professional (CMDSP)",
+      "GIAC Mobile Device Security Analyst (GMOB)"
+    ]
+  },
+  "network architect": {
+    "display_name": "NETWORK ARCHITECT",
+    "skills": [
+      "Network Design",
+      "Network Protocols",
+      "Security",
+      "System Architecture"
+    ],
+    "certifications": [
+      "TensorFlow Developer Certificate",
+      "DeepLearning.AI NLP Specialization"
+    ]
+  },
+  "penetration tester": {
+    "display_name": "PENETRATION TESTER",
+    "skills": [
+      "Penetration Testing",
+      "Security Audits",
+      "Ethical Hacking",
+      "Vulnerability Assessment"
+    ],
+    "certifications": [
+      "Cisco Certified Internetwork Expert (CCIE)",
+      "AWS Certified Advanced Networking - Specialty"
+    ]
+  },
+  "python architect": {
+    "display_name": "PYTHON ARCHITECT",
+    "skills": [
+      "Python",
+      "System Architecture",
+      "Design Patterns",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "Offensive Security Certified Professional (OSCP)",
+      "GIAC Penetration Tester (GPEN)"
+    ]
+  },
+  "quality assurance manager": {
+    "display_name": "QUALITY ASSURANCE MANAGER",
+    "skills": [
+      "QA Processes",
+      "Test Automation",
+      "Test Planning",
+      "Team Leadership"
+    ],
+    "certifications": [
+      "ISTQB Advanced Level Test Manager",
+      "Certified Quality Engineer (CQE)"
+    ]
+  },
+  "release manager": {
+    "display_name": "RELEASE MANAGER",
+    "skills": [
+      "Release Management",
+      "CI/CD Pipelines",
+      "Coordination",
+      "Communication"
+    ],
+    "certifications": [
+      "ITIL 4 Foundation",
+      "Certified Agile Project Manager"
+    ]
+  },
+  "sap consultant": {
+    "display_name": "SAP CONSULTANT",
+    "skills": [
+      "SAP Modules",
+      "Business Process Analysis",
+      "Implementation",
+      "Customization"
+    ],
+    "certifications": [
+      "SAP Certified Application Associate",
+      "SAP Certified Development Specialist"
+    ]
+  },
+  "ux/ui designer": {
+    "display_name": "UX/UI DESIGNER",
+    "skills": [
+      "UX/UI Design",
+      "User Research",
+      "Prototyping",
+      "Usability Testing"
+    ],
+    "certifications": [
+      "Nielsen Norman Group UX Certification",
+      "Google UX Design Professional Certificate"
+    ]
+  },
+  "back end developer": {
+    "display_name": "BACK END DEVELOPER",
+    "skills": [
+      "Server-Side Programming",
+      "Databases",
+      "API Development",
+      "Frameworks"
+    ],
+    "certifications": [
+      "AWS Certified Developer - Associate",
+      "Oracle Certified Java Developer"
+    ]
+  },
+  "web designer": {
+    "display_name": "WEB DESIGNER",
+    "skills": [
+      "Web Design",
+      "Graphic Design",
+      "UI/UX Principles",
+      "Wireframing"
+    ],
+    "certifications": [
+      "Adobe Certified Expert (ACE)",
+      "Google Mobile Web Specialist"
+    ]
+  },
+  "web engineer": {
+    "display_name": "WEB ENGINEER",
+    "skills": [
+      "Web Technologies",
+      "System Architecture",
+      "Performance Optimization",
+      "Security"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Solutions Architect",
+      "Google Professional Cloud Developer"
+    ]
+  },
+  "web producer": {
+    "display_name": "WEB PRODUCER",
+    "skills": [
+      "Web Content Management",
+      "Project Management",
+      "Content Strategy",
+      "Collaboration"
+    ],
+    "certifications": [
+      "Certified Scrum Product Owner (CSPO)",
+      "Agile Certified Practitioner (PMI-ACP)"
+    ]
+  },
+  "web project manager": {
+    "display_name": "WEB PROJECT MANAGER",
+    "skills": [
+      "Project Management",
+      "Web Development",
+      "Communication",
+      "Budgeting"
+    ],
+    "certifications": [
+      "PMP (Project Management Professional)",
+      "Certified ScrumMaster (CSM)"
+    ]
+  },
+  "web content manager": {
+    "display_name": "WEB CONTENT MANAGER",
+    "skills": [
+      "Content Creation",
+      "Content Strategy",
+      "CMS",
+      "SEO"
+    ],
+    "certifications": [
+      "HubSpot Content Marketing Certification",
+      "Google Analytics Individual Qualification (GAIQ)"
+    ]
+  },
+  "multimedia architect": {
+    "display_name": "MULTIMEDIA ARCHITECT",
+    "skills": [
+      "Multimedia Design",
+      "Video Production",
+      "Audio Production",
+      "Graphic Design"
+    ],
+    "certifications": [
+      "Adobe Certified Expert (ACE)",
+      "Unity Certified 3D Artist"
+    ]
+  },
+  "web analytics developer": {
+    "display_name": "WEB ANALYTICS DEVELOPER",
+    "skills": [
+      "Web Analytics Tools",
+      "Data Analysis",
+      "Reporting",
+      "A/B Testing"
+    ],
+    "certifications": [
+      "Google Analytics Individual Qualification (GAIQ)",
+      "Adobe Analytics Business Practitioner"
+    ]
+  },
+  "seo consultant": {
+    "display_name": "SEO CONSULTANT",
+    "skills": [
+      "Search Engine Optimization",
+      "Keyword Research",
+      "Content Optimization",
+      "Link Building"
+    ],
+    "certifications": [
+      "Google SEO Fundamentals",
+      "HubSpot Content Marketing Certification"
+    ]
+  },
+  "seo manager": {
+    "display_name": "SEO MANAGER",
+    "skills": [
+      "SEO Strategy",
+      "Team Leadership",
+      "Performance Monitoring",
+      "Reporting"
+    ],
+    "certifications": [
+      "Google Analytics Individual Qualification (GAIQ)",
+      "SEMrush SEO Toolkit Course"
+    ]
+  },
+  "internet engineer": {
+    "display_name": "INTERNET ENGINEER",
+    "skills": [
+      "Networking Protocols",
+      "Internet Technologies",
+      "System Administration",
+      "Security"
+    ],
+    "certifications": [
+      "Cisco Certified Internetwork Expert (CCIE)",
+      "AWS Certified Advanced Networking - Specialty"
+    ]
+  },
+  "front-end designer": {
+    "display_name": "FRONT-END DESIGNER",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "UI/UX Design",
+      "Responsive Design"
+    ],
+    "certifications": [
+      "Google Mobile Web Specialist",
+      "Microsoft Certified: Power Platform Developer Associate"
+    ]
+  },
+  "mobile developer": {
+    "display_name": "MOBILE DEVELOPER",
+    "skills": [
+      "Mobile App Development",
+      "iOS/Android SDKs",
+      "UI/UX Design",
+      "Programming Languages"
+    ],
+    "certifications": [
+      "Google Associate Android Developer",
+      "Apple Certified iOS Developer"
+    ]
+  },
+  "power bi developer": {
+    "display_name": "POWER BI DEVELOPER",
+    "skills": [
+      "Power BI",
+      "Data Modeling",
+      "DAX",
+      "Data Visualization"
+    ],
+    "certifications": [
+      "Microsoft Certified: Power BI Data Analyst Associate"
+    ]
+  },
+  "power bi analyst": {
+    "display_name": "POWER BI ANALYST",
+    "skills": [
+      "Power BI",
+      "Data Analysis",
+      "SQL",
+      "Business Intelligence"
+    ],
+    "certifications": [
+      "Microsoft Certified: Data Analyst Associate"
+    ]
+  },
+  "cloud computing specialist": {
+    "display_name": "CLOUD COMPUTING SPECIALIST",
+    "skills": [
+      "Cloud Platforms",
+      "Virtualization",
+      "System Administration",
+      "Security"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect",
+      "Google Professional Cloud Architect"
+    ]
+  },
+  "cybersecurity specialist": {
+    "display_name": "CYBERSECURITY SPECIALIST",
+    "skills": [
+      "Security Protocols",
+      "Threat Analysis",
+      "Compliance",
+      "Incident Response"
+    ],
+    "certifications": [
+      "CompTIA Security+",
+      "Certified Information Systems Security Professional (CISSP)"
+    ]
+  },
+  "data science specialist": {
+    "display_name": "DATA SCIENCE SPECIALIST",
+    "skills": [
+      "Data Analysis",
+      "Machine Learning",
+      "Statistical Modeling",
+      "Data Visualization"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Data Scientist Associate",
+      "Google Data Analytics Professional Certificate"
+    ]
+  },
+  "artificial intelligence engineer": {
+    "display_name": "ARTIFICIAL INTELLIGENCE ENGINEER",
+    "skills": [
+      "AI/ML Algorithms",
+      "Python",
+      "Deep Learning",
+      "Neural Networks"
+    ],
+    "certifications": [
+      "TensorFlow Developer Certificate",
+      "AWS Certified Machine Learning - Specialty"
+    ]
+  },
+  "database architect": {
+    "display_name": "DATABASE ARCHITECT",
+    "skills": [
+      "Database Design",
+      "Data Modeling",
+      "SQL",
+      "Performance Tuning"
+    ],
+    "certifications": [
+      "Oracle Database SQL Certified Associate",
+      "Microsoft Certified: Azure Database Administrator Associate"
+    ]
+  },
+  "software architect": {
+    "display_name": "SOFTWARE ARCHITECT",
+    "skills": [
+      "System Architecture",
+      "Design Patterns",
+      "Programming Languages",
+      "Cloud Computing"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect - Professional",
+      "TOGAF Certified Enterprise Architect"
+    ]
+  },
+  "cybersecurity engineer": {
+    "display_name": "CYBERSECURITY ENGINEER",
+    "skills": [
+      "Security Protocols",
+      "Threat Analysis",
+      "Risk Management",
+      "Incident Response"
+    ],
+    "certifications": [
+      "Certified Ethical Hacker (CEH)",
+      "GIAC Security Essentials Certification (GSEC)"
+    ]
+  },
+  "infosec analyst/cybersecurity analyst": {
+    "display_name": "INFOSEC ANALYST/CYBERSECURITY ANALYST",
+    "skills": [
+      "Security Protocols",
+      "Threat Analysis",
+      "Compliance",
+      "Incident Response"
+    ],
+    "certifications": [
+      "Certified Information Systems Security Professional (CISSP)",
+      "CompTIA Security+"
+    ]
+  },
+  "computer forensic analyst": {
+    "display_name": "COMPUTER FORENSIC ANALYST",
+    "skills": [
+      "Digital Forensics",
+      "Incident Response",
+      "Data Recovery",
+      "Legal Compliance"
+    ],
+    "certifications": [
+      "GIAC Certified Forensic Analyst (GCFA)",
+      "Certified Computer Examiner (CCE)"
+    ]
+  },
+  "it security specialist": {
+    "display_name": "IT SECURITY SPECIALIST",
+    "skills": [
+      "Security Protocols",
+      "Threat Analysis",
+      "Compliance",
+      "Risk Management"
+    ],
+    "certifications": [
+      "Certified Information Security Manager (CISM)",
+      "GIAC Security Leadership Certification (GSLC)"
+    ]
+  },
+  "security manager": {
+    "display_name": "SECURITY MANAGER",
+    "skills": [
+      "Security Management",
+      "Risk Assessment",
+      "Compliance",
+      "Team Leadership"
+    ],
+    "certifications": [
+      "Certified Information Security Manager (CISM)",
+      "Certified Information Systems Auditor (CISA)"
+    ]
+  },
+  "security engineer": {
+    "display_name": "SECURITY ENGINEER",
+    "skills": [
+      "Security Protocols",
+      "Threat Analysis",
+      "Risk Management",
+      "Incident Response"
+    ],
+    "certifications": [
+      "Offensive Security Certified Professional (OSCP)",
+      "Certified Ethical Hacker (CEH)"
+    ]
+  },
+  "security consultant": {
+    "display_name": "SECURITY CONSULTANT",
+    "skills": [
+      "Security Consulting",
+      "Risk Assessment",
+      "Compliance",
+      "Security Solutions"
+    ],
+    "certifications": [
+      "Certified Information Systems Security Professional (CISSP)",
+      "Certified Information Security Manager (CISM)"
+    ]
+  },
+  "director of security": {
+    "display_name": "DIRECTOR OF SECURITY",
+    "skills": [
+      "Security Leadership",
+      "Risk Management",
+      "Compliance",
+      "Incident Response"
+    ],
+    "certifications": [
+      "Certified Chief Information Security Officer (CCISO)",
+      "CISSP-ISSMP (Information Systems Security Management Professional)"
+    ]
+  },
+  "security administrator": {
+    "display_name": "SECURITY ADMINISTRATOR",
+    "skills": [
+      "Security Tools",
+      "System Administration",
+      "User Management",
+      "Security Policies"
+    ],
+    "certifications": [
+      "CompTIA Security+",
+      "Microsoft Certified: Security Operations Analyst Associate"
+    ]
+  },
+  "chief information officer": {
+    "display_name": "CHIEF INFORMATION OFFICER",
+    "skills": [
+      "IT Strategy",
+      "Leadership",
+      "Budgeting",
+      "Project Management"
+    ],
+    "certifications": [
+      "Certified Information Security Manager (CISM)",
+      "Certified Chief Information Security Officer (CCISO)"
+    ]
+  },
+  "network security engineer": {
+    "display_name": "NETWORK SECURITY ENGINEER",
+    "skills": [
+      "Networking Protocols",
+      "Security Protocols",
+      "Firewall Management",
+      "Intrusion Detection"
+    ],
+    "certifications": [
+      "Cisco Certified CyberOps Associate",
+      "Palo Alto Networks Certified Network Security Engineer"
+    ]
+  },
+  "machine learning engineer for cybersecurity": {
+    "display_name": "MACHINE LEARNING ENGINEER FOR CYBERSECURITY",
+    "skills": [
+      "Machine Learning Algorithms",
+      "Cybersecurity",
+      "Data Analysis",
+      "Threat Detection"
+    ],
+    "certifications": [
+      "AWS Certified Machine Learning - Specialty",
+      "Certified AI Security Specialist (CAISS)"
+    ]
+  },
+  "network analyst": {
+    "display_name": "NETWORK ANALYST",
+    "skills": [
+      "Network Monitoring",
+      "Troubleshooting",
+      "Performance Analysis",
+      "Reporting"
+    ],
+    "certifications": [
+      "Cisco Certified Network Associate (CCNA)",
+      "CompTIA Network+"
+    ]
+  },
+  "network operations engineer": {
+    "display_name": "NETWORK OPERATIONS ENGINEER",
+    "skills": [
+      "Network Operations",
+      "Troubleshooting",
+      "Monitoring",
+      "Incident Response"
+    ],
+    "certifications": [
+      "Cisco Certified Network Professional (CCNP)",
+      "Juniper Networks Certified Associate (JNCIA)"
+    ]
+  },
+  "network reliability engineer": {
+    "display_name": "NETWORK RELIABILITY ENGINEER",
+    "skills": [
+      "Network Reliability",
+      "Automation",
+      "Monitoring",
+      "Incident Response"
+    ],
+    "certifications": [
+      "Cisco Certified Internetwork Expert (CCIE)",
+      "AWS Certified Advanced Networking - Specialty"
+    ]
+  },
+  "network infrastructure specialist": {
+    "display_name": "NETWORK INFRASTRUCTURE SPECIALIST",
+    "skills": [
+      "Networking Hardware",
+      "Cabling",
+      "Network Design",
+      "Implementation"
+    ],
+    "certifications": [
+      "Cisco Certified Design Associate (CCDA)",
+      "Palo Alto Networks Certified Network Security Administrator"
+    ]
+  },
+  "computer support specialist": {
+    "display_name": "COMPUTER SUPPORT SPECIALIST",
+    "skills": [
+      "Technical Support",
+      "Troubleshooting",
+      "Customer Service",
+      "Hardware/Software"
+    ],
+    "certifications": [
+      "CompTIA A+",
+      "Microsoft Certified: Modern Desktop Administrator Associate"
+    ]
+  },
+  "information technology analyst": {
+    "display_name": "INFORMATION TECHNOLOGY ANALYST",
+    "skills": [
+      "IT Analysis",
+      "Requirements Gathering",
+      "Process Improvement",
+      "IT Consulting"
+    ],
+    "certifications": [
+      "ITIL 4 Foundation",
+      "CompTIA IT Fundamentals"
+    ]
+  },
+  "technology sales consultant": {
+    "display_name": "TECHNOLOGY SALES CONSULTANT",
+    "skills": [
+      "Sales",
+      "Technology Solutions",
+      "Customer Relationship Management",
+      "Technical Expertise"
+    ],
+    "certifications": [
+      "ITIL 4 Foundation",
+      "CompTIA IT Fundamentals"
+    ]
+  },
+  "database developer": {
+    "display_name": "DATABASE DEVELOPER",
+    "skills": [
+      "Database Development",
+      "SQL",
+      "PL/SQL",
+      "Data Modeling"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Database Administrator Associate",
+      "Oracle PL/SQL Developer Certified Associate"
+    ]
+  },
+  "database analyst": {
+    "display_name": "DATABASE ANALYST",
+    "skills": [
+      "Data Analysis",
+      "SQL",
+      "Data Modeling",
+      "Reporting"
+    ],
+    "certifications": [
+      "IBM Certified Database Administrator",
+      "Oracle Database SQL Certified Associate"
+    ]
+  },
+  "data warehouse manager": {
+    "display_name": "DATA WAREHOUSE MANAGER",
+    "skills": [
+      "Data Warehousing",
+      "ETL Processes",
+      "Data Modeling",
+      "Team Leadership"
+    ],
+    "certifications": [
+      "Snowflake SnowPro Core Certification",
+      "AWS Certified Data Analytics - Specialty"
+    ]
+  },
+  "data warehouse programming specialist": {
+    "display_name": "DATA WAREHOUSE PROGRAMMING SPECIALIST",
+    "skills": [
+      "ETL Processes",
+      "SQL",
+      "Data Modeling",
+      "Data Warehousing"
+    ],
+    "certifications": [
+      "Cloudera Certified Data Analyst",
+      "Microsoft Certified: Azure Data Engineer Associate"
+    ]
+  },
+  "intelligence specialist": {
+    "display_name": "INTELLIGENCE SPECIALIST",
+    "skills": [
+      "Data Analysis",
+      "Intelligence Gathering",
+      "Reporting",
+      "Security"
+    ],
+    "certifications": [
+      "Certified Intelligence Analyst (CIA)",
+      "GIAC Intelligence Analyst (GCTI)"
+    ]
+  },
+  "cloud/software architect": {
+    "display_name": "CLOUD/SOFTWARE ARCHITECT",
+    "skills": [
+      "Cloud Platforms",
+      "System Architecture",
+      "Cloud Security",
+      "DevOps"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect - Professional",
+      "Google Professional Cloud Architect"
+    ]
+  },
+  "cloud/software developer": {
+    "display_name": "CLOUD/SOFTWARE DEVELOPER",
+    "skills": [
+      "Cloud Platforms",
+      "Programming Languages",
+      "Software Development",
+      "Cloud Services"
+    ],
+    "certifications": [
+      "AWS Certified Developer - Associate",
+      "Microsoft Certified: Azure Developer Associate"
+    ]
+  },
+  "cloud/software applications engineer": {
+    "display_name": "CLOUD/SOFTWARE APPLICATIONS ENGINEER",
+    "skills": [
+      "Cloud Platforms",
+      "Application Development",
+      "Cloud Services",
+      "DevOps"
+    ],
+    "certifications": [
+      "Google Professional Cloud Developer",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "cloud system administrator": {
+    "display_name": "CLOUD SYSTEM ADMINISTRATOR",
+    "skills": [
+      "Cloud Platforms",
+      "System Administration",
+      "Virtualization",
+      "Networking"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Administrator Associate",
+      "AWS Certified SysOps Administrator"
+    ]
+  },
+  "cloud system engineer": {
+    "display_name": "CLOUD SYSTEM ENGINEER",
+    "skills": [
+      "Cloud Platforms",
+      "System Engineering",
+      "Automation",
+      "Scripting"
+    ],
+    "certifications": [
+      "AWS Certified Advanced Networking - Specialty",
+      "Red Hat Certified Specialist in OpenShift Administration"
+    ]
+  },
+  "platform engineer": {
+    "display_name": "PLATFORM ENGINEER",
+    "skills": [
+      "Platform Engineering",
+      "Cloud Computing",
+      "Automation",
+      "DevOps Practices"
+    ],
+    "certifications": [
+      "Terraform Associate Certification",
+      "Kubernetes Certified Application Developer (CKAD)"
+    ]
+  },
+  "software quality assurance analyst": {
+    "display_name": "SOFTWARE QUALITY ASSURANCE ANALYST",
+    "skills": [
+      "QA Processes",
+      "Test Planning",
+      "Test Execution",
+      "Reporting"
+    ],
+    "certifications": [
+      "ISTQB Foundation Level Certification",
+      "Certified Software Quality Analyst (CSQA)"
+    ]
+  },
+  "ui (user interface) designer": {
+    "display_name": "UI (USER INTERFACE) DESIGNER",
+    "skills": [
+      "UI Design",
+      "User Research",
+      "Prototyping",
+      "Usability Testing"
+    ],
+    "certifications": [
+      "Google UX Design Certificate",
+      "Nielsen Norman Group UX Certification"
+    ]
+  },
+  "it sales executive": {
+    "display_name": "IT SALES EXECUTIVE",
+    "skills": [
+      "Sales",
+      "Technology Solutions",
+      "Customer Relationship Management",
+      "Sales Strategy"
+    ],
+    "certifications": [
+      "HubSpot Inbound Sales Certification",
+      "AWS Business Professional Accreditation"
+    ]
+  },
+  "it sales director": {
+    "display_name": "IT SALES DIRECTOR",
+    "skills": [
+      "Sales Leadership",
+      "Sales Strategy",
+      "Customer Relationship Management",
+      "Team Management"
+    ],
+    "certifications": [
+      "Salesforce Sales Cloud Consultant",
+      "Microsoft Certified: Dynamics 365 Sales Functional Consultant"
+    ]
+  },
+  "technology manager": {
+    "display_name": "TECHNOLOGY MANAGER",
+    "skills": [
+      "IT Management",
+      "Team Leadership",
+      "Project Management",
+      "Budgeting"
+    ],
+    "certifications": [
+      "Certified Information Systems Security Professional (CISSP)",
+      "ITIL 4 Managing Professional"
+    ]
+  },
+  "technology assistant": {
+    "display_name": "TECHNOLOGY ASSISTANT",
+    "skills": [
+      "Technical Support",
+      "Administrative Support",
+      "Hardware/Software",
+      "Troubleshooting"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Microsoft Office Specialist (MOS)"
+    ]
+  },
+  "technology specialist": {
+    "display_name": "TECHNOLOGY SPECIALIST",
+    "skills": [
+      "Technical Expertise",
+      "Problem Solving",
+      "Troubleshooting",
+      "IT Support"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect",
+      "Microsoft Certified: Azure Solutions Architect Expert"
+    ]
+  },
+  "director oracle": {
+    "display_name": "DIRECTOR ORACLE",
+    "skills": [
+      "Oracle Database",
+      "Team Leadership",
+      "Project Management",
+      "Budgeting"
+    ],
+    "certifications": [
+      "Oracle Certified Master (OCM)",
+      "Oracle Cloud Infrastructure Architect Professional"
+    ]
+  },
+  "knowledge manager": {
+    "display_name": "KNOWLEDGE MANAGER",
+    "skills": [
+      "Knowledge Management",
+      "Information Architecture",
+      "Collaboration",
+      "Documentation"
+    ],
+    "certifications": [
+      "Knowledge-Centered Service (KCS) Certification",
+      "Certified Knowledge Manager (CKM)"
+    ]
+  },
+  "manager hardware": {
+    "display_name": "MANAGER HARDWARE",
+    "skills": [
+      "Hardware Management",
+      "Team Leadership",
+      "Budgeting",
+      "Inventory Management"
+    ],
+    "certifications": [
+      "CompTIA Server+",
+      "Cisco Certified Network Professional (CCNP)"
+    ]
+  },
+  "sharepoint manager": {
+    "display_name": "SHAREPOINT MANAGER",
+    "skills": [
+      "SharePoint",
+      "Team Leadership",
+      "Project Management",
+      "Collaboration"
+    ],
+    "certifications": [
+      "Microsoft Certified: Power Platform Solution Architect",
+      "Microsoft 365 Certified: Teams Administrator Associate"
+    ]
+  },
+  "requirements manager": {
+    "display_name": "REQUIREMENTS MANAGER",
+    "skills": [
+      "Requirements Gathering",
+      "Analysis",
+      "Documentation",
+      "Communication"
+    ],
+    "certifications": [
+      "Certified Business Analysis Professional (CBAP)",
+      "PMI Professional in Business Analysis (PMI-PBA)"
+    ]
+  },
+  "implementation director": {
+    "display_name": "IMPLEMENTATION DIRECTOR",
+    "skills": [
+      "Implementation Management",
+      "Project Management",
+      "Team Leadership",
+      "Communication"
+    ],
+    "certifications": [
+      "PMP (Project Management Professional)",
+      "Certified SAFe 6 Agilist"
+    ]
+  },
+  "technology officer": {
+    "display_name": "TECHNOLOGY OFFICER",
+    "skills": [
+      "IT Strategy",
+      "Leadership",
+      "Innovation",
+      "Project Management"
+    ],
+    "certifications": [
+      "Certified Chief Information Security Officer (CCISO)",
+      "ITIL 4 Strategic Leader"
+    ]
+  },
+  "director business systems": {
+    "display_name": "DIRECTOR BUSINESS SYSTEMS",
+    "skills": [
+      "Business Systems",
+      "Team Leadership",
+      "Project Management",
+      "Process Improvement"
+    ],
+    "certifications": [
+      "Salesforce Certified Technical Architect",
+      "Microsoft Certified: Dynamics 365 Fundamentals"
+    ]
+  },
+  "manager net": {
+    "display_name": "MANAGER NET",
+    "skills": [
+      "NET Development",
+      "Team Leadership",
+      "Project Management",
+      ".NET Framework"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Developer Associate",
+      "Microsoft Certified: Azure Solutions Architect Expert"
+    ]
+  },
+  "systems integration manager": {
+    "display_name": "SYSTEMS INTEGRATION MANAGER",
+    "skills": [
+      "Systems Integration",
+      "Project Management",
+      "Team Leadership",
+      "Communication"
+    ],
+    "certifications": [
+      "TOGAF 9 Certified",
+      "Microsoft Certified: Azure Integration Architect"
+    ]
+  },
+  "digital program manager": {
+    "display_name": "DIGITAL PROGRAM MANAGER",
+    "skills": [
+      "Digital Strategy",
+      "Program Management",
+      "Team Leadership",
+      "Communication"
+    ],
+    "certifications": [
+      "Agile Certified Practitioner (PMI-ACP)",
+      "Certified Scrum Product Owner (CSPO)"
+    ]
+  },
+  "integration director": {
+    "display_name": "INTEGRATION DIRECTOR",
+    "skills": [
+      "Integration Management",
+      "Project Management",
+      "Team Leadership",
+      "Communication"
+    ],
+    "certifications": [
+      "IBM Certified Integration Architect",
+      "AWS Certified Solutions Architect - Professional"
+    ]
+  },
+  "director hardware": {
+    "display_name": "DIRECTOR HARDWARE",
+    "skills": [
+      "Hardware Management",
+      "Team Leadership",
+      "Budgeting",
+      "Strategic Planning"
+    ],
+    "certifications": [
+      "Cisco Certified Design Expert (CCDE)",
+      "CompTIA Server+"
+    ]
+  },
+  "manager linux": {
+    "display_name": "MANAGER LINUX",
+    "skills": [
+      "Linux Administration",
+      "Team Leadership",
+      "Project Management",
+      "Troubleshooting"
+    ],
+    "certifications": [
+      "Red Hat Certified Engineer (RHCE)",
+      "Linux Professional Institute Certification (LPIC-2)"
+    ]
+  },
+  "manager php": {
+    "display_name": "MANAGER PHP",
+    "skills": [
+      "PHP Development",
+      "Team Leadership",
+      "Project Management",
+      "Web Development"
+    ],
+    "certifications": [
+      "Zend Certified PHP Engineer",
+      "Laravel Certification"
+    ]
+  },
+  "firmware manager": {
+    "display_name": "FIRMWARE MANAGER",
+    "skills": [
+      "Firmware Development",
+      "Team Leadership",
+      "Project Management",
+      "Embedded Systems"
+    ],
+    "certifications": [
+      "Certified Embedded Systems Engineer (CESE)",
+      "Arm Certified Embedded Engineer"
+    ]
+  },
+  "it program engagement director": {
+    "display_name": "IT PROGRAM ENGAGEMENT DIRECTOR",
+    "skills": [
+      "IT Program Management",
+      "Customer Relationship Management",
+      "Stakeholder Management",
+      "Team Leadership"
+    ],
+    "certifications": [
+      "PMP (Project Management Professional)",
+      "ITIL 4 Strategic Leader"
+    ]
+  },
+  "manager unix": {
+    "display_name": "MANAGER UNIX",
+    "skills": [
+      "UNIX Administration",
+      "Team Leadership",
+      "Project Management",
+      "Troubleshooting"
+    ],
+    "certifications": [
+      "Red Hat Certified Engineer (RHCE)",
+      "Linux Professional Institute Certification (LPIC-2)"
+    ]
+  },
+  "technology adoption manager": {
+    "display_name": "TECHNOLOGY ADOPTION MANAGER",
+    "skills": [
+      "Technology Adoption",
+      "Training",
+      "Communication",
+      "Change Management"
+    ],
+    "certifications": [
+      "AWS Certified Cloud Practitioner",
+      "ITIL 4 Digital & IT Strategy"
+    ]
+  },
+  "it support specialist": {
+    "display_name": "IT SUPPORT SPECIALIST",
+    "skills": [
+      "Technical Support",
+      "Troubleshooting",
+      "Customer Service",
+      "Hardware/Software"
+    ],
+    "certifications": [
+      "CompTIA A+",
+      "Microsoft 365 Certified: Modern Desktop Administrator Associate"
+    ]
+  },
+  "customer service representative": {
+    "display_name": "CUSTOMER SERVICE REPRESENTATIVE",
+    "skills": [
+      "Customer Service",
+      "Communication",
+      "Problem Solving",
+      "Technical Support"
+    ],
+    "certifications": [
+      "ITIL Foundation",
+      "Google IT Support Professional Certificate"
+    ]
+  },
+  "technical product manager": {
+    "display_name": "TECHNICAL PRODUCT MANAGER",
+    "skills": [
+      "Product Management",
+      "Technical Expertise",
+      "Market Analysis",
+      "Requirements Gathering"
+    ],
+    "certifications": [
+      "Certified Scrum Product Owner (CSPO)",
+      "Pragmatic Institute Certification"
+    ]
+  },
+  "project manager": {
+    "display_name": "PROJECT MANAGER",
+    "skills": [
+      "Project Management",
+      "Planning",
+      "Execution",
+      "Communication"
+    ],
+    "certifications": [
+      "PMP (Project Management Professional)",
+      "Certified ScrumMaster (CSM)"
+    ]
+  },
+  "program manager": {
+    "display_name": "PROGRAM MANAGER",
+    "skills": [
+      "Program Management",
+      "Planning",
+      "Execution",
+      "Communication"
+    ],
+    "certifications": [
+      "PMI Program Management Professional (PgMP)",
+      "SAFe Program Consultant (SPC)"
+    ]
+  },
+  "portfolio manager": {
+    "display_name": "PORTFOLIO MANAGER",
+    "skills": [
+      "Portfolio Management",
+      "Investment Management",
+      "Risk Management",
+      "Financial Analysis"
+    ],
+    "certifications": [
+      "PMI Portfolio Management Professional (PfMP)",
+      "MoP (Management of Portfolios) Certification"
+    ]
+  },
+  "chief information officer (cio)": {
+    "display_name": "CHIEF INFORMATION OFFICER (CIO)",
+    "skills": [
+      "IT Strategy",
+      "Leadership",
+      "Budgeting",
+      "Project Management"
+    ],
+    "certifications": [
+      "Certified Information Systems Security Professional (CISSP)",
+      "Certified Chief Information Officer (CCIO)"
+    ]
+  },
+  "chief technology officer (cto)": {
+    "display_name": "CHIEF TECHNOLOGY OFFICER (CTO)",
+    "skills": [
+      "Technology Strategy",
+      "Innovation",
+      "Research and Development",
+      "Team Leadership"
+    ],
+    "certifications": [
+      "TOGAF 9 Certified",
+      "AWS Certified Solutions Architect - Professional"
+    ]
+  },
+  "it director": {
+    "display_name": "IT DIRECTOR",
+    "skills": [
+      "IT Management",
+      "Team Leadership",
+      "Budgeting",
+      "Project Management"
+    ],
+    "certifications": [
+      "ITIL 4 Managing Professional",
+      "Certified Information Security Manager (CISM)"
+    ]
+  },
+  "technical operations officer": {
+    "display_name": "TECHNICAL OPERATIONS OFFICER",
+    "skills": [
+      "Technical Operations",
+      "Infrastructure Management",
+      "System Administration",
+      "Incident Response"
+    ],
+    "certifications": [
+      "ITIL 4 Leader: Digital & IT Strategy",
+      "AWS Certified DevOps Engineer - Professional"
+    ]
+  },
+  "information management systems director": {
+    "display_name": "INFORMATION MANAGEMENT SYSTEMS DIRECTOR",
+    "skills": [
+      "Information Management",
+      "Systems Administration",
+      "Data Management",
+      "Compliance"
+    ],
+    "certifications": [
+      "Certified Information Systems Auditor (CISA)",
+      "Data Management Association (DAMA) Certification"
+    ]
+  },
+  "senior it consultant": {
+    "display_name": "SENIOR IT CONSULTANT",
+    "skills": [
+      "IT Consulting",
+      "Project Management",
+      "Technical Expertise",
+      "Client Management"
+    ],
+    "certifications": [
+      "Certified Management Consultant (CMC)",
+      "Certified Information Systems Security Professional (CISSP)"
+    ]
+  },
+  "it apprentice": {
+    "display_name": "IT APPRENTICE",
+    "skills": [
+      "Technical Support",
+      "Troubleshooting",
+      "Learning Agility",
+      "Customer Service"
+    ],
+    "certifications": [
+      "CompTIA IT Fundamentals+",
+      "Google IT Support Certificate"
+    ]
+  },
+  "it technician": {
+    "display_name": "IT TECHNICIAN",
+    "skills": [
+      "Technical Support",
+      "Troubleshooting",
+      "Hardware/Software",
+      "Networking"
+    ],
+    "certifications": [
+      "CompTIA A+",
+      "Microsoft 365 Certified: Modern Desktop Administrator Associate"
+    ]
+  },
+  "it systems administrator": {
+    "display_name": "IT SYSTEMS ADMINISTRATOR",
+    "skills": [
+      "System Administration",
+      "Linux/Windows Servers",
+      "Troubleshooting",
+      "Scripting"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Administrator Associate",
+      "Red Hat Certified System Administrator (RHCSA)"
+    ]
+  },
+  "it engineer": {
+    "display_name": "IT ENGINEER",
+    "skills": [
+      "System Engineering",
+      "Networking",
+      "Cloud Computing",
+      "Security"
+    ],
+    "certifications": [
+      "AWS Certified Solutions Architect",
+      "Cisco Certified Network Associate (CCNA)"
+    ]
+  },
+  "computer network specialist": {
+    "display_name": "COMPUTER NETWORK SPECIALIST",
+    "skills": [
+      "Networking",
+      "Troubleshooting",
+      "System Administration",
+      "Security"
+    ],
+    "certifications": [
+      "CompTIA Network+",
+      "Cisco Certified Network Professional (CCNP)"
+    ]
+  },
+  "computer and information research scientist": {
+    "display_name": "COMPUTER AND INFORMATION RESEARCH SCIENTIST",
+    "skills": [
+      "Research Methodologies",
+      "Data Analysis",
+      "Programming",
+      "Scientific Writing"
+    ],
+    "certifications": [
+      "Certified AI Engineer (CAE)",
+      "TensorFlow Developer Certificate"
+    ]
+  },
+  "computer and information research manager": {
+    "display_name": "COMPUTER AND INFORMATION RESEARCH MANAGER",
+    "skills": [
+      "Research Management",
+      "Team Leadership",
+      "Budgeting",
+      "Project Management"
+    ],
+    "certifications": [
+      "Google Machine Learning Engineer Certification",
+      "AWS Certified Machine Learning - Specialty"
+    ]
+  },
+  "software development manager": {
+    "display_name": "SOFTWARE DEVELOPMENT MANAGER",
+    "skills": [
+      "Software Development",
+      "Team Leadership",
+      "Project Management",
+      "Software Architecture"
+    ],
+    "certifications": [
+      "PMP (Project Management Professional)",
+      "Certified ScrumMaster (CSM)"
+    ]
+  },
+  "software development engineer": {
+    "display_name": "SOFTWARE DEVELOPMENT ENGINEER",
+    "skills": [
+      "Software Development",
+      "Programming Languages",
+      "Algorithm Design",
+      "Problem Solving"
+    ],
+    "certifications": [
+      "AWS Certified Developer",
+      "Microsoft Certified: Azure Developer Associate"
+    ]
+  },
+  "application designer": {
+    "display_name": "APPLICATION DESIGNER",
+    "skills": [
+      "Application Design",
+      "UI/UX Principles",
+      "Programming Languages",
+      "Software Architecture"
+    ],
+    "certifications": [
+      "Google UX Design Certificate",
+      "Nielsen Norman Group UX Certification"
+    ]
+  },
+  "application engineer": {
+    "display_name": "APPLICATION ENGINEER",
+    "skills": [
+      "Application Development",
+      "Programming Languages",
+      "Troubleshooting",
+      "System Administration"
+    ],
+    "certifications": [
+      "AWS Certified DevOps Engineer",
+      "Google Cloud Professional Data Engineer"
+    ]
+  },
+  "lead programmer": {
+    "display_name": "LEAD PROGRAMMER",
+    "skills": [
+      "Programming Languages",
+      "Software Development",
+      "Team Leadership",
+      "Mentoring"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure Developer Associate",
+      "Google Professional Cloud Developer"
+    ]
+  },
+  "iteration manager": {
+    "display_name": "ITERATION MANAGER",
+    "skills": [
+      "Agile Methodologies",
+      "Scrum",
+      "Kanban",
+      "Team Facilitation"
+    ],
+    "certifications": [
+      "SAFe 6 Agilist Certification",
+      "Certified Scrum Professional (CSP)"
+    ]
+  },
+  "webmaster": {
+    "display_name": "WEBMASTER",
+    "skills": [
+      "Web Development",
+      "Web Design",
+      "System Administration",
+      "Content Management"
+    ],
+    "certifications": [
+      "Google Analytics Individual Qualification",
+      "HubSpot CMS for Developers Certification"
+    ]
+  },
+  "ux/ui researcher": {
+    "display_name": "UX/UI RESEARCHER",
+    "skills": [
+      "User Research",
+      "Usability Testing",
+      "Data Analysis",
+      "Reporting"
+    ],
+    "certifications": [
+      "Nielsen Norman Group UX Certification",
+      "Google UX Design Certificate"
+    ]
+  },
+  "ux/ui specialist": {
+    "display_name": "UX/UI SPECIALIST",
+    "skills": [
+      "UX/UI Design",
+      "User Research",
+      "Prototyping",
+      "Usability Testing"
+    ],
+    "certifications": [
+      "Interaction Design Foundation (IDF) Certification",
+      "HFI Certified Usability Analyst"
+    ]
+  },
+  "animator": {
+    "display_name": "ANIMATOR",
+    "skills": [
+      "Animation Software",
+      "2D/3D Animation",
+      "Storyboarding",
+      "Visual Effects"
+    ],
+    "certifications": [
+      "Adobe Certified Professional (ACP) in After Effects",
+      "Toon Boom Harmony Certification"
+    ]
+  },
+  "motion graphics artist": {
+    "display_name": "MOTION GRAPHICS ARTIST",
+    "skills": [
+      "Motion Graphics",
+      "Animation Software",
+      "Visual Effects",
+      "Graphic Design"
+    ],
+    "certifications": [
+      "Adobe Certified Professional (ACP) in Motion Graphics",
+      "Cinema 4D Certification"
+    ]
+  },
+  "2d artist/animator": {
+    "display_name": "2D ARTIST/ANIMATOR",
+    "skills": [
+      "2D Animation",
+      "Drawing",
+      "Illustration",
+      "Animation Software"
+    ],
+    "certifications": [
+      "Toon Boom Certified Artist",
+      "Autodesk SketchBook Certification"
+    ]
+  },
+  "3d artist/animator": {
+    "display_name": "3D ARTIST/ANIMATOR",
+    "skills": [
+      "3D Animation",
+      "Modeling",
+      "Texturing",
+      "Rigging"
+    ],
+    "certifications": [
+      "Autodesk Maya Certified Professional",
+      "Blender Cloud Certification"
+    ]
+  },
+  "character designer": {
+    "display_name": "CHARACTER DESIGNER",
+    "skills": [
+      "Character Design",
+      "Illustration",
+      "Drawing",
+      "Animation"
+    ],
+    "certifications": [
+      "Concept Art Academy Certification",
+      "Schoolism Character Design Course"
+    ]
+  },
+  "storyboard artist": {
+    "display_name": "STORYBOARD ARTIST",
+    "skills": [
+      "Storyboarding",
+      "Drawing",
+      "Visual Communication",
+      "Film/Animation"
+    ],
+    "certifications": [
+      "Storyboard Pro Certification",
+      "Animation Mentor Storyboarding Course"
+    ]
+  },
+  "vfx artist": {
+    "display_name": "VFX ARTIST",
+    "skills": [
+      "Visual Effects",
+      "Compositing",
+      "3D Modeling",
+      "Simulation"
+    ],
+    "certifications": [
+      "Adobe Certified Professional in After Effects",
+      "Autodesk Maya Certified User"
+    ]
+  },
+  "rigging artist": {
+    "display_name": "RIGGING ARTIST",
+    "skills": [
+      "Rigging",
+      "Animation",
+      "3D Modeling",
+      "Character Setup"
+    ],
+    "certifications": [
+      "Autodesk Maya Certified Professional",
+      "Houdini Certification (SideFX)"
+    ]
+  },
+  "technical animator": {
+    "display_name": "TECHNICAL ANIMATOR",
+    "skills": [
+      "Technical Animation",
+      "Scripting",
+      "Programming",
+      "Animation Software"
+    ],
+    "certifications": [
+      "Certified Technical Artist (Unity)",
+      "Unreal Engine Technical Animator Certification"
+    ]
+  },
+  "art director": {
+    "display_name": "ART DIRECTOR",
+    "skills": [
+      "Art Direction",
+      "Visual Design",
+      "Team Leadership",
+      "Project Management"
+    ],
+    "certifications": [
+      "Adobe Certified Professional in Photoshop & Illustrator",
+      "Gnomon School of Visual Effects Certification"
+    ]
+  },
+  "animation director": {
+    "display_name": "ANIMATION DIRECTOR",
+    "skills": [
+      "Animation Direction",
+      "Storytelling",
+      "Team Leadership",
+      "Project Management"
+    ],
+    "certifications": [
+      "Toon Boom Harmony Certification",
+      "School of Motion Animation Bootcamp"
+    ]
+  },
+  "visual effects animator": {
+    "display_name": "VISUAL EFFECTS ANIMATOR",
+    "skills": [
+      "Visual Effects",
+      "Animation",
+      "Compositing",
+      "3D Modeling"
+    ],
+    "certifications": [
+      "Autodesk Maya Certified Professional",
+      "Nuke Certification (Foundry)"
+    ]
+  },
+  "graphic effects supervisor": {
+    "display_name": "GRAPHIC EFFECTS SUPERVISOR",
+    "skills": [
+      "Visual Effects Supervision",
+      "Team Leadership",
+      "Technical Expertise",
+      "Project Management"
+    ],
+    "certifications": [
+      "SideFX Houdini FX Certification",
+      "Autodesk 3ds Max Certification"
+    ]
+  },
+  "forensic animator": {
+    "display_name": "FORENSIC ANIMATOR",
+    "skills": [
+      "Forensic Animation",
+      "3D Modeling",
+      "Legal Expertise",
+      "Visual Communication"
+    ],
+    "certifications": [
+      "Certified Forensic Video Technician (LEVA)",
+      "Blender Forensics Course"
+    ]
+  },
+  "compositor": {
+    "display_name": "COMPOSITOR",
+    "skills": [
+      "Compositing",
+      "Visual Effects",
+      "Color Correction",
+      "Image Manipulation"
+    ],
+    "certifications": [
+      "Nuke Certified Artist (Foundry)",
+      "Adobe Certified Professional in After Effects"
+    ]
+  },
+  "effects technical director (fx td)": {
+    "display_name": "EFFECTS TECHNICAL DIRECTOR (FX TD)",
+    "skills": [
+      "Visual Effects",
+      "Technical Expertise",
+      "Scripting",
+      "Problem Solving"
+    ],
+    "certifications": [
+      "SideFX Houdini FX Certification",
+      "Pixar's RenderMan Certification"
+    ]
+  },
+  "layout artist": {
+    "display_name": "LAYOUT ARTIST",
+    "skills": [
+      "Layout",
+      "Cinematography",
+      "3D Modeling",
+      "Visual Storytelling"
+    ],
+    "certifications": [
+      "Autodesk Maya Certified User",
+      "Concept Art Academy Certification"
+    ]
+  },
+  "ai researcher": {
+    "display_name": "AI RESEARCHER",
+    "skills": [
+      "AI/ML Algorithms",
+      "Python",
+      "Research Methodologies",
+      "Data Analysis"
+    ],
+    "certifications": [
+      "Google TensorFlow Developer Certificate",
+      "IBM AI Engineering Professional Certificate"
+    ]
+  },
+  "ai software architect": {
+    "display_name": "AI SOFTWARE ARCHITECT",
+    "skills": [
+      "AI/ML Architecture",
+      "Software Design",
+      "Cloud Computing",
+      "Data Modeling"
+    ],
+    "certifications": [
+      "Microsoft Certified: Azure AI Engineer Associate",
+      "AWS Certified Machine Learning - Specialty"
+    ]
+  },
+  "business intelligence developer": {
+    "display_name": "BUSINESS INTELLIGENCE DEVELOPER",
+    "skills": [
+      "Business Intelligence Tools",
+      "Data Modeling",
+      "SQL",
+      "ETL Processes"
+    ],
+    "certifications": [
+      "Microsoft Certified: Power BI Data Analyst",
+      "Tableau Desktop Specialist"
+    ]
+  }
+}

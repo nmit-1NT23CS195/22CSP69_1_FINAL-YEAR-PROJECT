@@ -1,58 +1,90 @@
-import pandas as pd
+"""
+role_service.py
+===============
+Service for looking up job roles and their required skills/certifications.
+
+Refactored from CSV-based pandas reads to the Repository Pattern data layer.
+Retains rapidfuzz for fuzzy role-name matching when exact match fails.
+"""
+
+import logging
+from typing import List
+
 from rapidfuzz import process, fuzz
 
-def load_roles():
-    return pd.read_csv("app/data/IT_Job_Roles_Skills.csv")
+from app.services.data_repository import get_repository
+
+# ---------------------------------------------------------------------------
+# Logger
+# ---------------------------------------------------------------------------
+logger = logging.getLogger(__name__)
 
 
-# -------------------------------
+# ---------------------------------------------------------------------------
 # GET ALL ROLES (USED BY API)
-# -------------------------------
-def get_all_roles():
-    df = load_roles()
+# ---------------------------------------------------------------------------
 
-    role_col = "Job Title"
-
-    return df[role_col].dropna().unique().tolist()
-
-
-# -------------------------------
-# GET ROLE REQUIREMENTS (USED IN ATS)
-# -------------------------------
-def get_role_requirements(role_name):
+def get_all_roles() -> List[str]:
     """
-    Returns a combined list of skills and certifications required for a given role.
+    Return a list of all known job role display names.
+
+    Previously loaded from CSV via pandas on every call.
+    Now served from LRU-cached JSON via the repository.
     """
-    df = load_roles()
+    repo = get_repository()
+    roles: List[str] = repo.get_all_role_names()
+    logger.debug("get_all_roles() returned %d roles", len(roles))
+    return roles
 
-    role_col = "Job Title"
-    skills_col = "Skills"
-    certs_col = "Certifications"
 
-    # Exact match
-    row = df[df[role_col].str.lower() == role_name.lower()]
+# ---------------------------------------------------------------------------
+# GET ROLE REQUIREMENTS (USED IN ATS PIPELINE)
+# ---------------------------------------------------------------------------
 
-    if row.empty:
-        # Fuzzy match
-        roles = df[role_col].dropna().unique().tolist()
-        match = process.extractOne(role_name, roles, scorer=fuzz.WRatio)
+def get_role_requirements(role_name: str) -> List[str]:
+    """
+    Return a combined list of skills and certifications required for a given role.
 
-        # Threshold of 70 (out of 100)
-        if match and match[1] >= 70:
-            matched_role = match[0]
-            row = df[df[role_col] == matched_role]
+    Matching strategy:
+        1. Exact match (case-insensitive) against the roles dictionary.
+        2. If no exact match, use rapidfuzz fuzzy matching (threshold ≥ 70).
 
-    if not row.empty:
-        skills_str = str(row.iloc[0][skills_col]) if pd.notna(row.iloc[0][skills_col]) else ""
-        certs_str = str(row.iloc[0].get(certs_col, "")) if pd.notna(row.iloc[0].get(certs_col, "")) else ""
-        
-        # Parse into a combined list
-        combined = []
-        if skills_str:
-            combined.extend([s.strip() for s in skills_str.split(',') if s.strip()])
-        if certs_str:
-            combined.extend([c.strip() for c in certs_str.split(',') if c.strip()])
-            
-        return combined
+    Args:
+        role_name: The job role title to look up.
 
+    Returns:
+        A list of skill and certification strings. Empty list if no match.
+    """
+    repo = get_repository()
+
+    # ------------------------------------------------------------------
+    # 1. Attempt exact match via repository
+    # ------------------------------------------------------------------
+    requirements: List[str] = repo.get_role_requirements(role_name)
+
+    if requirements:
+        logger.info("Exact match found for role '%s' — %d requirements", role_name, len(requirements))
+        return requirements
+
+    # ------------------------------------------------------------------
+    # 2. Fuzzy match fallback using rapidfuzz
+    # ------------------------------------------------------------------
+    all_display_names: List[str] = repo.get_all_role_names()
+
+    if not all_display_names:
+        logger.warning("No roles available for fuzzy matching")
+        return []
+
+    match = process.extractOne(role_name, all_display_names, scorer=fuzz.WRatio)
+
+    if match and match[1] >= 70:
+        matched_role: str = match[0]
+        logger.info(
+            "Fuzzy match: '%s' → '%s' (score: %.1f)",
+            role_name, matched_role, match[1],
+        )
+        # Use the matched display name to look up requirements
+        return repo.get_role_requirements(matched_role)
+
+    logger.warning("No match found for role '%s' (best fuzzy score: %.1f)", role_name, match[1] if match else 0)
     return []
