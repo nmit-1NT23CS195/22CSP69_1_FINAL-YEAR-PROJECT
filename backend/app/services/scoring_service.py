@@ -296,18 +296,19 @@ def compute_smart_ats_score(
     semantic_score: float = 0.0,
     tfidf_score: float = 0.0,
     contextual_weights: Optional[Dict[str, float]] = None,
+    llm_diagnosis_score: float = 0.0,
 ) -> Dict[str, Any]:
     """
     Compute the composite ATS score using multiple weighted signals.
 
-    NEW weight distribution (approved):
+    NEW weight distribution:
         Technical Skill Score (weighted + contextual) = 40%
         Semantic Similarity                          = 15%
         TF-IDF Relevance                             = 10%
         Soft Skills                                  = 10%
-        Action Verbs                                 = 10%
+        Action Verbs (Resume Impact)                 = 10%
         Keyword Match (stop-word filtered)           =  5%
-        Quality Score (Goldilocks)                   = 10%
+        Layout Formatting (Quality Score)            = 10%
                                                 TOTAL = 100%
 
     All original return keys are preserved. New keys are ADDED to the
@@ -324,6 +325,7 @@ def compute_smart_ats_score(
         semantic_score:      Semantic similarity score [0.0–1.0] (optional).
         tfidf_score:         TF-IDF relevance score [0.0–1.0] (optional).
         contextual_weights:  Skill → contextual weight mapping (optional).
+        llm_diagnosis_score: LLM-based subjective score [0.0-1.0] (optional).
 
     Returns:
         Dict with "overall_score" and detailed "breakdown" of all components.
@@ -372,9 +374,9 @@ def compute_smart_ats_score(
     quality_score: float = compute_quality_score(resume_text) * 100
 
     # ------------------------------------------------------------------
-    # Combine scores with approved weight distribution
+    # Combine scores with full 7-signal algorithm (Deterministic Pipeline)
     # ------------------------------------------------------------------
-    final_score: float = (
+    deterministic_pipeline: float = (
         (technical_score * 0.40) +
         (semantic_display * 0.15) +
         (tfidf_display * 0.10) +
@@ -383,6 +385,14 @@ def compute_smart_ats_score(
         (keyword_score * 0.05) +
         (quality_score * 0.10)
     )
+
+    # ------------------------------------------------------------------
+    # The Hybrid Scoring Logic
+    # ------------------------------------------------------------------
+    if llm_diagnosis_score > 0:
+        final_score: float = (0.6 * deterministic_pipeline) + (0.4 * (llm_diagnosis_score * 100))
+    else:
+        final_score: float = deterministic_pipeline
 
     logger.info(
         "Smart ATS Score: %.2f | Tech=%.1f Sem=%.1f TFIDF=%.1f "
@@ -409,9 +419,9 @@ def compute_smart_ats_score(
                 "semantic_similarity": 0.15,
                 "tfidf_relevance": 0.10,
                 "soft_skills": 0.10,
-                "action_verbs": 0.10,
+                "resume_impact_verbs": 0.10,
                 "keyword_match": 0.05,
-                "quality": 0.10,
+                "layout_formatting": 0.10,
             },
         },
     }

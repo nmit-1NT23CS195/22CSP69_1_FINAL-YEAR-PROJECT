@@ -16,18 +16,20 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from typing import Any, Dict, Optional
 
 from app.services.ats_service import run_pipeline
+from app.api.schemas import ATSAnalysisResponse
 
 router = APIRouter()
 
 _SENTINEL_VALUES = {"", "string", "null", "none", "undefined"}
 
 
-@router.post("/score", response_model=Dict[str, Any])
+@router.post("/score", response_model=ATSAnalysisResponse)
 async def score_resume(
     resume: UploadFile = File(..., description="Resume file (PDF, DOCX, or TXT)"),
-    jd_text: Optional[str] = Form(None, description="Raw job description text"),
-    role: Optional[str] = Form(None, description="Job role name for role-based skill lookup"),
-) -> Dict[str, Any]:
+    jd_file: Optional[UploadFile] = File(None, description="Job description file"),
+    jd_text: str = Form("", description="Raw job description text"),
+    role: str = Form("", description="Job role name for role-based skill lookup"),
+) -> ATSAnalysisResponse:
     """
     Run the full ATS analysis pipeline on an uploaded resume.
 
@@ -58,11 +60,18 @@ async def score_resume(
 
     resume_filename: str = resume.filename or ""
 
+    # ── Read JD bytes (if uploaded) ─────────────────────────────────────
+    jd_bytes: Optional[bytes] = None
+    jd_filename: str = ""
+    if jd_file:
+        jd_bytes = await jd_file.read()
+        jd_filename = jd_file.filename or ""
+
     # ── Validate: at least one JD source must be supplied ──────────────
-    if not jd_text and not role:
+    if not jd_bytes and not jd_text and not role:
         raise HTTPException(
             status_code=422,
-            detail="Provide either 'jd_text' (job description) or 'role' (job role name).",
+            detail="Provide either 'jd_file', 'jd_text' (job description) or 'role' (job role name).",
         )
 
     # ── Run the pipeline ────────────────────────────────────────────────
@@ -70,6 +79,8 @@ async def score_resume(
         resume_bytes=resume_bytes,
         resume_filename=resume_filename,
         jd_text=jd_text,
+        jd_bytes=jd_bytes,
+        jd_filename=jd_filename,
         role=role,
     )
 
@@ -77,4 +88,15 @@ async def score_resume(
     if "error" in result:
         raise HTTPException(status_code=422, detail=result["error"])
 
-    return result
+    return ATSAnalysisResponse(
+        ats_score=result["ats_score"],
+        keyword_metrics=result.get("keyword_metrics", {}),
+        matched_skills=result.get("technical_skills", {}).get("matched", []),
+        missing_skills=result.get("technical_skills", {}).get("missing", []),
+        contextual_skill_weights=result.get("contextual_skill_weights", {}),
+        estimated_experience=result.get("estimated_experience", {}),
+        soft_skills_found=result.get("soft_skills_found", []),
+        action_verbs_found=result.get("action_verbs_found", []),
+        llm_enriched_skills=result.get("llm_enriched_skills", {}),
+        cognitive_analysis=result.get("cognitive_analysis") or {}
+    )

@@ -1,16 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
+import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb } from 'lucide-react';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+const API_BASE_URL = "http://127.0.0.1:8080";
+
+const formatSkillName = (skill) => {
+  if (!skill) return "";
+  const acronyms = ["AWS", "API", "SQL", "GCP", "CSS", "HTML", "PHP", "UI", "UX", "CI/CD", "SEO", "NLP", "LLM", "REST", "JSON", "XML"];
+  const upper = skill.toUpperCase();
+  if (acronyms.includes(upper)) return upper;
+
+  return skill.split(/[- ]/).map(word => {
+    if (acronyms.includes(word.toUpperCase())) return word.toUpperCase();
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }).join(' ');
+};
 
 export default function PlaceBuddyDashboard() {
   const [appState, setAppState] = useState('idle'); // idle, analyzing, results_heatmap, results_detailed
-  const [loadingText, setLoadingText] = useState('Segmenting document...');
-  
+  const [loadingText, setLoadingText] = useState('Processing Analysis...');
+  const [atsResult, setAtsResult] = useState(null);
+
   // Input State
   const [jdText, setJdText] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
-  
+
   // Dropdown State
   const [roles, setRoles] = useState([]);
   const [searchRole, setSearchRole] = useState('');
@@ -20,7 +35,7 @@ export default function PlaceBuddyDashboard() {
 
   useEffect(() => {
     // Fetch roles on mount 
-    fetch('http://127.0.0.1:8080/roles/')
+    fetch(`${API_BASE_URL}/roles/`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -63,12 +78,14 @@ export default function PlaceBuddyDashboard() {
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       setResumeFile(e.dataTransfer.files[0]);
+      setAtsResult(null);
     }
   };
 
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       setResumeFile(e.target.files[0]);
+      setAtsResult(null);
     }
   };
 
@@ -78,16 +95,13 @@ export default function PlaceBuddyDashboard() {
       return;
     }
 
+    if (atsResult) {
+      setAppState(type);
+      return;
+    }
+
     setAppState('analyzing');
-    
-    const texts = ["Segmenting document...", "Running FlashText...", "Querying LLM..."];
-    let i = 0;
-    const interval = setInterval(() => {
-      i++;
-      if (i < texts.length) {
-        setLoadingText(texts[i]);
-      }
-    }, 1000);
+    setLoadingText('Processing Analysis...');
 
     try {
       // Construction of FormData for file payload
@@ -97,23 +111,22 @@ export default function PlaceBuddyDashboard() {
       if (selectedRole) formData.append("role", selectedRole);
 
       // NO "Content-Type" header here, fetch handles it natively with boundary for FormData
-      const response = await fetch("http://127.0.0.1:8080/ats/score", {
+      const response = await fetch(`${API_BASE_URL}/ats/score`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
         console.error("Backend returned error:", await response.text());
+        setAppState('idle');
       } else {
         const data = await response.json();
-        console.log("Success! Backend Data:", data);
-        // You could set data to state here for real visualization
+        setAtsResult(data);
+        setAppState(type);
       }
     } catch (error) {
       console.error("Network or fetch error:", error);
-    } finally {
-      clearInterval(interval);
-      setAppState(type);
+      setAppState('idle');
     }
   };
 
@@ -144,24 +157,23 @@ export default function PlaceBuddyDashboard() {
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
           <FileText className="w-6 h-6 text-indigo-400 drop-shadow-[0_0_5px_rgba(99,102,241,0.8)]" /> Resume
         </h2>
-        <div 
+        <div
           onClick={() => fileInputRef.current?.click()}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`relative group cursor-pointer h-[340px] rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center overflow-hidden ${
-            isDragging ? 'border-indigo-500 bg-zinc-800/80' : 'border-zinc-700 hover:border-indigo-500 bg-zinc-900/40 hover:bg-zinc-800/60'
-          } backdrop-blur-md`}
+          className={`relative group cursor-pointer h-[340px] rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center overflow-hidden ${isDragging ? 'border-indigo-500 bg-zinc-800/80' : 'border-zinc-700 hover:border-indigo-500 bg-zinc-900/40 hover:bg-zinc-800/60'
+            } backdrop-blur-md`}
         >
-          <input 
-            type="file" 
+          <input
+            type="file"
             accept=".pdf,.docx,.txt"
             ref={fileInputRef}
             onChange={handleFileSelect}
-            className="hidden" 
+            className="hidden"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
+
           {resumeFile ? (
             <div className="flex flex-col items-center z-10 px-6 text-center">
               <FileText className="w-16 h-16 text-emerald-400 mb-6 drop-shadow-lg" />
@@ -182,12 +194,15 @@ export default function PlaceBuddyDashboard() {
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
           <CheckCircle2 className="w-6 h-6 text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" /> Target Requirements
         </h2>
-        
+
         <div className="flex flex-col gap-2 h-full">
           <label className="text-xs font-semibold text-zinc-400 ml-1 uppercase tracking-wider">Job Description (Optional)</label>
-          <textarea 
+          <textarea
             value={jdText}
-            onChange={(e) => setJdText(e.target.value)}
+            onChange={(e) => {
+              setJdText(e.target.value);
+              setAtsResult(null);
+            }}
             placeholder="Paste the job description here..."
             className="flex-1 min-h-[180px] resize-none rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-zinc-700/50 text-zinc-200 p-5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 placeholder:text-zinc-600 shadow-inner"
           />
@@ -195,16 +210,17 @@ export default function PlaceBuddyDashboard() {
 
         <div className="flex flex-col gap-2 relative mt-2" ref={dropdownRef}>
           <label className="text-xs font-semibold text-zinc-400 ml-1 uppercase tracking-wider">Target Role</label>
-          <div 
+          <div
             className="relative"
             onClick={() => setIsDropdownOpen(true)}
           >
-            <input 
+            <input
               type="text"
               value={isDropdownOpen ? searchRole : (selectedRole || searchRole)}
               onChange={(e) => {
                 setSearchRole(e.target.value);
                 setIsDropdownOpen(true);
+                setAtsResult(null);
               }}
               placeholder="Search or select a role..."
               className="w-full rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-zinc-700/50 text-zinc-200 px-5 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 pr-12 shadow-inner"
@@ -215,12 +231,13 @@ export default function PlaceBuddyDashboard() {
           {isDropdownOpen && (
             <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto rounded-2xl bg-zinc-800/90 backdrop-blur-xl border border-zinc-700 shadow-2xl z-20 p-2 scrollbar-thin scrollbar-thumb-zinc-600">
               {filteredRoles.length > 0 ? filteredRoles.map((role, idx) => (
-                <div 
+                <div
                   key={idx}
                   onClick={() => {
                     setSelectedRole(role);
                     setSearchRole('');
                     setIsDropdownOpen(false);
+                    setAtsResult(null);
                   }}
                   className="px-4 py-3 hover:bg-indigo-500/20 hover:text-indigo-300 text-zinc-300 cursor-pointer rounded-xl transition-colors font-medium"
                 >
@@ -238,25 +255,27 @@ export default function PlaceBuddyDashboard() {
 
   const renderActionButtons = () => (
     <div className="max-w-4xl mx-auto mt-12 flex flex-col sm:flex-row gap-8 justify-center px-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-      <button 
+      <button
         onClick={() => handleAnalyze('results_heatmap')}
         className="flex-1 relative group overflow-hidden rounded-2xl p-[2px] transition-transform hover:-translate-y-1"
       >
         <span className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl opacity-70 group-hover:opacity-100 blur-sm transition-opacity duration-500"></span>
         <span className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl"></span>
         <div className="relative bg-zinc-950 px-8 py-5 rounded-2xl flex items-center justify-center gap-2 transition-all group-hover:bg-zinc-900 h-full">
-          <span className="font-bold text-lg text-emerald-400 group-hover:text-emerald-300 drop-shadow-sm tracking-wide">Analyze Skill Gap Heatmap</span>
+          <Activity className="w-5 h-5 text-emerald-400" />
+          <span className="font-bold text-lg text-emerald-400 group-hover:text-emerald-300 drop-shadow-sm tracking-wide">Forensic Skill Matrix</span>
         </div>
       </button>
 
-      <button 
+      <button
         onClick={() => handleAnalyze('results_detailed')}
         className="flex-1 relative group overflow-hidden rounded-2xl p-[2px] transition-transform hover:-translate-y-1"
       >
         <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl opacity-70 group-hover:opacity-100 blur-sm transition-opacity duration-500"></span>
         <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl"></span>
         <div className="relative bg-zinc-950 px-8 py-5 rounded-2xl flex items-center justify-center gap-2 transition-all group-hover:bg-zinc-900 h-full">
-          <span className="font-bold text-lg text-indigo-400 group-hover:text-indigo-300 drop-shadow-sm tracking-wide">Detailed ATS Scoring</span>
+          <BrainCircuit className="w-5 h-5 text-indigo-400" />
+          <span className="font-bold text-lg text-indigo-400 group-hover:text-indigo-300 drop-shadow-sm tracking-wide">Cognitive ATS Insights</span>
         </div>
       </button>
     </div>
@@ -280,14 +299,14 @@ export default function PlaceBuddyDashboard() {
   const renderScoreDisplay = () => (
     <div className="flex flex-col items-center justify-center p-10 bg-zinc-900/40 rounded-[2.5rem] border border-white/10 backdrop-blur-xl mb-12 shadow-[0_0_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none"></div>
-      <div className="text-sm font-bold text-zinc-400 uppercase tracking-[0.2em] mb-6 relative z-10">Placement Readiness Score</div>
+      <div className="text-sm font-bold text-zinc-400 uppercase tracking-[0.2em] mb-6 relative z-10">ATS Score</div>
       <div className="relative flex items-center justify-center">
         <svg className="w-48 h-48 transform -rotate-90">
           <circle cx="96" cy="96" r="84" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-zinc-800" />
-          <circle cx="96" cy="96" r="84" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray="527.7" strokeDashoffset="116.1" className="text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.8)] transition-all duration-1000 ease-out" />
+          <circle cx="96" cy="96" r="84" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray="527.7" strokeDashoffset={527.7 - (527.7 * (atsResult ? Math.round(atsResult.ats_score) : 0)) / 100} className="text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.8)] transition-all duration-1000 ease-out" />
         </svg>
         <div className="absolute flex flex-col items-center">
-          <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-400">78</span>
+          <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-400">{atsResult ? Math.round(atsResult.ats_score) : 0}</span>
           <span className="text-lg font-semibold text-zinc-500">/100</span>
         </div>
       </div>
@@ -295,79 +314,161 @@ export default function PlaceBuddyDashboard() {
   );
 
   const renderResultsHeatmap = () => {
-    const skills = [
-      { name: 'React', status: 'applied' },
-      { name: 'Node.js', status: 'applied' },
-      { name: 'TypeScript', status: 'stated' },
-      { name: 'GraphQL', status: 'missing' },
-      { name: 'Tailwind CSS', status: 'applied' },
-      { name: 'Docker', status: 'stated' },
-      { name: 'Kubernetes', status: 'missing' },
-      { name: 'AWS', status: 'missing' },
-      { name: 'PostgreSQL', status: 'applied' },
-      { name: 'Python', status: 'stated' },
-    ];
+    let radarData = [];
+    let bsDetector = [];
 
-    return (
-      <div className="max-w-5xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
-        <button onClick={() => setAppState('idle')} className="text-zinc-500 hover:text-white transition-colors text-sm font-semibold mb-8 flex items-center gap-2 bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800 w-fit">
-          ← Back to Dashboard
-        </button>
-        
-        {renderScoreDisplay()}
+    if (atsResult?.cognitive_analysis) {
+      const { skill_matrix, bullshit_detector } = atsResult.cognitive_analysis;
+      bsDetector = bullshit_detector || [];
+      if (skill_matrix) {
+        if (Array.isArray(skill_matrix)) {
+          radarData = skill_matrix.map((data) => ({
+            skill: formatSkillName(data.skill_name),
+            proficiency: data.proficiency_score || 0,
+            yoe: data.estimated_yoe || 0
+          }));
+        } else {
+          radarData = Object.entries(skill_matrix).map(([skill, data]) => ({
+            skill: formatSkillName(skill),
+            proficiency: data.proficiency_score || 0,
+            yoe: data.estimated_yoe || 0
+          }));
+        }
 
-        <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-          Contextual Readiness Grid
-        </h3>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-          {skills.map((s, i) => (
-            <div key={i} className={`p-5 rounded-2xl border flex flex-col items-center justify-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-              s.status === 'applied' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.15)]' :
-              s.status === 'stated' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.15)]' :
-              'bg-red-500/10 border-red-500/30 text-red-400 shadow-[0_0_15px_rgba(248,113,113,0.15)]'
-            }`}>
-              {s.status === 'applied' && <CheckCircle2 className="w-8 h-8 opacity-80" />}
-              {s.status === 'stated' && <AlertCircle className="w-8 h-8 opacity-80" />}
-              {s.status === 'missing' && <XCircle className="w-8 h-8 opacity-80" />}
-              <span className="font-bold text-center">{s.name}</span>
-            </div>
-          ))}
-        </div>
-        
-        <div className="flex flex-wrap gap-8 mt-12 justify-center text-sm font-semibold bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800">
-          <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-4 py-2 rounded-xl"><CheckCircle2 className="w-5 h-5"/> Applied Context (Verified)</div>
-          <div className="flex items-center gap-2 text-amber-400 bg-amber-500/10 px-4 py-2 rounded-xl"><AlertCircle className="w-5 h-5"/> Stated Only (Unverified)</div>
-          <div className="flex items-center gap-2 text-red-400 bg-red-500/10 px-4 py-2 rounded-xl"><XCircle className="w-5 h-5"/> Missing Skill (Gap)</div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderResultsDetailed = () => {
-    const signals = [
-      { name: "Semantic Similarity", value: "84%", desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" },
-      { name: "TF-IDF Relevance", value: "72%", desc: "Keyword frequency alignment", color: "text-blue-400", bg: "bg-blue-500/5", border: "border-blue-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]" },
-      { name: "Contextual Weighting", value: "18", desc: "Skills verified in context", color: "text-emerald-400", bg: "bg-emerald-500/5", border: "border-emerald-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(52,211,153,0.2)]" },
-      { name: "Experience Est.", value: "4.2 Yrs", desc: "NER-extracted timeline", color: "text-purple-400", bg: "bg-purple-500/5", border: "border-purple-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(168,85,247,0.2)]" },
-      { name: "Action Verbs", value: "24", desc: "Impact-driven vocabulary used", color: "text-pink-400", bg: "bg-pink-500/5", border: "border-pink-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]" },
-      { name: "Soft Skills", value: "6", desc: "Interpersonal attributes identified", color: "text-amber-400", bg: "bg-amber-500/5", border: "border-amber-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(251,191,36,0.2)]" },
-      { name: "Format Parse", value: "100%", desc: "Structure & readability score", color: "text-teal-400", bg: "bg-teal-500/5", border: "border-teal-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(20,184,166,0.2)]" },
-    ];
+        // Clamp data to top 15 skills to prevent visual overlap on Radar Chart
+        radarData = radarData.sort((a, b) => b.proficiency - a.proficiency).slice(0, 15);
+      }
+    }
 
     return (
       <div className="max-w-6xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
         <button onClick={() => setAppState('idle')} className="text-zinc-500 hover:text-white transition-colors text-sm font-semibold mb-8 flex items-center gap-2 bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800 w-fit">
           ← Back to Dashboard
         </button>
-        
+
+        {renderScoreDisplay()}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-zinc-900/40 border border-indigo-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(99,102,241,0.1)] relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent"></div>
+            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+              <Activity className="w-7 h-7 text-indigo-400" />
+              Forensic Skill Matrix
+            </h3>
+
+            {radarData.length > 0 ? (
+              <div className="h-[400px] w-full relative z-10">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                    <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                    <PolarAngleAxis dataKey="skill" tick={{ fill: '#a1a1aa', fontSize: 11, fontWeight: 'bold' }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 10]} tick={{ fill: '#52525b', fontSize: 10 }} />
+                    <Radar name="Proficiency" dataKey="proficiency" stroke="#8b5cf6" strokeWidth={2} fill="#8b5cf6" fillOpacity={0.35} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-[400px] text-zinc-500 italic">No skill matrix data available.</div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-8">
+            <div className="bg-zinc-900/40 border border-amber-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(251,191,36,0.1)] relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent"></div>
+              <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3 relative z-10">
+                <AlertCircle className="w-7 h-7 text-amber-400" />
+                Unverified Skills (Stated Only)
+              </h3>
+              <p className="text-sm text-zinc-400 mb-6 relative z-10">
+                The LLM Panel found no concrete project evidence for the following skills. Be prepared to defend these in an interview.
+              </p>
+
+              <div className="flex flex-wrap gap-3 relative z-10">
+                {bsDetector.length > 0 ? bsDetector.map((skill, idx) => (
+                  <div key={idx} className="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-4 py-2 rounded-xl font-semibold flex items-center gap-2">
+                    <XCircle className="w-4 h-4" /> {formatSkillName(skill)}
+                  </div>
+                )) : (
+                  <div className="text-emerald-400 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-xl font-semibold">
+                    <CheckCircle2 className="w-5 h-5" /> All stated skills verified!
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-zinc-900/40 border border-emerald-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(52,211,153,0.1)] relative overflow-hidden flex-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+                <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                Verified Competencies
+              </h3>
+              <div className="flex flex-wrap gap-3 relative z-10">
+                {radarData.filter(r => r.proficiency >= 5).map((r, idx) => (
+                  <div key={idx} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-sm font-semibold flex flex-col">
+                    <span>{r.skill}</span>
+                    <span className="text-xs opacity-70">{r.yoe} Yrs Exp</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-zinc-900/40 border border-red-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(239,68,68,0.1)] relative overflow-hidden flex-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent"></div>
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+                <AlertCircle className="w-6 h-6 text-red-400" />
+                Missing Skills (Critical Gaps)
+              </h3>
+              <div className="flex flex-wrap gap-3 relative z-10">
+                {atsResult?.missing_skills?.length > 0 ? (
+                  atsResult.missing_skills.map((skill, idx) => (
+                    <div key={idx} className="bg-red-500/10 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg text-sm font-semibold">
+                      {formatSkillName(skill)}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-emerald-400 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-xl font-semibold">
+                    <CheckCircle2 className="w-5 h-5" /> No critical missing skills!
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderResultsDetailed = () => {
+    const signals = atsResult ? [
+      { name: "Semantic Similarity", value: `${(atsResult.keyword_metrics?.semantic_similarity * 100 || 0).toFixed(0)}%`, desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" },
+      { name: "TF-IDF Match", value: `${(atsResult.keyword_metrics?.tfidf_score * 100 || 0).toFixed(0)}%`, desc: "Keyword frequency alignment", color: "text-blue-400", bg: "bg-blue-500/5", border: "border-blue-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]" },
+      { name: "Skill Alignment", value: `${Object.values(atsResult.contextual_skill_weights || {}).reduce((acc, w) => acc + (w > 1 ? 1 : 0), 0)}`, desc: "Skills verified in context", color: "text-emerald-400", bg: "bg-emerald-500/5", border: "border-emerald-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(52,211,153,0.2)]" },
+      { name: "Experience Est.", value: `${atsResult.estimated_experience?.total_yoe || 0} Yrs`, desc: "NER-extracted timeline", color: "text-purple-400", bg: "bg-purple-500/5", border: "border-purple-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(168,85,247,0.2)]" },
+      { name: "Resume Impact", value: `${atsResult.action_verbs_found?.length || 0}`, desc: "Impact-driven action verbs used", color: "text-pink-400", bg: "bg-pink-500/5", border: "border-pink-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]" },
+      { name: "Soft Skills", value: `${atsResult.soft_skills_found?.length || 0}`, desc: "Interpersonal attributes identified", color: "text-amber-400", bg: "bg-amber-500/5", border: "border-amber-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(251,191,36,0.2)]" },
+      { name: "Keyword Match", value: `${(atsResult.keyword_metrics?.keyword_match || 0).toFixed(0)}%`, desc: "Stop-word filtered keyword match", color: "text-teal-400", bg: "bg-teal-500/5", border: "border-teal-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(20,184,166,0.2)]" },
+    ] : [];
+
+    const cog = atsResult?.cognitive_analysis || {};
+    const roles = cog.best_fit_roles || [];
+    const questions = cog.targeted_questions || [];
+    const dsaBridge = cog.dsa_bridge || [];
+    const microProject = cog.micro_project_suggestion || "";
+    const pivots = cog.pivot_opportunities || [];
+
+    return (
+      <div className="max-w-6xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
+        <button onClick={() => setAppState('idle')} className="text-zinc-500 hover:text-white transition-colors text-sm font-semibold mb-8 flex items-center gap-2 bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800 w-fit">
+          ← Back to Dashboard
+        </button>
+
         {renderScoreDisplay()}
 
         <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
           ML Signal Breakdown
         </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
           {signals.map((sig, i) => (
             <div key={i} className={`p-6 rounded-3xl border ${sig.bg} ${sig.border} backdrop-blur-md relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 ${sig.glow}`}>
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -376,6 +477,99 @@ export default function PlaceBuddyDashboard() {
               <div className="text-sm text-zinc-500 font-medium leading-relaxed">{sig.desc}</div>
             </div>
           ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Constellation View */}
+          <div className="lg:col-span-1 flex flex-col gap-8">
+            <div className="bg-zinc-900/40 border border-teal-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(20,184,166,0.1)] relative overflow-hidden group h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent"></div>
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+                <Compass className="w-6 h-6 text-teal-400" />
+                Career Constellation
+              </h3>
+
+              <div className="flex flex-col gap-4 relative z-10">
+                {roles.map((r, i) => (
+                  <div key={i} className="bg-teal-500/5 border border-teal-500/20 rounded-xl p-4 transition-all hover:bg-teal-500/10 hover:border-teal-500/40 hover:-translate-y-1">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-teal-300">{r.role}</span>
+                      <span className="text-teal-400 font-black text-sm bg-teal-500/20 px-2 py-1 rounded-md">{r.match_percentage}% Match</span>
+                    </div>
+                    <p className="text-xs text-zinc-400 leading-relaxed">{r.rationale}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 relative z-10 border-t border-white/5 pt-6">
+                <h4 className="text-sm font-bold text-zinc-400 mb-4 flex items-center gap-2 uppercase tracking-wider">
+                  <Rocket className="w-4 h-4" /> Pivot Opportunities
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {pivots.map((p, i) => (
+                    <span key={i} className="text-xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700 px-3 py-1.5 rounded-full">
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Interview Prep & Roadmap */}
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            {/* The Brutal Interviewer */}
+            <div className="bg-zinc-900/40 border border-rose-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(244,63,94,0.1)] relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent"></div>
+              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+                <Target className="w-6 h-6 text-rose-400" />
+                The "Brutal Interviewer" Simulator
+              </h3>
+
+              <div className="grid grid-cols-1 gap-4 relative z-10">
+                {questions.map((q, i) => (
+                  <div key={i} className="bg-rose-500/5 border-l-4 border-rose-500/50 p-4 rounded-r-xl text-zinc-300 text-sm font-medium">
+                    <span className="text-rose-400 font-bold mr-2">Q{i + 1}:</span> {q}
+                  </div>
+                ))}
+              </div>
+
+              {dsaBridge.length > 0 && (
+                <div className="mt-6 relative z-10 bg-zinc-950/50 rounded-xl p-5 border border-white/5">
+                  <h4 className="text-sm font-bold text-rose-300 mb-3 flex items-center gap-2">
+                    <Briefcase className="w-4 h-4" /> Real-World DSA Bridge
+                  </h4>
+                  <div className="flex flex-col gap-3">
+                    {dsaBridge.map((bridge, i) => (
+                      <div key={i} className="flex flex-col sm:flex-row gap-2 text-xs">
+                        <div className="flex-1 bg-zinc-900 p-3 rounded-lg border border-zinc-800 text-zinc-400">
+                          <span className="block text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Your Project Logic</span>
+                          {bridge.project_logic}
+                        </div>
+                        <div className="flex items-center justify-center text-zinc-600 sm:rotate-0 rotate-90">→</div>
+                        <div className="flex-1 bg-rose-500/10 p-3 rounded-lg border border-rose-500/20 text-rose-300 font-semibold">
+                          <span className="block text-[10px] text-rose-500/70 uppercase tracking-wider mb-1">Core DSA Concept</span>
+                          {bridge.dsa_concept}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Actionable Roadmap */}
+            <div className="bg-zinc-900/40 border border-sky-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(14,165,233,0.1)] relative overflow-hidden group flex-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent"></div>
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3 relative z-10">
+                <Lightbulb className="w-6 h-6 text-sky-400" />
+                Actionable Micro-Project Roadmap
+              </h3>
+              <p className="text-zinc-300 leading-relaxed text-sm relative z-10 bg-sky-500/10 border border-sky-500/20 p-5 rounded-xl font-medium">
+                {microProject || "No roadmap data generated."}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -388,7 +582,7 @@ export default function PlaceBuddyDashboard() {
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-900/20 rounded-full blur-[150px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-900/20 rounded-full blur-[150px]" />
       </div>
-      
+
       <div className="relative z-10">
         {renderNavbar()}
 

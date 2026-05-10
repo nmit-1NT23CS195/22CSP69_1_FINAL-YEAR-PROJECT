@@ -195,17 +195,26 @@ def run_pipeline(
     except Exception as exc:
         logger.error("Experience extraction failed: %s", exc)
 
-    # ==================================================================
-    # STAGE 9: LLM-Enriched Extraction (graceful degradation)
-    # ==================================================================
-    llm_skills: Dict[str, float] = {}
+    cognitive_analysis: Dict[str, Any] = {}
     try:
-        from app.services.llm_service import extract_skills_via_llm
-        llm_skills = extract_skills_via_llm(resume_text)
-        if llm_skills:
-            logger.info("LLM extracted %d skills with YoE estimates", len(llm_skills))
+        from app.services.llm_service import run_cognitive_analysis
+        cognitive_analysis = run_cognitive_analysis(resume_text, final_jd_text)
+        if cognitive_analysis:
+            logger.info("Cognitive analysis completed via LLM.")
     except Exception as exc:
-        logger.error("LLM extraction failed: %s", exc)
+        logger.error("LLM Cognitive analysis failed: %s", exc)
+
+    llm_skills = {}
+    llm_diagnosis_score = 0.0
+    if cognitive_analysis:
+        skill_matrix = cognitive_analysis.get("skill_matrix", [])
+        if isinstance(skill_matrix, list):
+            for item in skill_matrix:
+                if isinstance(item, dict):
+                    skill_name = item.get("skill_name")
+                    if skill_name:
+                        llm_skills[skill_name] = float(item.get("estimated_yoe", 0.0))
+        llm_diagnosis_score = cognitive_analysis.get("llm_diagnosis_score", 0.0)
 
     # ==================================================================
     # STAGE 10: Composite Scoring
@@ -223,6 +232,7 @@ def run_pipeline(
         semantic_score=semantic_score,
         tfidf_score=tfidf_result["tfidf_score"],
         contextual_weights=contextual_weights,
+        llm_diagnosis_score=llm_diagnosis_score,
     )
 
     # ==================================================================
@@ -260,7 +270,11 @@ def run_pipeline(
         "metrics_breakdown": score_data["breakdown"],
 
         # ── New keys (ADDED for downstream ML feature engineering) ──
-        "semantic_similarity_score": round(semantic_score, 4),
+        "keyword_metrics": {
+            "semantic_similarity": round(semantic_score, 4),
+            "tfidf_score": tfidf_result["tfidf_score"],
+            "keyword_match": score_data["breakdown"]["keyword_score"],
+        },
         "tfidf_analysis": {
             "score": tfidf_result["tfidf_score"],
             "top_jd_keywords": tfidf_result["top_jd_keywords"],
@@ -274,6 +288,7 @@ def run_pipeline(
         },
         "contextual_skill_weights": contextual_weights,
         "llm_enriched_skills": llm_skills,
+        "cognitive_analysis": cognitive_analysis,
     }
 
     logger.info(
