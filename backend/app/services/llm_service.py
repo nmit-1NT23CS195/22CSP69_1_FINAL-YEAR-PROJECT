@@ -156,7 +156,7 @@ def run_cognitive_analysis(resume_text: str, jd_text: str) -> Dict[str, Any]:
     }
 
     try:
-        with httpx.Client(timeout=45.0) as client:
+        with httpx.Client(timeout=120.0) as client:
             response = client.post(url, json=payload, headers={"Content-Type": "application/json"})
             response.raise_for_status()
 
