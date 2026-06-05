@@ -58,3 +58,36 @@ dist/
 # Cache
 # -------------------------------
 .cache/
+
+# -------------------------------
+# Frontend — Node / Vite / React
+# -------------------------------
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+.vite/
+frontend/.vite/
+
+# Vite / React build artifacts
+*.local
+frontend/*.local
+
+# Test coverage
+coverage/
+frontend/coverage/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Package manager locks (keep package-lock.json but ignore yarn/pnpm)
+yarn.lock
+pnpm-lock.yaml
+
+# -------------------------------
+# Backend — Python venv (all locations)
+# -------------------------------
+backend/venv/
+backend/.venv/
+ml/venv/
+ml/.venv/

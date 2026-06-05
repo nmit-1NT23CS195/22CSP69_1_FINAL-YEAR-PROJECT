@@ -1,27 +1,15 @@
 from fastapi import APIRouter, UploadFile, File
-from app.services.resume_service import extract_text_from_pdf
-from app.services.skill_loader import load_skills
-from app.services.nlp_service import build_skill_map, extract_skills
+from app.services.resume_service import extract_text
+from app.services.nlp_service import extract_skills
 
-router = APIRouter(prefix="/skills", tags=["Skills"])
+router = APIRouter()
 
 
 @router.post("/extract")
-async def extract_resume_skills(file: UploadFile = File(...)):
-    
-    # read file
-    resume_bytes = await file.read()
+async def extract_skills_api(resume: UploadFile = File(...)):
+    resume_bytes = await resume.read()
+    text = extract_text(resume_bytes, resume.filename)
 
-    # extract text
-    text = extract_text_from_pdf(resume_bytes)
-
-    # load dataset
-    skills_list = load_skills()
-
-    # build map
-    skill_map = build_skill_map(skills_list)
-
-    # extract skills
-    skills = extract_skills(text, skill_map)
+    skills = extract_skills(text)
 
     return {"skills": skills}
