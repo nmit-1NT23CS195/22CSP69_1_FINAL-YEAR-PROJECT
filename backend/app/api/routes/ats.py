@@ -15,7 +15,7 @@ Priority for JD source (handled inside run_pipeline):
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from typing import Any, Dict, Optional
 
-from app.services.ats_service import run_pipeline
+from app.services.ats_service import run_pipeline, run_core_pipeline, run_deep_pipeline
 from app.api.schemas import ATSAnalysisResponse
 
 router = APIRouter()
@@ -74,8 +74,8 @@ async def score_resume(
             detail="Provide either 'jd_file', 'jd_text' (job description) or 'role' (job role name).",
         )
 
-    # ── Run the pipeline ────────────────────────────────────────────────
-    result: Dict[str, Any] = run_pipeline(
+    # ── Run the pipeline (async — runs both LLM calls concurrently) ────
+    result: Dict[str, Any] = await run_pipeline(
         resume_bytes=resume_bytes,
         resume_filename=resume_filename,
         jd_text=jd_text,
@@ -99,4 +99,83 @@ async def score_resume(
         action_verbs_found=result.get("action_verbs_found", []),
         llm_enriched_skills=result.get("llm_enriched_skills", {}),
         cognitive_analysis=result.get("cognitive_analysis") or {}
-    )
+    )
+
+
+# ---------------------------------------------------------------------------
+# TWO-STAGE ENDPOINTS
+# /score/core  — heavy: file upload + all deterministic layers + CoreLLM
+# /score/deep  — light: raw strings only + DeepLLM (no parsing overhead)
+# ---------------------------------------------------------------------------
+
+@router.post("/score/core")
+async def score_resume_core(
+    resume: UploadFile = File(..., description="Resume file (PDF, DOCX, or TXT)"),
+    jd_file: Optional[UploadFile] = File(None, description="Job description file"),
+    jd_text: str = Form("", description="Raw job description text"),
+    role: str = Form("", description="Job role name for role-based skill lookup"),
+) -> Dict[str, Any]:
+    """
+    Stage 1 of the two-stage pipeline.
+
+    Runs all deterministic layers (TF-IDF, pgvector, NLP, YoE) and the
+    CoreScoringSchema LLM call.  Returns the full core payload plus
+    `extracted_resume_text` and `extracted_jd_text` — passthrough tokens
+    for the frontend to hand to /score/deep without re-uploading the file.
+    """
+    if jd_text and jd_text.strip().lower() in _SENTINEL_VALUES:
+        jd_text = None
+    if role and role.strip().lower() in _SENTINEL_VALUES:
+        role = None
+
+    resume_bytes: bytes = await resume.read()
+    if not resume_bytes:
+        raise HTTPException(status_code=400, detail="Uploaded resume file is empty.")
+    resume_filename: str = resume.filename or ""
+
+    jd_bytes: Optional[bytes] = None
+    jd_filename: str = ""
+    if jd_file:
+        jd_bytes = await jd_file.read()
+        jd_filename = jd_file.filename or ""
+
+    if not jd_bytes and not jd_text and not role:
+        raise HTTPException(
+            status_code=422,
+            detail="Provide either 'jd_file', 'jd_text' or 'role'.",
+        )
+
+    result: Dict[str, Any] = await run_core_pipeline(
+        resume_bytes=resume_bytes,
+        resume_filename=resume_filename,
+        jd_text=jd_text,
+        jd_bytes=jd_bytes,
+        jd_filename=jd_filename,
+        role=role,
+    )
+
+    if "error" in result:
+        raise HTTPException(status_code=422, detail=result["error"])
+
+    return result
+
+
+@router.post("/score/deep")
+async def score_resume_deep(
+    resume_text: str = Form(..., description="Pre-extracted resume text from /score/core"),
+    jd_text: str = Form(..., description="Job description text"),
+) -> Dict[str, Any]:
+    """
+    Stage 2 of the two-stage pipeline.
+
+    Receives the pre-extracted resume text string returned by /score/core —
+    no file upload, no re-parsing.  Fires only the DeepAnalysisSchema LLM
+    call and returns targeted_questions, dsa_bridge, micro_project_suggestion.
+    """
+    if not resume_text or not resume_text.strip():
+        raise HTTPException(status_code=422, detail="resume_text must not be empty.")
+    if not jd_text or not jd_text.strip():
+        raise HTTPException(status_code=422, detail="jd_text must not be empty.")
+
+    return await run_deep_pipeline(resume_text=resume_text, jd_text=jd_text)
+

@@ -42,7 +42,7 @@ from app.services.scoring_service import compute_smart_ats_score
 logger = logging.getLogger(__name__)
 
 
-def run_pipeline(
+async def run_pipeline(
     resume_bytes: bytes,
     resume_filename: str = "",
     jd_text: Optional[str] = None,
@@ -195,12 +195,17 @@ def run_pipeline(
     except Exception as exc:
         logger.error("Experience extraction failed: %s", exc)
 
+    # ==================================================================
+    # STAGE 9: Concurrent LLM Cognitive Analysis
+    # Fires CoreScoringSchema + DeepAnalysisSchema in parallel via
+    # asyncio.gather(). Wall-clock time ≈ max(T_core, T_deep) not their sum.
+    # ==================================================================
     cognitive_analysis: Dict[str, Any] = {}
     try:
-        from app.services.llm_service import run_cognitive_analysis
-        cognitive_analysis = run_cognitive_analysis(resume_text, final_jd_text)
+        from app.services.llm_service import run_cognitive_analysis_concurrent
+        cognitive_analysis = await run_cognitive_analysis_concurrent(resume_text, final_jd_text)
         if cognitive_analysis:
-            logger.info("Cognitive analysis completed via LLM.")
+            logger.info("Concurrent cognitive analysis completed via LLM.")
     except Exception as exc:
         logger.error("LLM Cognitive analysis failed: %s", exc)
 
@@ -300,3 +305,183 @@ def run_pipeline(
     )
 
     return result
+
+
+# ===========================================================================
+# TWO-STAGE PIPELINE FUNCTIONS
+# Powers the /ats/score/core and /ats/score/deep endpoints.
+# ===========================================================================
+
+async def run_core_pipeline(
+    resume_bytes: bytes,
+    resume_filename: str = "",
+    jd_text: Optional[str] = None,
+    jd_bytes: Optional[bytes] = None,
+    jd_filename: str = "",
+    role: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    Stage 1 pipeline: runs ALL deterministic layers + CoreScoringSchema LLM call.
+
+    Returns the full core payload PLUS `extracted_resume_text` (raw string) so
+    the caller can hand it directly to run_deep_pipeline() without re-parsing.
+    """
+    # ── Text extraction ────────────────────────────────────────────────
+    resume_text: str = extract_text(resume_bytes, resume_filename)
+    logger.info("[CorePipeline] Resume extracted: %d chars", len(resume_text))
+
+    # ── JD source resolution ───────────────────────────────────────────
+    final_jd_text: str = ""
+    jd_skills: List[str] = []
+
+    if jd_bytes:
+        final_jd_text = extract_text(jd_bytes, jd_filename)
+        jd_skills = extract_skills(final_jd_text)
+    elif jd_text and jd_text.strip():
+        final_jd_text = jd_text
+        jd_skills = extract_skills(final_jd_text)
+    elif role and role.strip():
+        jd_skills = [s.lower() for s in get_role_requirements(role)]
+        final_jd_text = " ".join(jd_skills)
+
+    if not jd_skills and not final_jd_text:
+        return {"error": "No valid job description or role provided"}
+
+    # ── Section segmentation ───────────────────────────────────────────
+    resume_sections: Dict[str, str] = {}
+    try:
+        resume_sections = parse_resume_sections(resume_text)
+    except Exception as exc:
+        logger.error("[CorePipeline] Section parsing failed: %s", exc)
+        resume_sections = {"other": resume_text}
+
+    # ── Skill extraction ───────────────────────────────────────────────
+    resume_skills: List[str] = extract_skills(resume_text, custom_skills=jd_skills)
+    contextual_weights: Dict[str, float] = {}
+    try:
+        _, contextual_weights = extract_skills_with_context(
+            resume_text, resume_sections, custom_skills=jd_skills
+        )
+    except Exception as exc:
+        logger.error("[CorePipeline] Contextual extraction failed: %s", exc)
+        contextual_weights = {s: 1.0 for s in resume_skills}
+
+    soft_skills: List[str] = extract_soft_skills(resume_text)
+    action_verbs: List[str] = extract_action_verbs(resume_text)
+
+    # ── TF-IDF ────────────────────────────────────────────────────────
+    tfidf_result: Dict[str, Any] = {"tfidf_score": 0.0, "top_jd_keywords": [], "matched_count": 0, "total_analyzed": 0}
+    try:
+        from app.services.tfidf_service import compute_tfidf_analysis
+        tfidf_result = compute_tfidf_analysis(final_jd_text, resume_text)
+    except Exception as exc:
+        logger.error("[CorePipeline] TF-IDF failed: %s", exc)
+
+    # ── Semantic similarity ────────────────────────────────────────────
+    semantic_score: float = 0.0
+    try:
+        from app.services.semantic_service import compute_semantic_similarity
+        semantic_score = compute_semantic_similarity(final_jd_text, resume_text)
+    except Exception as exc:
+        logger.error("[CorePipeline] Semantic failed: %s", exc)
+
+    # ── Years of experience ────────────────────────────────────────────
+    experience_data: Dict[str, Any] = {"total_yoe": 0.0, "experience_entries": []}
+    try:
+        from app.services.experience_service import extract_experience
+        experience_data = extract_experience(resume_sections.get("experience", resume_text))
+    except Exception as exc:
+        logger.error("[CorePipeline] YoE extraction failed: %s", exc)
+
+    # ── Core LLM call ─────────────────────────────────────────────────
+    core_analysis: Dict[str, Any] = {}
+    try:
+        from app.services.llm_service import run_core_analysis
+        core_analysis = await run_core_analysis(resume_text, final_jd_text)
+        logger.info("[CorePipeline] Core LLM analysis complete.")
+    except Exception as exc:
+        logger.error("[CorePipeline] Core LLM failed: %s", exc)
+
+    # ── Scoring ───────────────────────────────────────────────────────
+    priority_skills: Set[str] = load_priority_skills()
+    llm_diagnosis_score = float(core_analysis.get("llm_diagnosis_score", 0.0))
+
+    score_data: Dict[str, Any] = compute_smart_ats_score(
+        jd_text=final_jd_text,
+        resume_text=resume_text,
+        jd_skills=jd_skills,
+        resume_skills=resume_skills,
+        priority_skills=priority_skills,
+        soft_skills=soft_skills,
+        action_verbs=action_verbs,
+        semantic_score=semantic_score,
+        tfidf_score=tfidf_result["tfidf_score"],
+        contextual_weights=contextual_weights,
+        llm_diagnosis_score=llm_diagnosis_score,
+    )
+
+    # ── Skill diff ────────────────────────────────────────────────────
+    jd_normalized: Set[str] = {s.strip().lower() for s in (jd_skills or []) if s and s.strip()}
+    resume_normalized: Set[str] = {s.strip().lower() for s in (resume_skills or []) if s and s.strip()}
+    matched_skills: List[str] = sorted(jd_normalized & resume_normalized)
+    missing_skills: List[str] = sorted(jd_normalized - resume_normalized)
+
+    llm_skills = {}
+    for item in core_analysis.get("skill_matrix", []):
+        if isinstance(item, dict) and item.get("skill_name"):
+            llm_skills[item["skill_name"]] = float(item.get("estimated_yoe", 0.0))
+
+    logger.info(
+        "[CorePipeline] Done — Score: %.2f | %d matched | %d missing",
+        score_data["overall_score"], len(matched_skills), len(missing_skills),
+    )
+
+    return {
+        # Core scoring data
+        "ats_score":               score_data["overall_score"],
+        "technical_skills":        {"matched": matched_skills, "missing": missing_skills},
+        "soft_skills_found":       soft_skills,
+        "action_verbs_count":      len(action_verbs),
+        "action_verbs_found":      action_verbs,
+        "metrics_breakdown":       score_data["breakdown"],
+        "keyword_metrics": {
+            "semantic_similarity": round(semantic_score, 4),
+            "tfidf_score":         tfidf_result["tfidf_score"],
+            "keyword_match":       score_data["breakdown"]["keyword_score"],
+        },
+        "tfidf_analysis":          {"score": tfidf_result["tfidf_score"], "top_jd_keywords": tfidf_result["top_jd_keywords"], "matched_count": tfidf_result["matched_count"], "total_analyzed": tfidf_result["total_analyzed"]},
+        "estimated_experience":    experience_data,
+        "resume_sections":         {k: v[:500] if v else "" for k, v in resume_sections.items()},
+        "contextual_skill_weights": contextual_weights,
+        "llm_enriched_skills":     llm_skills,
+        "cognitive_analysis":      core_analysis,
+        # ── Passed to /score/deep to skip re-parsing ──────────────────
+        "extracted_resume_text":   resume_text,
+        "extracted_jd_text":       final_jd_text,
+        # Legacy schema keys
+        "matched_skills":  matched_skills,
+        "missing_skills":  missing_skills,
+    }
+
+
+async def run_deep_pipeline(resume_text: str, jd_text: str) -> Dict[str, Any]:
+    """
+    Stage 2 pipeline: receives pre-extracted text strings (no file parsing),
+    calls only DeepAnalysisSchema LLM call, and returns the deep analysis dict.
+
+    This is intentionally lightweight — no TF-IDF, no pgvector, no NLP.
+    The heavy deterministic work already happened in run_core_pipeline().
+    """
+    deep_analysis: Dict[str, Any] = {}
+    try:
+        from app.services.llm_service import run_deep_analysis
+        deep_analysis = await run_deep_analysis(resume_text, jd_text)
+        logger.info("[DeepPipeline] Deep LLM analysis complete.")
+    except Exception as exc:
+        logger.error("[DeepPipeline] Deep LLM failed: %s", exc)
+
+    return {
+        "targeted_questions":       deep_analysis.get("targeted_questions", []),
+        "dsa_bridge":               deep_analysis.get("dsa_bridge", []),
+        "micro_project_suggestion": deep_analysis.get("micro_project_suggestion", ""),
+    }
