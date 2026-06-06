@@ -34,6 +34,23 @@ export default function PlaceBuddyDashboard() {
   const [currentAnalysisId, setCurrentAnalysisId] = useState(null);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
+  const handleNavClick = (sectionId) => {
+    if (appState !== 'idle') {
+      setAppState('idle');
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
   const resetResults = () => {
     setCoreResult(null);
     setDeepResult(null);
@@ -540,9 +557,18 @@ export default function PlaceBuddyDashboard() {
         </h1>
       </div>
       <div className="flex items-center gap-8 text-sm font-semibold text-zinc-300">
-        <a href="#" className="hover:text-white transition-colors">Home</a>
-        <a href="#" className="text-white border-b-2 border-indigo-500 pb-1">Dashboard</a>
-        <a href="#" className="hover:text-white transition-colors">Upskill</a>
+        <button
+          onClick={() => handleNavClick('dashboard-section')}
+          className="text-white border-b-2 border-indigo-500 pb-1 transition-all duration-300 hover:text-white"
+        >
+          Dashboard
+        </button>
+        <button
+          onClick={() => handleNavClick('recent-analyses-section')}
+          className="hover:text-white transition-colors pb-1 border-b-2 border-transparent"
+        >
+          Recent Analyses
+        </button>
         <button className="flex items-center gap-2 hover:text-white transition-colors ml-4 bg-white/5 p-2 rounded-full border border-white/10 hover:bg-white/10">
           <UserCircle className="w-6 h-6 text-zinc-300" />
         </button>
@@ -551,7 +577,7 @@ export default function PlaceBuddyDashboard() {
   );
 
   const renderInputZone = () => (
-    <div className="max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div id="dashboard-section" className="scroll-mt-24 max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
           <FileText className="w-6 h-6 text-indigo-400 drop-shadow-[0_0_5px_rgba(99,102,241,0.8)]" /> Resume
@@ -722,25 +748,31 @@ export default function PlaceBuddyDashboard() {
   );
 
   const renderRecentAnalyses = () => {
-    if (recentAnalyses.length === 0) return null;
-
     return (
-      <div className="max-w-4xl mx-auto mt-16 px-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      <div id="recent-analyses-section" className="scroll-mt-24 max-w-4xl mx-auto mt-16 px-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
         <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
             <History className="w-5 h-5 text-indigo-400" />
             Recent Analyses
           </h3>
-          <button
-            onClick={clearRecentEntries}
-            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-red-400 transition-colors py-1 px-2 rounded-lg hover:bg-white/5"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            Clear All
-          </button>
+          {recentAnalyses.length > 0 && (
+            <button
+              onClick={clearRecentEntries}
+              className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-red-400 transition-colors py-1 px-2 rounded-lg hover:bg-white/5"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Clear All
+            </button>
+          )}
         </div>
 
-        <div className="flex flex-col gap-3">
+        {recentAnalyses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-8 rounded-2xl bg-zinc-900/20 border border-dashed border-zinc-800/50 text-center text-zinc-500">
+            <History className="w-8 h-8 mb-3 opacity-30 text-zinc-400" />
+            <p className="text-sm font-medium">No recent analyses yet. Analyzed resumes will appear here.</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
           {recentAnalyses.map((entry) => {
             const date = new Date(entry.timestamp);
             const isToday = date.toDateString() === new Date().toDateString();
@@ -803,6 +835,7 @@ export default function PlaceBuddyDashboard() {
             );
           })}
         </div>
+        )}
       </div>
     );
   };
