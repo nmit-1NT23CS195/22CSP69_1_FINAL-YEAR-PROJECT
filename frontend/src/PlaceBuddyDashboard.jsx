@@ -32,11 +32,13 @@ export default function PlaceBuddyDashboard() {
     }
   });
   const [currentAnalysisId, setCurrentAnalysisId] = useState(null);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const resetResults = () => {
     setCoreResult(null);
     setDeepResult(null);
     setIsDeepLoading(false);
+    setIsAdvancedOpen(false);
   };
 
   const deleteRecentEntry = (id) => {
@@ -820,24 +822,90 @@ export default function PlaceBuddyDashboard() {
     </div>
   );
 
-  const renderScoreDisplay = () => (
-    <div className="flex flex-col items-center justify-center p-10 bg-zinc-900/40 rounded-[2.5rem] border border-white/10 backdrop-blur-xl mb-12 shadow-[0_0_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none"></div>
-      <div className="text-sm font-bold text-zinc-400 uppercase tracking-[0.2em] mb-6 relative z-10">ATS Score</div>
-      <div className="relative flex items-center justify-center">
-        <svg className="w-48 h-48 transform -rotate-90">
-          <circle cx="96" cy="96" r="84" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-zinc-800" />
-          <circle cx="96" cy="96" r="84" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray="527.7" strokeDashoffset={527.7 - (527.7 * (coreResult ? Math.round(coreResult.ats_score) : 0)) / 100} className="text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.8)] transition-all duration-1000 ease-out" />
-        </svg>
-        <div className="absolute flex flex-col items-center">
-          <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-400">{coreResult ? Math.round(coreResult.ats_score) : 0}</span>
-          <span className="text-lg font-semibold text-zinc-500">/100</span>
+  const renderExecutiveSummary = () => {
+    const score = Math.round(coreResult.ats_score || 0);
+    const cog = coreResult.cognitive_analysis || {};
+    const bestRole = (cog.best_fit_roles || [])[0];
+    const sm = cog.skill_matrix || [];
+
+    const allSkills = sm
+      ? (Array.isArray(sm)
+          ? sm.map(s => ({ skill: s.skill_name, proficiency: s.proficiency_score || 0 }))
+          : Object.entries(sm).map(([k, v]) => ({ skill: k, proficiency: v.proficiency_score || 0 })))
+          .sort((a, b) => b.proficiency - a.proficiency)
+      : [];
+
+    const verifiedSkills = allSkills.filter(s => s.proficiency >= 50).map(s => formatSkillName(s.skill));
+    const missingSkills  = (coreResult.missing_skills || []).map(formatSkillName);
+
+    return (
+      <div className="bg-zinc-900/40 border border-indigo-500/20 rounded-[2.5rem] p-8 backdrop-blur-xl mb-12 shadow-[0_0_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none"></div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-center relative z-10">
+          <div className="flex flex-col items-center justify-center lg:border-r lg:border-white/10 lg:pr-8">
+            <span className="text-xs font-bold text-zinc-400 uppercase tracking-[0.2em] mb-4">ATS Score</span>
+            <div className="relative flex items-center justify-center">
+              <svg className="w-36 h-36 transform -rotate-90">
+                <circle cx="72" cy="72" r="62" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-zinc-800" />
+                <circle cx="72" cy="72" r="62" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="389.5" strokeDashoffset={389.5 - (389.5 * score) / 100} className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.6)] transition-all duration-1000 ease-out" />
+              </svg>
+              <div className="absolute flex flex-col items-center">
+                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-400">{score}</span>
+                <span className="text-xs font-semibold text-zinc-500">/100</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Best Fit Role</span>
+              <span className="text-lg font-bold text-white leading-snug">
+                {bestRole ? bestRole.role : 'N/A'}
+              </span>
+              {bestRole && (
+                <span className="text-xs text-indigo-400 font-semibold mt-0.5">
+                  {bestRole.match_percentage}% Profile Match
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Top Verified Skills</span>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {verifiedSkills.slice(0, 3).length > 0 ? (
+                  verifiedSkills.slice(0, 3).map((skill, i) => (
+                    <span key={i} className="text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-lg">
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-zinc-500 italic">None identified</span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Critical Skill Gaps</span>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {missingSkills.slice(0, 3).length > 0 ? (
+                  missingSkills.slice(0, 3).map((skill, i) => (
+                    <span key={i} className="text-xs font-semibold bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded-lg">
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-emerald-400 font-semibold">No critical gaps!</span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const renderResultsHeatmap = () => {
+  const renderSkillsAssessment = () => {
     let radarData = [];
     let bsDetector = [];
 
@@ -848,308 +916,249 @@ export default function PlaceBuddyDashboard() {
         if (Array.isArray(skill_matrix)) {
           radarData = skill_matrix.map((data) => ({
             skill: formatSkillName(data.skill_name),
-            proficiency: data.proficiency_score || 0,
-            yoe: data.estimated_yoe || 0
+            proficiency: data.proficiency_score || 0
           }));
         } else {
           radarData = Object.entries(skill_matrix).map(([skill, data]) => ({
             skill: formatSkillName(skill),
-            proficiency: data.proficiency_score || 0,
-            yoe: data.estimated_yoe || 0
+            proficiency: data.proficiency_score || 0
           }));
         }
-
-        // Clamp data to top 15 skills to prevent visual overlap on Radar Chart
         radarData = radarData.sort((a, b) => b.proficiency - a.proficiency).slice(0, 15);
       }
     }
 
     return (
-      <div className="max-w-6xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
-        <div className="flex items-center justify-between mb-8">
-          <button onClick={() => setAppState('idle')} className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors font-medium">
-            <ArrowLeft className="w-4 h-4" /> Back to Upload Screen
-          </button>
-          {coreResult && (
-            <button
-              onClick={generatePdfReport}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all duration-200 shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:-translate-y-0.5"
-            >
-              <Download className="w-4 h-4" />
-              Download Report
-            </button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl shadow-lg relative overflow-hidden group h-fit lg:col-span-1">
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent"></div>
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+            <Activity className="w-6 h-6 text-indigo-400" />
+            Forensic Skill Matrix
+          </h3>
+
+          {radarData.length > 0 ? (
+            <div className="h-[350px] w-full relative z-10">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                  <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                  <PolarAngleAxis dataKey="skill" tick={{ fill: '#a1a1aa', fontSize: 10, fontWeight: 'bold' }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#52525b', fontSize: 9 }} />
+                  <Radar name="Proficiency" dataKey="proficiency" stroke="#8b5cf6" strokeWidth={2} fill="#8b5cf6" fillOpacity={0.35} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-[350px] text-zinc-500 italic">No skill matrix data available.</div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="bg-zinc-900/40 border border-indigo-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(99,102,241,0.1)] relative overflow-hidden group h-fit lg:col-span-1">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent"></div>
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
-              <Activity className="w-7 h-7 text-indigo-400" />
-              Forensic Skill Matrix
-            </h3>
-
-            {radarData.length > 0 ? (
-              <div className="h-[400px] w-full relative z-10">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
-                    <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                    <PolarAngleAxis dataKey="skill" tick={{ fill: '#a1a1aa', fontSize: 11, fontWeight: 'bold' }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#52525b', fontSize: 10 }} />
-                    <Radar name="Proficiency" dataKey="proficiency" stroke="#8b5cf6" strokeWidth={2} fill="#8b5cf6" fillOpacity={0.35} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-[400px] text-zinc-500 italic">No skill matrix data available.</div>
-            )}
-          </div>
- 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:col-span-2 h-fit">
- 
-            <div className="bg-zinc-900/40 border border-emerald-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(52,211,153,0.1)] relative overflow-hidden h-fit lg:col-span-2">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
-                <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-                Verified Competencies
-              </h3>
-              <div className="flex flex-wrap gap-3 w-full relative z-10">
-                {radarData.filter(r => r.proficiency >= 50).map((r, idx) => (
-                  <div key={idx} className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-emerald-900/20 border border-emerald-800/50 text-emerald-400 font-semibold text-sm">
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
+            <h4 className="text-sm font-bold text-zinc-300 mb-4 flex items-center gap-2 relative z-10 uppercase tracking-wider">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              Verified Competencies
+            </h4>
+            <div className="flex flex-wrap gap-2 relative z-10">
+              {radarData.filter(r => r.proficiency >= 50).length > 0 ? (
+                radarData.filter(r => r.proficiency >= 50).map((r, idx) => (
+                  <div key={idx} className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-emerald-950/20 border border-emerald-800/40 text-emerald-400 font-semibold text-xs transition-colors hover:bg-emerald-900/25">
                     {r.skill}
                   </div>
-                ))}
-              </div>
+                ))
+              ) : (
+                <span className="text-xs text-zinc-500 italic">No verified competencies found</span>
+              )}
             </div>
+          </div>
 
-            <div className="bg-zinc-900/40 border border-amber-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(251,191,36,0.1)] relative overflow-hidden h-fit lg:col-span-1">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent"></div>
-              <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3 relative z-10">
-                <AlertCircle className="w-7 h-7 text-amber-400" />
-                Unverified Skills (Stated Only)
-              </h3>
-              <p className="text-sm text-zinc-400 mb-6 relative z-10">
-                The LLM Panel found no concrete project evidence for the following skills. Be prepared to defend these in an interview.
-              </p>
-
-              <div className="flex flex-wrap gap-3 w-full relative z-10">
-                {bsDetector.length > 0 ? bsDetector.map((skill, idx) => (
-                  <div key={idx} className="inline-flex flex-col items-start justify-center px-4 py-2 rounded-lg bg-amber-900/20 border border-amber-800/50 w-fit text-amber-400 font-semibold text-sm">
-                    <div className="flex items-center gap-2">
-                      <XCircle className="w-4 h-4" /> {formatSkillName(skill)}
-                    </div>
+          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent"></div>
+            <h4 className="text-sm font-bold text-zinc-300 mb-4 flex items-center gap-2 relative z-10 uppercase tracking-wider">
+              <AlertCircle className="w-5 h-5 text-red-400" />
+              Missing Skills (Critical Gaps)
+            </h4>
+            <div className="flex flex-wrap gap-2 relative z-10">
+              {coreResult?.missing_skills?.length > 0 ? (
+                coreResult.missing_skills.map((skill, idx) => (
+                  <div key={idx} className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-red-950/20 border border-red-900/40 text-red-400 font-semibold text-xs">
+                    {formatSkillName(skill)}
                   </div>
-                )) : (
-                  <div className="text-emerald-400 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-xl font-semibold">
-                    <CheckCircle2 className="w-5 h-5" /> All stated skills verified!
-                  </div>
-                )}
-              </div>
+                ))
+              ) : (
+                <div className="text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg font-semibold text-xs">
+                  <CheckCircle2 className="w-4 h-4" /> No critical missing skills!
+                </div>
+              )}
             </div>
+          </div>
 
-            <div className="bg-zinc-900/40 border border-red-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(239,68,68,0.1)] relative overflow-hidden h-fit lg:col-span-1">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent"></div>
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
-                <AlertCircle className="w-6 h-6 text-red-400" />
-                Missing Skills (Critical Gaps)
-              </h3>
-              <div className="flex flex-wrap gap-3 w-full relative z-10">
-                {coreResult?.missing_skills?.length > 0 ? (
-                  coreResult.missing_skills.map((skill, idx) => (
-                    <div key={idx} className="inline-flex flex-col items-start justify-center px-4 py-2 rounded-lg bg-red-900/20 border border-red-800/50 w-fit text-red-400 font-semibold text-sm">
-                      {formatSkillName(skill)}
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-emerald-400 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-xl font-semibold">
-                    <CheckCircle2 className="w-5 h-5" /> No critical missing skills!
-                  </div>
-                )}
-              </div>
+          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent"></div>
+            <h4 className="text-sm font-bold text-zinc-300 mb-2 flex items-center gap-2 relative z-10 uppercase tracking-wider">
+              <AlertCircle className="w-5 h-5 text-amber-400" />
+              Unverified Stated Skills
+            </h4>
+            <p className="text-xs text-zinc-400 mb-4 relative z-10">
+              No project evidence found. Be ready to defend these in interviews.
+            </p>
+            <div className="flex flex-wrap gap-2 relative z-10">
+              {bsDetector.length > 0 ? bsDetector.map((skill, idx) => (
+                <div key={idx} className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-amber-950/20 border border-amber-900/40 text-amber-400 font-semibold text-xs">
+                  {formatSkillName(skill)}
+                </div>
+              )) : (
+                <div className="text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg font-semibold text-xs">
+                  <CheckCircle2 className="w-4 h-4" /> All stated skills verified!
+                </div>
+              )}
             </div>
-
           </div>
         </div>
       </div>
     );
   };
 
-  const renderResultsDetailed = () => {
-    const signals = coreResult ? [
-      { name: "Semantic Similarity", value: `${(coreResult.keyword_metrics?.semantic_similarity * 100 || 0).toFixed(0)}%`, desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" },
-      { name: "TF-IDF Match", value: `${(coreResult.keyword_metrics?.tfidf_score * 100 || 0).toFixed(0)}%`, desc: "Keyword frequency alignment", color: "text-blue-400", bg: "bg-blue-500/5", border: "border-blue-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]" },
-      { name: "Skill Alignment", value: `${Object.values(coreResult.contextual_skill_weights || {}).reduce((acc, w) => acc + (w > 1 ? 1 : 0), 0)}`, desc: "Skills verified in context", color: "text-emerald-400", bg: "bg-emerald-500/5", border: "border-emerald-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(52,211,153,0.2)]" },
-      { name: "Resume Impact", value: `${coreResult.action_verbs_found?.length || 0}`, desc: "Impact-driven action verbs used", color: "text-pink-400", bg: "bg-pink-500/5", border: "border-pink-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]" },
-      { name: "Soft Skills", value: `${coreResult.soft_skills_found?.length || 0}`, desc: "Interpersonal attributes identified", color: "text-amber-400", bg: "bg-amber-500/5", border: "border-amber-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(251,191,36,0.2)]" },
-      { name: "Keyword Match", value: `${(coreResult.keyword_metrics?.keyword_match || 0).toFixed(0)}%`, desc: "Stop-word filtered keyword match", color: "text-teal-400", bg: "bg-teal-500/5", border: "border-teal-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(20,184,166,0.2)]" },
-    ] : [];
-
+  const renderCareerAndInterviewPrep = () => {
     const cog = coreResult?.cognitive_analysis || {};
     const roles = cog.best_fit_roles || [];
-    const pivots = cog.pivot_opportunities || [];
     const questions = deepResult?.targeted_questions || [];
-    const dsaBridge = deepResult?.dsa_bridge || [];
-    const microProject = deepResult?.micro_project_suggestion || "";
 
     return (
-      <div className="max-w-6xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
-        <div className="flex items-center justify-between mb-8">
-          <button onClick={() => setAppState('idle')} className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors font-medium">
-            <ArrowLeft className="w-4 h-4" /> Back to Upload Screen
-          </button>
-          {coreResult && (
-            <button
-              onClick={generatePdfReport}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all duration-200 shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:-translate-y-0.5"
-            >
-              <Download className="w-4 h-4" />
-              Download Report
-            </button>
-          )}
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        <div className="lg:col-span-1 flex flex-col gap-6">
+          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl shadow-lg relative overflow-hidden group h-fit">
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent"></div>
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+              <Compass className="w-6 h-6 text-teal-400" />
+              Career Constellation
+            </h3>
 
-        {renderScoreDisplay()}
-
-        <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-          ML Signal Breakdown
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
-          {signals.map((sig, i) => (
-            <div key={i} className={`p-6 rounded-3xl border ${sig.bg} ${sig.border} backdrop-blur-md relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 ${sig.glow}`}>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">{sig.name}</div>
-              <div className={`text-4xl font-black ${sig.color} mb-3 drop-shadow-md`}>{sig.value}</div>
-              <div className="text-sm text-zinc-500 font-medium leading-relaxed">{sig.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Constellation View */}
-          <div className="lg:col-span-1 flex flex-col gap-8">
-            <div className="bg-zinc-900/40 border border-teal-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(20,184,166,0.1)] relative overflow-hidden group h-fit">
-              <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent"></div>
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
-                <Compass className="w-6 h-6 text-teal-400" />
-                Career Constellation
-              </h3>
-
-              <div className="flex flex-col gap-4 relative z-10">
-                {roles.map((r, i) => (
-                  <div key={i} className="bg-teal-500/5 border border-teal-500/20 rounded-xl p-4 transition-all hover:bg-teal-500/10 hover:border-teal-500/40 hover:-translate-y-1 group/role cursor-pointer relative">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-teal-300 flex items-center gap-2">
-                        {r.role}
-                        <ChevronDown className="w-4 h-4 opacity-50 group-hover/role:rotate-180 transition-transform" />
-                      </span>
-                      <span className="text-teal-400 font-black text-sm bg-teal-500/20 px-2 py-1 rounded-md">{r.match_percentage}% Match</span>
-                    </div>
-                    <div className="max-h-0 opacity-0 overflow-hidden group-hover/role:max-h-[500px] group-hover/role:opacity-100 group-hover/role:mt-4 transition-all duration-500 ease-in-out">
-                      <p className="text-xs text-zinc-400 leading-relaxed border-t border-teal-500/10 pt-3">{r.rationale}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 relative z-10 border-t border-white/5 pt-6">
-                <h4 className="text-sm font-bold text-zinc-400 mb-4 flex items-center gap-2 uppercase tracking-wider">
-                  <Rocket className="w-4 h-4" /> Pivot Opportunities
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {pivots.map((p, i) => (
-                    <span key={i} className="text-xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700 px-3 py-1.5 rounded-full">
-                      {p}
+            <div className="flex flex-col gap-4 relative z-10">
+              {roles.map((r, i) => (
+                <div key={i} className="bg-teal-500/5 border border-teal-500/20 rounded-xl p-4 transition-all hover:bg-teal-500/10 hover:border-teal-500/40 group/role cursor-pointer relative">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-teal-300 flex items-center gap-2">
+                      {r.role}
+                      <ChevronDown className="w-4 h-4 opacity-50 group-hover/role:rotate-180 transition-transform" />
                     </span>
-                  ))}
+                    <span className="text-teal-400 font-black text-sm bg-teal-500/20 px-2 py-1 rounded-md">{r.match_percentage}% Match</span>
+                  </div>
+                  <div className="max-h-0 opacity-0 overflow-hidden group-hover/role:max-h-[500px] group-hover/role:opacity-100 group-hover/role:mt-4 transition-all duration-500 ease-in-out">
+                    <p className="text-xs text-zinc-400 leading-relaxed border-t border-teal-500/10 pt-3">{r.rationale}</p>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
+        </div>
 
-          {/* Interview Prep & Roadmap */}
-          <div className="lg:col-span-2 flex flex-col gap-8">
-            {/* The Brutal Interviewer */}
-            <div className="bg-zinc-900/40 border border-rose-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(244,63,94,0.1)] relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent"></div>
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
-                <Target className="w-6 h-6 text-rose-400" />
-                The "Brutal Interviewer" Simulator
-              </h3>
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl shadow-lg relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent"></div>
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+              <Target className="w-6 h-6 text-rose-400" />
+              The "Brutal Interviewer" Simulator
+            </h3>
 
-              <div className="grid grid-cols-1 gap-4 relative z-10">
-                {isDeepLoading ? (
-                  <div className="text-zinc-400 italic animate-pulse">Loading deep analysis questions...</div>
-                ) : questions.length > 0 ? questions.map((q, i) => (
-                  <div key={i} className="bg-rose-500/5 border-l-4 border-rose-500/50 p-4 rounded-r-xl text-zinc-300 text-sm font-medium group/q cursor-pointer hover:bg-rose-500/10 transition-all relative">
-                    <div className="flex justify-between items-center">
-                      <span className="text-rose-400 font-bold whitespace-nowrap">Question {i + 1}</span>
-                      <ChevronDown className="w-4 h-4 opacity-50 group-hover/q:rotate-180 transition-transform" />
-                    </div>
-                    <div className="max-h-0 opacity-0 overflow-hidden group-hover/q:max-h-[500px] group-hover/q:opacity-100 group-hover/q:mt-3 transition-all duration-500 ease-in-out">
-                      <p className="text-zinc-300 leading-relaxed text-sm">{q}</p>
-                    </div>
+            <div className="grid grid-cols-1 gap-4 relative z-10">
+              {isDeepLoading ? (
+                <div className="text-zinc-400 italic animate-pulse">Loading deep analysis questions...</div>
+              ) : questions.length > 0 ? questions.map((q, i) => (
+                <div key={i} className="bg-rose-500/5 border-l-4 border-rose-500/50 p-4 rounded-r-xl text-zinc-300 text-sm font-medium group/q cursor-pointer hover:bg-rose-500/10 transition-all relative">
+                  <div className="flex justify-between items-center">
+                    <span className="text-rose-400 font-bold whitespace-nowrap">Question {i + 1}</span>
+                    <ChevronDown className="w-4 h-4 opacity-50 group-hover/q:rotate-180 transition-transform" />
                   </div>
-                )) : (
-                  <div className="text-zinc-500 italic text-sm">No targeted questions available.</div>
-                )}
-              </div>
-
-              {dsaBridge.length > 0 && (
-                <div className="mt-6 relative z-10 bg-zinc-950/50 rounded-xl p-5 border border-white/5">
-                  <h4 className="text-sm font-bold text-rose-300 mb-3 flex items-center gap-2">
-                    <Briefcase className="w-4 h-4" /> Real-World DSA Bridge
-                  </h4>
-                  <div className="flex flex-col gap-3">
-                    {dsaBridge.map((bridge, i) => (
-                      <div key={i} className="bg-zinc-950/80 rounded-lg p-4 border border-zinc-800/50 group/dsa cursor-pointer transition-all hover:border-zinc-700">
-                        <div className="flex justify-between items-center">
-                          <span className="text-rose-400 font-bold text-xs uppercase tracking-wider">{bridge.dsa_concept}</span>
-                          <ChevronDown className="w-4 h-4 opacity-50 text-zinc-500 group-hover/dsa:rotate-180 transition-transform" />
-                        </div>
-                        <div className="max-h-0 opacity-0 overflow-hidden group-hover/dsa:max-h-[800px] group-hover/dsa:opacity-100 group-hover/dsa:mt-4 transition-all duration-500 ease-in-out">
-                          <div className="flex flex-col sm:flex-row gap-4 text-xs">
-                            <div className="flex-1 bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-zinc-400 relative">
-                              <span className="block text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Project Logic</span>
-                              {bridge.project_logic}
-                              <div className="absolute top-1/2 -right-5 -translate-y-1/2 w-6 h-6 bg-zinc-800 rounded-full flex flex-col items-center justify-center border border-zinc-700 hidden sm:flex z-10 shadow-lg">
-                                <ArrowRight className="w-3 h-3 text-rose-400" />
-                              </div>
-                            </div>
-                            <div className="flex-1 bg-rose-500/10 p-4 rounded-xl border border-rose-500/20 text-rose-300 font-semibold flex items-center justify-center text-center">
-                              {bridge.dsa_concept}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="max-h-0 opacity-0 overflow-hidden group-hover/q:max-h-[500px] group-hover/q:opacity-100 group-hover/q:mt-3 transition-all duration-500 ease-in-out">
+                    <p className="text-zinc-300 leading-relaxed text-sm">{q}</p>
                   </div>
                 </div>
+              )) : (
+                <div className="text-zinc-500 italic text-sm">No targeted questions available.</div>
               )}
             </div>
-
-            {/* Actionable Roadmap */}
-            <div className="bg-zinc-900/40 border border-sky-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(14,165,233,0.1)] relative overflow-hidden group/road h-fit cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent"></div>
-              <div className="flex justify-between items-center relative z-10">
-                <h3 className="text-xl font-bold text-white flex items-center gap-3">
-                  <Lightbulb className="w-6 h-6 text-sky-400" />
-                  Actionable Micro-Project Roadmap
-                </h3>
-                <ChevronDown className="w-5 h-5 text-sky-400 opacity-50 group-hover/road:rotate-180 transition-transform" />
-              </div>
-              <div className="max-h-0 opacity-0 overflow-hidden group-hover/road:max-h-[1000px] group-hover/road:opacity-100 group-hover/road:mt-6 transition-all duration-700 ease-in-out relative z-10">
-                <p className="text-zinc-300 leading-relaxed text-sm bg-sky-500/10 border border-sky-500/20 p-5 rounded-xl font-medium">
-                  {isDeepLoading ? (
-                    <span className="text-sky-300 italic animate-pulse">Generating actionable micro-project...</span>
-                  ) : (
-                    microProject || "No roadmap data generated."
-                  )}
-                </p>
-              </div>
-            </div>
           </div>
         </div>
+      </div>
+    );
+  };
+
+  const renderAdvancedAnalytics = () => {
+    const km = coreResult?.keyword_metrics || {};
+    const signals = coreResult ? [
+      { name: "Semantic Similarity", value: `${(km.semantic_similarity * 100 || 0).toFixed(0)}%`, desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" },
+      { name: "TF-IDF Match", value: `${(km.tfidf_score * 100 || 0).toFixed(0)}%`, desc: "Keyword frequency alignment", color: "text-blue-400", bg: "bg-blue-500/5", border: "border-blue-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]" },
+      { name: "Skill Alignment", value: `${Object.values(coreResult.contextual_skill_weights || {}).reduce((acc, w) => acc + (w > 1 ? 1 : 0), 0)}`, desc: "Skills verified in context", color: "text-emerald-400", bg: "bg-emerald-500/5", border: "border-emerald-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(52,211,153,0.2)]" },
+      { name: "Action Verbs", value: `${coreResult.action_verbs_found?.length || 0}`, desc: "Impact-driven action verbs used", color: "text-pink-400", bg: "bg-pink-500/5", border: "border-pink-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]" },
+      { name: "Soft Skills", value: `${coreResult.soft_skills_found?.length || 0}`, desc: "Interpersonal attributes identified", color: "text-amber-400", bg: "bg-amber-500/5", border: "border-amber-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(251,191,36,0.2)]" },
+      { name: "Keyword Match", value: `${(km.keyword_match || 0).toFixed(0)}%`, desc: "Stop-word filtered keyword match", color: "text-teal-400", bg: "bg-teal-500/5", border: "border-teal-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(20,184,166,0.2)]" },
+    ] : [];
+
+    return (
+      <div className="bg-zinc-900/20 border border-white/5 rounded-[2.5rem] p-6 backdrop-blur-xl shadow-inner mb-12 animate-in fade-in duration-500">
+        <button
+          onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+          className="w-full flex items-center justify-between py-2 px-4 hover:bg-white/5 rounded-2xl transition-colors text-left"
+        >
+          <span className="text-xl font-bold text-white flex items-center gap-3">
+            <BrainCircuit className="w-6 h-6 text-purple-400" />
+            Advanced Analytics
+          </span>
+          <ChevronDown className={`w-6 h-6 text-purple-400 transition-transform duration-300 ${isAdvancedOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {isAdvancedOpen && (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-8 animate-in fade-in slide-in-from-top-4 duration-500">
+            {signals.map((sig, i) => (
+              <div key={i} className={`p-6 rounded-3xl border ${sig.bg} ${sig.border} backdrop-blur-md relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 ${sig.glow}`}>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">{sig.name}</div>
+                <div className={`text-4xl font-black ${sig.color} mb-3 drop-shadow-md`}>{sig.value}</div>
+                <div className="text-sm text-zinc-500 font-medium leading-relaxed">{sig.desc}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderResultsHeader = () => (
+    <div className="flex items-center justify-between mb-8">
+      <button onClick={() => setAppState('idle')} className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors font-medium">
+        <ArrowLeft className="w-4 h-4" /> Back to Upload Screen
+      </button>
+      {coreResult && (
+        <button
+          onClick={generatePdfReport}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all duration-200 shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:-translate-y-0.5"
+        >
+          <Download className="w-4 h-4" />
+          Download Report
+        </button>
+      )}
+    </div>
+  );
+
+  const renderResultsHeatmap = () => {
+    return (
+      <div className="max-w-6xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
+        {renderResultsHeader()}
+        {renderExecutiveSummary()}
+        {renderSkillsAssessment()}
+      </div>
+    );
+  };
+
+  const renderResultsDetailed = () => {
+    return (
+      <div className="max-w-6xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
+        {renderResultsHeader()}
+        {renderExecutiveSummary()}
+        {renderCareerAndInterviewPrep()}
+        {renderAdvancedAnalytics()}
       </div>
     );
   };
