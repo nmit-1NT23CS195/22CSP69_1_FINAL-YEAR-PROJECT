@@ -30,9 +30,11 @@ export default function PlaceBuddyDashboard() {
 
   // Input State
   const [jdText, setJdText] = useState('');
+  const [jdFile, setJdFile] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const jdFileInputRef = useRef(null);
 
   // Dropdown State
   const [roles, setRoles] = useState([]);
@@ -116,6 +118,7 @@ export default function PlaceBuddyDashboard() {
       const formData = new FormData();
       formData.append("resume", resumeFile);
       if (jdText) formData.append("jd_text", jdText);
+      if (jdFile) formData.append("jd_file", jdFile);
       if (selectedRole) formData.append("role", selectedRole);
 
       const coreRes = await fetch(`${API_BASE_URL}/ats/score/core`, {
@@ -221,7 +224,7 @@ export default function PlaceBuddyDashboard() {
           <CheckCircle2 className="w-6 h-6 text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" /> Target Requirements
         </h2>
 
-        <div className="flex flex-col gap-2 h-full">
+        <div className="flex flex-col gap-2">
           <label className="text-xs font-semibold text-zinc-400 ml-1 uppercase tracking-wider">Job Description (Optional)</label>
           <textarea
             value={jdText}
@@ -230,8 +233,49 @@ export default function PlaceBuddyDashboard() {
               resetResults();
             }}
             placeholder="Paste the job description here..."
-            className="flex-1 min-h-[180px] resize-none rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-zinc-700/50 text-zinc-200 p-5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 placeholder:text-zinc-600 shadow-inner"
+            className="min-h-[180px] resize-none rounded-2xl bg-zinc-900/40 backdrop-blur-md border border-zinc-700/50 text-zinc-200 p-5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-300 placeholder:text-zinc-600 shadow-inner"
           />
+
+          {/* JD PDF Upload */}
+          <div className="flex flex-col gap-1 mt-1">
+            <label className="text-xs font-semibold text-zinc-400 ml-1 uppercase tracking-wider">Or Upload JD as PDF</label>
+            <input
+              type="file"
+              accept=".pdf"
+              ref={jdFileInputRef}
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setJdFile(e.target.files[0]);
+                  resetResults();
+                }
+              }}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => jdFileInputRef.current?.click()}
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-300 text-sm font-medium ${
+                jdFile
+                  ? 'border-emerald-500/50 bg-emerald-900/20 text-emerald-300 hover:bg-emerald-900/30'
+                  : 'border-zinc-700/50 bg-zinc-900/40 text-zinc-400 hover:border-indigo-500/50 hover:text-indigo-300 hover:bg-zinc-800/60'
+              }`}
+            >
+              <UploadCloud className={`w-4 h-4 flex-shrink-0 ${jdFile ? 'text-emerald-400' : 'text-zinc-500'}`} />
+              <span className="truncate">
+                {jdFile ? jdFile.name : 'Click to upload JD PDF'}
+              </span>
+              {jdFile && (
+                <span
+                  role="button"
+                  aria-label="Remove JD file"
+                  onClick={(e) => { e.stopPropagation(); setJdFile(null); resetResults(); }}
+                  className="ml-auto text-zinc-500 hover:text-red-400 transition-colors cursor-pointer"
+                >
+                  ✕
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col gap-2 relative mt-2" ref={dropdownRef}>
