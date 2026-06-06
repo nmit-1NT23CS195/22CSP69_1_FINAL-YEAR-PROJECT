@@ -34,6 +34,38 @@ export default function PlaceBuddyDashboard() {
   const [currentAnalysisId, setCurrentAnalysisId] = useState(null);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
+  // Staged loading screen states
+  const stages = [
+    "Parsing Resume",
+    "Extracting Skills",
+    "Matching Against Job Requirements",
+    "Calculating ATS Score",
+    "Generating Cognitive Insights",
+    "Finalizing Report"
+  ];
+  const [currentStageIndex, setCurrentStageIndex] = useState(0);
+  const [analysisResultData, setAnalysisResultData] = useState(null);
+  const [targetType, setTargetType] = useState(null);
+
+  // Drive progression through stages
+  useEffect(() => {
+    if (appState !== 'analyzing') return;
+
+    const hasData = analysisResultData !== null;
+    const intervalTime = hasData ? 400 : 1500;
+
+    const timer = setTimeout(() => {
+      if (currentStageIndex < stages.length - 1) {
+        setCurrentStageIndex(prev => prev + 1);
+      } else if (hasData && targetType) {
+        setCoreResult(analysisResultData);
+        setAppState(targetType);
+      }
+    }, intervalTime);
+
+    return () => clearTimeout(timer);
+  }, [appState, currentStageIndex, analysisResultData, targetType]);
+
   const handleNavClick = (sectionId) => {
     if (appState !== 'idle') {
       setAppState('idle');
@@ -169,7 +201,9 @@ export default function PlaceBuddyDashboard() {
     }
 
     setAppState('analyzing');
-    setLoadingText('Processing Analysis...');
+    setCurrentStageIndex(0);
+    setAnalysisResultData(null);
+    setTargetType(null);
     resetResults();
 
     try {
@@ -189,8 +223,6 @@ export default function PlaceBuddyDashboard() {
         setAppState('idle');
       } else {
         const data = await coreRes.json();
-        setCoreResult(data);
-        setAppState(type);
 
         const newId = Date.now().toString();
         setCurrentAnalysisId(newId);
@@ -227,6 +259,10 @@ export default function PlaceBuddyDashboard() {
             .catch(err => console.error("Deep analysis error:", err))
             .finally(() => setIsDeepLoading(false));
         }
+
+        // Save data and target type for the timer-based staged loading screen
+        setAnalysisResultData(data);
+        setTargetType(type);
       }
     } catch (error) {
       console.error("Network or fetch error:", error);
@@ -841,17 +877,56 @@ export default function PlaceBuddyDashboard() {
   };
 
   const renderAnalyzingView = () => (
-    <div className="flex flex-col items-center justify-center mt-32 animate-in fade-in zoom-in duration-500">
-      <div className="relative flex items-center justify-center w-40 h-40 mb-10">
-        <div className="absolute inset-0 rounded-full border-t-4 border-indigo-500 animate-spin opacity-80" style={{ animationDuration: '3s' }}></div>
-        <div className="absolute inset-3 rounded-full border-r-4 border-purple-500 animate-spin opacity-80" style={{ animationDirection: 'reverse', animationDuration: '2s' }}></div>
-        <div className="absolute inset-6 rounded-full border-b-4 border-emerald-500 animate-spin opacity-80" style={{ animationDuration: '1.5s' }}></div>
-        <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full animate-pulse shadow-[0_0_50px_rgba(99,102,241,0.8)] flex items-center justify-center">
-          <span className="text-white font-bold tracking-widest text-xs opacity-50">AI</span>
+    <div className="flex flex-col items-center justify-center mt-20 animate-in fade-in zoom-in duration-500 pb-20">
+      <div className="relative flex items-center justify-center w-32 h-32 mb-10">
+        <div className="absolute inset-0 rounded-full border-t-2 border-indigo-500 animate-spin opacity-80" style={{ animationDuration: '3s' }}></div>
+        <div className="absolute inset-2 rounded-full border-r-2 border-purple-500 animate-spin opacity-80" style={{ animationDirection: 'reverse', animationDuration: '2s' }}></div>
+        <div className="absolute inset-4 rounded-full border-b-2 border-emerald-500 animate-spin opacity-80" style={{ animationDuration: '1.5s' }}></div>
+        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full animate-pulse shadow-[0_0_40px_rgba(99,102,241,0.6)] flex items-center justify-center">
+          <BrainCircuit className="w-8 h-8 text-white opacity-90 animate-pulse" />
         </div>
       </div>
-      <h2 className="text-3xl font-black text-white tracking-wider mb-3">Analyzing Profile</h2>
-      <p className="text-indigo-400 font-mono text-lg animate-pulse">{loadingText}</p>
+
+      <h2 className="text-3xl font-black text-white tracking-wider mb-2">Analyzing Profile</h2>
+      <p className="text-zinc-400 text-sm mb-8 font-mono">Analyzing resume against target requirements...</p>
+
+      <div className="w-full max-w-md bg-zinc-900/40 border border-white/5 rounded-3xl p-6 backdrop-blur-xl shadow-2xl flex flex-col gap-4">
+        {stages.map((stage, idx) => {
+          const isCompleted = idx < currentStageIndex;
+          const isActive = idx === currentStageIndex;
+
+          return (
+            <div
+              key={idx}
+              className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-300 ${
+                isActive ? 'bg-indigo-500/5 border border-indigo-500/20 animate-pulse' : 'border border-transparent'
+              }`}
+            >
+              <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                {isCompleted ? (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 animate-in zoom-in duration-300" />
+                ) : isActive ? (
+                  <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <div className="w-3.5 h-3.5 rounded-full border border-zinc-700 bg-zinc-800/40"></div>
+                )}
+              </div>
+
+              <span
+                className={`text-sm font-medium transition-colors duration-300 ${
+                  isActive
+                    ? 'text-indigo-400 font-semibold'
+                    : isCompleted
+                    ? 'text-zinc-300'
+                    : 'text-zinc-600'
+                }`}
+              >
+                {stage}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 
