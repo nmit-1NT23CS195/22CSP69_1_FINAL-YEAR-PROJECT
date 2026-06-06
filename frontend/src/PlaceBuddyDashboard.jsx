@@ -934,17 +934,45 @@ export default function PlaceBuddyDashboard() {
     const score = Math.round(coreResult.ats_score || 0);
     const cog = coreResult.cognitive_analysis || {};
     const bestRole = (cog.best_fit_roles || [])[0];
-    const sm = cog.skill_matrix || [];
 
-    const allSkills = sm
-      ? (Array.isArray(sm)
-          ? sm.map(s => ({ skill: s.skill_name, proficiency: s.proficiency_score || 0 }))
-          : Object.entries(sm).map(([k, v]) => ({ skill: k, proficiency: v.proficiency_score || 0 })))
-          .sort((a, b) => b.proficiency - a.proficiency)
-      : [];
+    const matched = coreResult.technical_skills?.matched || coreResult.matched_skills || [];
+    const missing = coreResult.technical_skills?.missing || coreResult.missing_skills || [];
+    const km = coreResult.keyword_metrics || {};
+    const verbs = coreResult.action_verbs_found || [];
 
-    const verifiedSkills = allSkills.filter(s => s.proficiency >= 50).map(s => formatSkillName(s.skill));
-    const missingSkills  = (coreResult.missing_skills || []).map(formatSkillName);
+    // Compute dynamic strengths list (max 3 items)
+    const strengths = [];
+    matched.slice(0, 2).forEach(skill => {
+      strengths.push(`Strong ${formatSkillName(skill)} alignment`);
+    });
+    if (km.keyword_match >= 50) {
+      strengths.push("Good keyword coverage");
+    }
+    if (km.semantic_similarity >= 0.5) {
+      strengths.push("Strong project relevance");
+    } else if (matched.length > 5) {
+      strengths.push("Strong core skillset");
+    }
+    if (verbs.length >= 8 && strengths.length < 3) {
+      strengths.push("Strong action verb usage");
+    }
+    const displayStrengths = strengths.slice(0, 3);
+
+    // Compute dynamic improvements list (max 3 items)
+    const improvements = [];
+    missing.slice(0, 2).forEach(skill => {
+      improvements.push(`Missing ${formatSkillName(skill)}`);
+    });
+    if (km.keyword_match < 50) {
+      improvements.push("Low keyword alignment");
+    }
+    if (km.semantic_similarity < 0.5) {
+      improvements.push("Missing target JD keywords");
+    }
+    if (verbs.length < 5 && improvements.length < 3) {
+      improvements.push("Weak action verb usage");
+    }
+    const displayImprovements = improvements.slice(0, 3);
 
     return (
       <div className="bg-zinc-900/40 border border-indigo-500/20 rounded-[2.5rem] p-8 backdrop-blur-xl mb-12 shadow-[0_0_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
@@ -978,34 +1006,34 @@ export default function PlaceBuddyDashboard() {
               )}
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Top Verified Skills</span>
-              <div className="flex flex-wrap gap-1.5 mt-1">
-                {verifiedSkills.slice(0, 3).length > 0 ? (
-                  verifiedSkills.slice(0, 3).map((skill, i) => (
-                    <span key={i} className="text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-lg">
-                      {skill}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-xs text-zinc-500 italic">None identified</span>
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Top Strengths</span>
+              <ul className="flex flex-col gap-1.5 mt-1.5">
+                {displayStrengths.length > 0 ? displayStrengths.map((str, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-emerald-400 text-xs font-semibold">
+                    <span className="text-emerald-400 flex-shrink-0">✓</span>
+                    <span className="truncate" title={str}>{str}</span>
+                  </li>
+                )) : (
+                  <li className="text-zinc-500 text-xs italic">No matched strengths</li>
                 )}
-              </div>
+              </ul>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Critical Skill Gaps</span>
-              <div className="flex flex-wrap gap-1.5 mt-1">
-                {missingSkills.slice(0, 3).length > 0 ? (
-                  missingSkills.slice(0, 3).map((skill, i) => (
-                    <span key={i} className="text-xs font-semibold bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded-lg">
-                      {skill}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-xs text-emerald-400 font-semibold">No critical gaps!</span>
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Areas to Improve</span>
+              <ul className="flex flex-col gap-1.5 mt-1.5">
+                {displayImprovements.length > 0 ? displayImprovements.map((imp, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-amber-400 text-xs font-semibold">
+                    <span className="text-amber-500 flex-shrink-0">⚠</span>
+                    <span className="truncate" title={imp}>{imp}</span>
+                  </li>
+                )) : (
+                  <li className="text-emerald-400 text-xs font-semibold flex items-center gap-1">
+                    ✓ Perfect job fit!
+                  </li>
                 )}
-              </div>
+              </ul>
             </div>
           </div>
         </div>
