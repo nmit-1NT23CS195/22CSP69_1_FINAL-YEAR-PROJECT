@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight } from 'lucide-react';
+import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Download } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+import jsPDF from 'jspdf';
 const API_BASE_URL = "http://127.0.0.1:8080";
 
 const formatSkillName = (skill) => {
@@ -159,6 +160,300 @@ export default function PlaceBuddyDashboard() {
     }
   };
 
+  // -- PDF Report Generator ---------------------------------------------------
+  const generatePdfReport = () => {
+    if (!coreResult) return;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 48;
+    const contentW = pageW - margin * 2;
+    let y = margin;
+
+    // helpers
+    const checkPage = (needed = 24) => {
+      if (y + needed > pageH - margin) { doc.addPage(); y = margin; }
+    };
+
+    const drawSectionHeader = (title, r, g, b) => {
+      checkPage(40);
+      doc.setFillColor(r, g, b);
+      doc.roundedRect(margin, y, contentW, 28, 4, 4, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(255, 255, 255);
+      doc.text(title.toUpperCase(), margin + 12, y + 19);
+      y += 38;
+      doc.setTextColor(30, 30, 30);
+    };
+
+    const drawKeyValue = (label, value) => {
+      checkPage(20);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(100, 100, 120);
+      doc.text(label.toUpperCase(), margin + 10, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(30, 30, 30);
+      doc.text(String(value), margin + 155, y);
+      y += 17;
+    };
+
+    const drawWrappedText = (text, indent, fontSize) => {
+      const ind = indent || 0;
+      const fs = fontSize || 9;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(fs);
+      doc.setTextColor(50, 50, 60);
+      const lines = doc.splitTextToSize(String(text), contentW - ind);
+      lines.forEach(line => { checkPage(14); doc.text(line, margin + ind, y); y += 13; });
+      y += 3;
+    };
+
+    // Flowing badge tags
+    const drawTags = (items, r, g, b) => {
+      let x = margin;
+      const tagH = 18;
+      const padX = 9;
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      items.forEach(item => {
+        const label = String(item);
+        const tw = doc.getTextWidth(label) + padX * 2;
+        if (x + tw > pageW - margin) { x = margin; y += tagH + 5; checkPage(tagH + 5); }
+        doc.setFillColor(r, g, b, 0.12);
+        doc.setDrawColor(r, g, b);
+        doc.roundedRect(x, y - 13, tw, tagH, 3, 3, 'FD');
+        doc.setTextColor(r, g, b);
+        doc.text(label, x + padX, y - 1);
+        x += tw + 7;
+      });
+      y += tagH + 8;
+      doc.setTextColor(30, 30, 30);
+    };
+
+    // 3-column badge grid for verified skills
+    const drawSkillGrid = (items, r, g, b) => {
+      const cols = 3;
+      const cellW = Math.floor(contentW / cols);
+      const cellH = 22;
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      let startY = y;
+      items.forEach((item, idx) => {
+        const col = idx % cols;
+        if (col === 0 && idx > 0) { startY += cellH + 5; checkPage(cellH + 5); }
+        const x = margin + col * cellW;
+        const rowY = idx === 0 ? startY : startY;
+        const label = String(item);
+        const badgeW = cellW - 10;
+        doc.setFillColor(r, g, b, 0.1);
+        doc.setDrawColor(r, g, b);
+        doc.roundedRect(x + 2, rowY, badgeW, cellH, 3, 3, 'FD');
+        doc.setTextColor(r, g, b);
+        const trunc = label.length > 22 ? label.slice(0, 21) + '..' : label;
+        doc.text(trunc, x + 11, rowY + 14);
+      });
+      const rows = Math.ceil(items.length / cols);
+      y = startY + rows * (cellH + 5) + 8;
+      doc.setTextColor(30, 30, 30);
+    };
+
+    // -- COVER --
+    doc.setFillColor(14, 14, 22);
+    doc.rect(0, 0, pageW, 145, 'F');
+    doc.setFillColor(99, 102, 241);
+    doc.rect(0, 145, pageW, 4, 'F');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(28);
+    doc.setTextColor(255, 255, 255);
+    doc.text('PlaceBuddy', margin, 68);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(148, 163, 255);
+    doc.text('ATS Analysis Report', margin, 90);
+    doc.setFontSize(9);
+    doc.setTextColor(100, 105, 140);
+    doc.text(
+      'Generated: ' + new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      margin, 110
+    );
+    if (resumeFile) doc.text('Resume: ' + resumeFile.name, margin, 126);
+
+    // ATS ring (cover right)
+    const score = Math.round(coreResult.ats_score || 0);
+    const cx = pageW - 86, cy = 76, r2 = 44;
+    doc.setDrawColor(35, 35, 50); doc.setLineWidth(8);
+    doc.circle(cx, cy, r2, 'S');
+    const scoreRGB = score >= 70 ? [52, 211, 153] : score >= 45 ? [251, 191, 36] : [239, 68, 68];
+    doc.setDrawColor(scoreRGB[0], scoreRGB[1], scoreRGB[2]); doc.setLineWidth(8);
+    doc.circle(cx, cy, r2, 'S');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(24); doc.setTextColor(255, 255, 255);
+    doc.text(String(score), cx - doc.getTextWidth(String(score)) / 2, cy + 8);
+    doc.setFontSize(8); doc.setTextColor(140, 140, 175);
+    doc.text('/ 100', cx - doc.getTextWidth('/ 100') / 2, cy + 22);
+    doc.text('ATS SCORE', cx - doc.getTextWidth('ATS SCORE') / 2, cy + 36);
+
+    y = 168;
+
+    // -- Pre-compute shared data --
+    const cog = coreResult.cognitive_analysis || {};
+    const sm  = cog.skill_matrix;
+    const exp = coreResult.estimated_experience || {};
+    const km  = coreResult.keyword_metrics || {};
+
+    const allSkills = sm
+      ? (Array.isArray(sm)
+          ? sm.map(s => ({ skill: s.skill_name, proficiency: s.proficiency_score || 0, yoe: s.estimated_yoe || 0 }))
+          : Object.entries(sm).map(([k, v]) => ({ skill: k, proficiency: v.proficiency_score || 0, yoe: v.estimated_yoe || 0 })))
+          .sort((a, b) => b.proficiency - a.proficiency)
+      : [];
+
+    const verifiedSkills = allSkills.filter(s => s.proficiency >= 50).map(s => formatSkillName(s.skill));
+    const missingSkills  = (coreResult.missing_skills || []).map(formatSkillName);
+    const bestRole       = (cog.best_fit_roles || [])[0];
+
+    // -- 1. EXECUTIVE SUMMARY --
+    drawSectionHeader('Executive Summary', 99, 102, 241);
+    checkPage(108);
+    doc.setFillColor(246, 246, 255);
+    const summaryH = 81;
+    doc.roundedRect(margin, y, contentW, summaryH, 6, 6, 'F');
+    doc.setDrawColor(200, 202, 245);
+    doc.roundedRect(margin, y, contentW, summaryH, 6, 6, 'S');
+    y += 14;
+    const scoreLabel = score >= 70 ? 'Strong Match' : score >= 45 ? 'Moderate Match' : 'Needs Improvement';
+    drawKeyValue('ATS Score', score + ' / 100 — ' + scoreLabel);
+    drawKeyValue('Best Fit Role', bestRole ? bestRole.role + '  (' + bestRole.match_percentage + '% match)' : 'N/A');
+    drawKeyValue('Top 3 Verified Skills', verifiedSkills.slice(0, 3).join(', ') || 'N/A');
+    drawKeyValue('Top 3 Skill Gaps', missingSkills.slice(0, 3).join(', ') || 'None identified');
+    y += 10;
+
+    // -- 2. SKILL PROFICIENCY MATRIX --
+    if (allSkills.length) {
+      const top15 = allSkills.slice(0, 15);
+      drawSectionHeader('Skill Proficiency Matrix', 139, 92, 246);
+      top15.forEach(s => {
+        checkPage(20);
+        const pct = Math.max(0, Math.min(100, Math.round(s.proficiency)));
+        const barW = 150;
+        const filled = Math.round((pct / 100) * barW);
+        const barRGB = pct >= 70 ? [52, 211, 153] : pct >= 40 ? [139, 92, 246] : [251, 191, 36];
+
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(30, 30, 50);
+        const name = formatSkillName(s.skill);
+        doc.text(name.length > 24 ? name.slice(0, 22) + '..' : name, margin, y - 2);
+
+        // bar track
+        doc.setFillColor(220, 220, 235);
+        doc.roundedRect(margin + 155, y - 11, barW, 10, 2, 2, 'F');
+        // bar fill
+        doc.setFillColor(barRGB[0], barRGB[1], barRGB[2]);
+        if (filled > 0) doc.roundedRect(margin + 155, y - 11, filled, 10, 2, 2, 'F');
+
+        // percentage
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(70, 70, 100);
+        doc.text(pct + '%', margin + 155 + barW + 8, y - 2);
+
+        y += 18;
+      });
+      y += 6;
+    }
+
+    // -- 3. VERIFIED COMPETENCIES --
+    if (verifiedSkills.length) {
+      drawSectionHeader('Verified Competencies', 16, 160, 100);
+      drawSkillGrid(verifiedSkills, 16, 150, 90);
+    }
+
+    // -- 4. CRITICAL SKILL GAPS --
+    if (missingSkills.length) {
+      drawSectionHeader('Critical Skill Gaps', 210, 50, 50);
+      checkPage(32);
+      doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(140, 60, 60);
+      doc.text('The following skills are required but insufficient or absent in the resume:', margin, y);
+      y += 16;
+      drawTags(missingSkills, 200, 55, 55);
+    }
+
+    // -- 5. UNVERIFIED SKILLS --
+    const bsDetector = cog.bullshit_detector || [];
+    if (bsDetector.length) {
+      drawSectionHeader('Unverified Skills (Stated Only)', 180, 100, 10);
+      doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(140, 90, 20);
+      doc.text('No concrete project evidence found for these skills:', margin, y);
+      y += 16;
+      drawTags(bsDetector.map(formatSkillName), 200, 120, 20);
+    }
+
+    // -- 6. ROLE MATCH ANALYSIS --
+    const roles = cog.best_fit_roles || [];
+    if (roles.length) {
+      drawSectionHeader('Role Match Analysis', 20, 184, 166);
+      roles.forEach((r, i) => {
+        checkPage(44);
+        const pct = r.match_percentage || 0;
+        const rc = pct >= 70 ? [16, 155, 95] : pct >= 45 ? [180, 130, 10] : [190, 50, 50];
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(rc[0], rc[1], rc[2]);
+        doc.text((i + 1) + '.  ' + r.role, margin, y);
+        const badge = pct + '% Match';
+        const bw = doc.getTextWidth(badge) + 14;
+        doc.setFillColor(rc[0], rc[1], rc[2]);
+        doc.roundedRect(pageW - margin - bw, y - 12, bw, 16, 3, 3, 'F');
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(255, 255, 255);
+        doc.text(badge, pageW - margin - bw + 7, y - 1);
+        y += 16;
+        if (r.rationale) drawWrappedText(r.rationale, 14, 8);
+        y += 4;
+      });
+    }
+
+    // -- 7. ML SIGNAL BREAKDOWN --
+    drawSectionHeader('ML Signal Breakdown', 79, 70, 229);
+    drawKeyValue('Semantic Similarity', ((km.semantic_similarity || 0) * 100).toFixed(0) + '%');
+    drawKeyValue('TF-IDF Match',        ((km.tfidf_score || 0) * 100).toFixed(0) + '%');
+    drawKeyValue('Keyword Match',       Number(km.keyword_match || 0).toFixed(0) + '%');
+    drawKeyValue('Action Verbs Found',  (coreResult.action_verbs_found || []).length + ' verbs');
+    drawKeyValue('Soft Skills Found',   (coreResult.soft_skills_found || []).length + ' attributes');
+    y += 8;
+
+    // -- 8. TOP 3 INTERVIEW QUESTIONS --
+    const questions = (deepResult && deepResult.targeted_questions ? deepResult.targeted_questions : []).slice(0, 3);
+    if (questions.length) {
+      drawSectionHeader('Top Interview Questions', 200, 50, 80);
+      questions.forEach((q, i) => {
+        checkPage(50);
+        const lines = doc.splitTextToSize(String(q), contentW - 32);
+        const blockH = lines.length * 13 + 24;
+        doc.setFillColor(255, 245, 248);
+        doc.roundedRect(margin, y, contentW, blockH, 4, 4, 'F');
+        doc.setDrawColor(220, 130, 150);
+        doc.roundedRect(margin, y, contentW, blockH, 4, 4, 'S');
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(180, 50, 80);
+        doc.text('Q' + (i + 1), margin + 10, y + 15);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(50, 30, 40);
+        lines.forEach((line, li) => { doc.text(line, margin + 30, y + 15 + li * 13); });
+        y += blockH + 8;
+      });
+    }
+
+    // -- FOOTER on every page --
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFillColor(240, 240, 250);
+      doc.rect(0, pageH - 28, pageW, 28, 'F');
+      doc.setDrawColor(210, 210, 232);
+      doc.line(0, pageH - 28, pageW, pageH - 28);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(130, 130, 155);
+      doc.text('PlaceBuddy  |  Confidential ATS Report', margin, pageH - 10);
+      doc.text('Page ' + i + ' of ' + totalPages, pageW - margin - 52, pageH - 10);
+    }
+
+    doc.save('PlaceBuddy_Report_' + new Date().toISOString().slice(0, 10) + '.pdf');
+  };
+  // ---------------------------------------------------------------------------
   const renderNavbar = () => (
     <nav className="flex items-center justify-between px-8 py-4 border-b border-white/10 bg-zinc-900/40 backdrop-blur-xl sticky top-0 z-50">
       <div className="flex items-center gap-3">
@@ -166,7 +461,7 @@ export default function PlaceBuddyDashboard() {
           <span className="text-white font-black text-2xl leading-none">P</span>
         </div>
         <h1 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.4)] tracking-tight">
-          PlaceBuddy AI
+          PlaceBuddy
         </h1>
       </div>
       <div className="flex items-center gap-8 text-sm font-semibold text-zinc-300">
@@ -412,9 +707,20 @@ export default function PlaceBuddyDashboard() {
 
     return (
       <div className="max-w-6xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
-        <button onClick={() => setAppState('idle')} className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors font-medium mb-8">
-          <ArrowLeft className="w-4 h-4" /> Back to Upload Screen
-        </button>
+        <div className="flex items-center justify-between mb-8">
+          <button onClick={() => setAppState('idle')} className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors font-medium">
+            <ArrowLeft className="w-4 h-4" /> Back to Upload Screen
+          </button>
+          {coreResult && (
+            <button
+              onClick={generatePdfReport}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all duration-200 shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:-translate-y-0.5"
+            >
+              <Download className="w-4 h-4" />
+              Download Report
+            </button>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="bg-zinc-900/40 border border-indigo-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(99,102,241,0.1)] relative overflow-hidden group h-fit lg:col-span-1">
@@ -430,7 +736,7 @@ export default function PlaceBuddyDashboard() {
                   <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
                     <PolarGrid stroke="rgba(255,255,255,0.1)" />
                     <PolarAngleAxis dataKey="skill" tick={{ fill: '#a1a1aa', fontSize: 11, fontWeight: 'bold' }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 10]} tick={{ fill: '#52525b', fontSize: 10 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#52525b', fontSize: 10 }} />
                     <Radar name="Proficiency" dataKey="proficiency" stroke="#8b5cf6" strokeWidth={2} fill="#8b5cf6" fillOpacity={0.35} />
                   </RadarChart>
                 </ResponsiveContainer>
@@ -439,9 +745,9 @@ export default function PlaceBuddyDashboard() {
               <div className="flex items-center justify-center h-[400px] text-zinc-500 italic">No skill matrix data available.</div>
             )}
           </div>
-
+ 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:col-span-2 h-fit">
-
+ 
             <div className="bg-zinc-900/40 border border-emerald-500/30 rounded-[2rem] p-8 backdrop-blur-xl shadow-[0_0_30px_rgba(52,211,153,0.1)] relative overflow-hidden h-fit lg:col-span-2">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
               <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
@@ -449,10 +755,9 @@ export default function PlaceBuddyDashboard() {
                 Verified Competencies
               </h3>
               <div className="flex flex-wrap gap-3 w-full relative z-10">
-                {radarData.filter(r => r.proficiency >= 5).map((r, idx) => (
-                  <div key={idx} className="inline-flex flex-col items-start justify-center px-4 py-2 rounded-lg bg-emerald-900/20 border border-emerald-800/50 w-fit text-emerald-400 font-semibold text-sm">
-                    <span>{r.skill}</span>
-                    <span className="text-xs opacity-70 mt-1">{r.yoe} Yrs Exp</span>
+                {radarData.filter(r => r.proficiency >= 50).map((r, idx) => (
+                  <div key={idx} className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-emerald-900/20 border border-emerald-800/50 text-emerald-400 font-semibold text-sm">
+                    {r.skill}
                   </div>
                 ))}
               </div>
@@ -515,7 +820,6 @@ export default function PlaceBuddyDashboard() {
       { name: "Semantic Similarity", value: `${(coreResult.keyword_metrics?.semantic_similarity * 100 || 0).toFixed(0)}%`, desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" },
       { name: "TF-IDF Match", value: `${(coreResult.keyword_metrics?.tfidf_score * 100 || 0).toFixed(0)}%`, desc: "Keyword frequency alignment", color: "text-blue-400", bg: "bg-blue-500/5", border: "border-blue-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]" },
       { name: "Skill Alignment", value: `${Object.values(coreResult.contextual_skill_weights || {}).reduce((acc, w) => acc + (w > 1 ? 1 : 0), 0)}`, desc: "Skills verified in context", color: "text-emerald-400", bg: "bg-emerald-500/5", border: "border-emerald-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(52,211,153,0.2)]" },
-      { name: "Experience Est.", value: `${coreResult.estimated_experience?.total_yoe || 0} Yrs`, desc: "NER-extracted timeline", color: "text-purple-400", bg: "bg-purple-500/5", border: "border-purple-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(168,85,247,0.2)]" },
       { name: "Resume Impact", value: `${coreResult.action_verbs_found?.length || 0}`, desc: "Impact-driven action verbs used", color: "text-pink-400", bg: "bg-pink-500/5", border: "border-pink-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]" },
       { name: "Soft Skills", value: `${coreResult.soft_skills_found?.length || 0}`, desc: "Interpersonal attributes identified", color: "text-amber-400", bg: "bg-amber-500/5", border: "border-amber-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(251,191,36,0.2)]" },
       { name: "Keyword Match", value: `${(coreResult.keyword_metrics?.keyword_match || 0).toFixed(0)}%`, desc: "Stop-word filtered keyword match", color: "text-teal-400", bg: "bg-teal-500/5", border: "border-teal-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(20,184,166,0.2)]" },
@@ -530,9 +834,20 @@ export default function PlaceBuddyDashboard() {
 
     return (
       <div className="max-w-6xl mx-auto mt-12 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
-        <button onClick={() => setAppState('idle')} className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors font-medium mb-8">
-          <ArrowLeft className="w-4 h-4" /> Back to Upload Screen
-        </button>
+        <div className="flex items-center justify-between mb-8">
+          <button onClick={() => setAppState('idle')} className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors font-medium">
+            <ArrowLeft className="w-4 h-4" /> Back to Upload Screen
+          </button>
+          {coreResult && (
+            <button
+              onClick={generatePdfReport}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all duration-200 shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:-translate-y-0.5"
+            >
+              <Download className="w-4 h-4" />
+              Download Report
+            </button>
+          )}
+        </div>
 
         {renderScoreDisplay()}
 
