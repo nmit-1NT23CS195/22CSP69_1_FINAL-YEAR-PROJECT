@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Download } from 'lucide-react';
+import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Download, History, Trash2, Clock } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import jsPDF from 'jspdf';
 const API_BASE_URL = "http://127.0.0.1:8080";
@@ -22,11 +22,49 @@ export default function PlaceBuddyDashboard() {
   const [coreResult, setCoreResult] = useState(null);
   const [deepResult, setDeepResult] = useState(null);
   const [isDeepLoading, setIsDeepLoading] = useState(false);
+  const [recentAnalyses, setRecentAnalyses] = useState(() => {
+    try {
+      const stored = localStorage.getItem('placebuddy_recent');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      console.error("Failed to load recent analyses", e);
+      return [];
+    }
+  });
+  const [currentAnalysisId, setCurrentAnalysisId] = useState(null);
 
   const resetResults = () => {
     setCoreResult(null);
     setDeepResult(null);
     setIsDeepLoading(false);
+  };
+
+  const deleteRecentEntry = (id) => {
+    setRecentAnalyses(prev => {
+      const updated = prev.filter(item => item.id !== id);
+      localStorage.setItem('placebuddy_recent', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const clearRecentEntries = () => {
+    if (window.confirm("Clear all recent analyses?")) {
+      setRecentAnalyses([]);
+      localStorage.removeItem('placebuddy_recent');
+    }
+  };
+
+  const downloadPdfDataUri = (dataUri, filename) => {
+    try {
+      const link = document.createElement('a');
+      link.href = dataUri;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("Failed to download stored PDF", err);
+    }
   };
 
   // Input State
@@ -134,6 +172,23 @@ export default function PlaceBuddyDashboard() {
         const data = await coreRes.json();
         setCoreResult(data);
         setAppState(type);
+
+        const newId = Date.now().toString();
+        setCurrentAnalysisId(newId);
+
+        const newRecent = {
+          id: newId,
+          resumeFilename: resumeFile.name,
+          atsScore: Math.round(data.ats_score || 0),
+          bestFitRole: (data.cognitive_analysis?.best_fit_roles || [])[0]?.role || 'N/A',
+          timestamp: new Date().toISOString(),
+          pdfDataUri: null
+        };
+        setRecentAnalyses(prev => {
+          const updated = [newRecent, ...prev].slice(0, 5);
+          localStorage.setItem('placebuddy_recent', JSON.stringify(updated));
+          return updated;
+        });
 
         const extractedResumeText = data.extracted_resume_text || "";
         const extractedJdText = data.extracted_jd_text || jdText || "";
@@ -452,6 +507,24 @@ export default function PlaceBuddyDashboard() {
     }
 
     doc.save('PlaceBuddy_Report_' + new Date().toISOString().slice(0, 10) + '.pdf');
+
+    try {
+      const pdfDataUri = doc.output('datauristring');
+      if (currentAnalysisId) {
+        setRecentAnalyses(prev => {
+          const updated = prev.map(item => {
+            if (item.id === currentAnalysisId) {
+              return { ...item, pdfDataUri };
+            }
+            return item;
+          });
+          localStorage.setItem('placebuddy_recent', JSON.stringify(updated));
+          return updated;
+        });
+      }
+    } catch (err) {
+      console.error("Failed to store generated PDF to recent analyses", err);
+    }
   };
   // ---------------------------------------------------------------------------
   const renderNavbar = () => (
@@ -645,6 +718,92 @@ export default function PlaceBuddyDashboard() {
       </button>
     </div>
   );
+
+  const renderRecentAnalyses = () => {
+    if (recentAnalyses.length === 0) return null;
+
+    return (
+      <div className="max-w-4xl mx-auto mt-16 px-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+        <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <History className="w-5 h-5 text-indigo-400" />
+            Recent Analyses
+          </h3>
+          <button
+            onClick={clearRecentEntries}
+            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-red-400 transition-colors py-1 px-2 rounded-lg hover:bg-white/5"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Clear All
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {recentAnalyses.map((entry) => {
+            const date = new Date(entry.timestamp);
+            const isToday = date.toDateString() === new Date().toDateString();
+            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateStr = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+            const displayTime = isToday ? `Today, ${timeStr}` : `${dateStr}, ${timeStr}`;
+
+            return (
+              <div
+                key={entry.id}
+                className="flex items-center justify-between p-4 rounded-2xl bg-zinc-900/40 border border-white/5 backdrop-blur-md hover:border-white/10 transition-all duration-300"
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 text-indigo-400">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-semibold text-zinc-200 truncate">{entry.resumeFilename}</h4>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5 text-xs text-zinc-500">
+                      <span>{entry.bestFitRole}</span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {displayTime}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 flex-shrink-0">
+                  <div className="bg-zinc-800/60 px-3 py-1.5 rounded-xl border border-white/5 flex items-center gap-1.5">
+                    <span className={`text-sm font-black ${
+                      entry.atsScore >= 70 ? 'text-emerald-400' : entry.atsScore >= 45 ? 'text-amber-400' : 'text-red-400'
+                    }`}>
+                      {entry.atsScore}
+                    </span>
+                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">ATS</span>
+                  </div>
+
+                  {entry.pdfDataUri ? (
+                    <button
+                      onClick={() => downloadPdfDataUri(entry.pdfDataUri, `PlaceBuddy_Report_${entry.resumeFilename.replace(/\.[^/.]+$/, "")}.pdf`)}
+                      className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-600/10 transition-all flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.3)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]"
+                      title="Download PDF report"
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <span className="text-[10px] text-zinc-500 font-semibold italic border border-dashed border-zinc-800 px-2 py-1.5 rounded-xl bg-zinc-900/20 select-none">
+                      Report not downloaded yet
+                    </span>
+                  )}
+
+                  <button
+                    onClick={() => deleteRecentEntry(entry.id)}
+                    className="p-2 rounded-xl bg-white/5 border border-white/5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all"
+                    title="Delete entry"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   const renderAnalyzingView = () => (
     <div className="flex flex-col items-center justify-center mt-32 animate-in fade-in zoom-in duration-500">
@@ -1010,6 +1169,7 @@ export default function PlaceBuddyDashboard() {
           <div className="pb-24">
             {renderInputZone()}
             {renderActionButtons()}
+            {renderRecentAnalyses()}
           </div>
         )}
 
