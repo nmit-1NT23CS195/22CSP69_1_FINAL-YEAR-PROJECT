@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight } from 'lucide-react';
+import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 const API_BASE_URL = "http://127.0.0.1:8080";
 
@@ -21,6 +21,11 @@ export default function PlaceBuddyDashboard() {
   const [coreResult, setCoreResult] = useState(null);
   const [deepResult, setDeepResult] = useState(null);
   const [isDeepLoading, setIsDeepLoading] = useState(false);
+  const [revealedAnswers, setRevealedAnswers] = useState({});
+
+  const toggleAnswer = (index) => {
+    setRevealedAnswers(prev => ({ ...prev, [index]: !prev[index] }));
+  };
 
   const resetResults = () => {
     setCoreResult(null);
@@ -136,13 +141,18 @@ export default function PlaceBuddyDashboard() {
 
         if (extractedResumeText && extractedJdText) {
           setIsDeepLoading(true);
-          const deepFormData = new FormData();
-          deepFormData.append("resume_text", extractedResumeText);
-          deepFormData.append("jd_text", extractedJdText);
+          const deepPayload = {
+            resume_text: extractedResumeText,
+            jd_text: extractedJdText,
+            // Pass pre-parsed structured data to enable the compact JSON prompt path
+            skill_matrix: data.cognitive_analysis?.skill_matrix || null,
+            resume_sections: data.resume_sections || null,
+          };
 
           fetch(`${API_BASE_URL}/ats/score/deep`, {
             method: "POST",
-            body: deepFormData,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(deepPayload),
           })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(deepData => { setDeepResult(deepData); })
@@ -562,17 +572,40 @@ export default function PlaceBuddyDashboard() {
               <div className="grid grid-cols-1 gap-4 relative z-10">
                 {isDeepLoading ? (
                   <div className="text-zinc-400 italic animate-pulse">Loading deep analysis questions...</div>
-                ) : questions.length > 0 ? questions.map((q, i) => (
-                  <div key={i} className="bg-rose-500/5 border-l-4 border-rose-500/50 p-4 rounded-r-xl text-zinc-300 text-sm font-medium group/q cursor-pointer hover:bg-rose-500/10 transition-all relative">
-                    <div className="flex justify-between items-center">
-                      <span className="text-rose-400 font-bold whitespace-nowrap">Question {i + 1}</span>
-                      <ChevronDown className="w-4 h-4 opacity-50 group-hover/q:rotate-180 transition-transform" />
+                ) : questions.length > 0 ? questions.map((item, index) => {
+                  const questionText = typeof item === 'object' ? item.question : item;
+                  const expectedAnswer = typeof item === 'object' ? item.expected_answer : null;
+                  return (
+                    <div key={index} className="bg-rose-500/5 border-l-4 border-rose-500/50 rounded-r-xl text-zinc-300 text-sm font-medium transition-all relative">
+                      <div className="group/q cursor-pointer hover:bg-rose-500/10 transition-all p-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-rose-400 font-bold whitespace-nowrap">Question {index + 1}</span>
+                          <ChevronDown className="w-4 h-4 opacity-50 group-hover/q:rotate-180 transition-transform" />
+                        </div>
+                        <div className="max-h-0 opacity-0 overflow-hidden group-hover/q:max-h-[500px] group-hover/q:opacity-100 group-hover/q:mt-3 transition-all duration-500 ease-in-out">
+                          <p className="text-zinc-300 leading-relaxed text-sm">{questionText}</p>
+                        </div>
+                      </div>
+
+                      {expectedAnswer && (
+                        <div className="px-4 pb-4">
+                          <button
+                            onClick={() => toggleAnswer(index)}
+                            className="mt-4 px-3 py-1.5 text-xs font-mono text-emerald-400 hover:text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-800/50 rounded transition-colors flex items-center gap-2 w-fit"
+                          >
+                            {revealedAnswers[index] ? '[-] Hide Expected Answer' : '[+] Reveal Expected Answer'}
+                          </button>
+                          {revealedAnswers[index] && (
+                            <div className="mt-3 p-4 bg-slate-950/80 rounded-md border-l-2 border-emerald-500 text-slate-300 text-sm font-mono whitespace-pre-wrap animate-in fade-in slide-in-from-top-2 duration-200">
+                              <span className="text-emerald-500 block text-xs uppercase tracking-wider mb-2">// EXPECTED CRITERIA:</span>
+                              {expectedAnswer}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <div className="max-h-0 opacity-0 overflow-hidden group-hover/q:max-h-[500px] group-hover/q:opacity-100 group-hover/q:mt-3 transition-all duration-500 ease-in-out">
-                      <p className="text-zinc-300 leading-relaxed text-sm">{q}</p>
-                    </div>
-                  </div>
-                )) : (
+                  );
+                }) : (
                   <div className="text-zinc-500 italic text-sm">No targeted questions available.</div>
                 )}
               </div>

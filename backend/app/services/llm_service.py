@@ -164,25 +164,21 @@ _CORE_SCHEMA: Dict[str, Any] = {
 # Running them concurrently with Call 1 means we no longer wait serially.
 # ---------------------------------------------------------------------------
 _DEEP_SYSTEM_PROMPT = """\
-You are a ruthless Senior Engineer conducting a technical interview panel.
+You are a ruthless Senior Engineer conducting a focused technical interview.
+You are evaluating a candidate based on a pre-parsed JSON profile below.
+Output ONLY a valid JSON object. No markdown. No explanation.
 
-Analyse the candidate's resume and JD. Output ONLY a valid JSON object.
-
-1. THE BRUTAL INTERVIEWER
-   Generate 4 targeted_questions that are hostile and highly technical.
-   Each question must target a specific weakness or unverified claim in the resume.
-   Do not ask generic questions. Each must reference a specific project or claim.
-
-2. DSA BRIDGE
-   For each of the candidate's real projects, identify the underlying Data Structure
-   or Algorithm used. Output as dsa_bridge (project_logic, dsa_concept pairs).
-   Be specific: not just "array" but "sliding window on a sorted array" or "HNSW graph".
-
-3. MICRO PROJECT
-   In exactly 2 sentences, output a micro_project_suggestion that bridges the
-   candidate's exact skill gap relative to the JD.
-
-Return ONLY valid JSON. No markdown. No explanation.
+CRITICAL OUTPUT LIMITS — STRICTLY ENFORCED:
+- targeted_questions: Generate EXACTLY 2 questions. Each must be hostile and highly
+  specific, targeting a concrete weakness or unverified claim in the candidate's
+  skill_matrix or project_sections. Reference a specific skill or project by name.
+  For each question, provide an expected_answer that is EXACTLY 1-2 concise sentences
+  summarising the key criteria that would constitute a strong answer.
+- dsa_bridge: For each project in the candidate's project sections, identify the
+  underlying DSA concept. Each dsa_concept MUST be specific (e.g. "sliding window",
+  not just "array"). The project_logic explanation must be under 3 sentences.
+- micro_project_suggestion: EXACTLY 2 sentences bridging the candidate's exact skill
+  gap to the JD requirements.
 """
 
 _DEEP_SCHEMA: Dict[str, Any] = {
@@ -190,7 +186,14 @@ _DEEP_SCHEMA: Dict[str, Any] = {
     "properties": {
         "targeted_questions": {
             "type": "array",
-            "items": {"type": "string"},
+            "items": {
+                "type": "object",
+                "properties": {
+                    "question": {"type": "string"},
+                    "expected_answer": {"type": "string"},
+                },
+                "required": ["question", "expected_answer"],
+            },
         },
         "dsa_bridge": {
             "type": "array",
@@ -208,14 +211,21 @@ _DEEP_SCHEMA: Dict[str, Any] = {
     "required": ["targeted_questions", "dsa_bridge", "micro_project_suggestion"],
 }
 
-# ---------------------------------------------------------------------------
-# Shared user prompt template (both calls receive the same resume + JD)
-# ---------------------------------------------------------------------------
+# Shared user prompt template for CORE call (raw text)
 _USER_PROMPT_TEMPLATE = """\
 RESUME TEXT:
 {resume_text}
 
 JOB DESCRIPTION:
+{jd_text}
+"""
+
+# Structured user prompt for DEEP call (pre-parsed JSON — compact, low token count)
+_DEEP_USER_PROMPT_TEMPLATE = """\
+COMPACT CANDIDATE PROFILE (pre-parsed JSON — use this instead of raw resume):
+{structured_profile}
+
+JOB DESCRIPTION (truncated):
 {jd_text}
 """
 
@@ -454,25 +464,46 @@ async def run_core_analysis(resume_text: str, jd_text: str) -> Dict[str, Any]:
         )
 
 
-async def run_deep_analysis(resume_text: str, jd_text: str) -> Dict[str, Any]:
+async def run_deep_analysis(
+    resume_text: str,
+    jd_text: str,
+    skill_matrix: list = None,
+    resume_sections: dict = None,
+) -> Dict[str, Any]:
     """
     Stage 2 — Deep Analysis Call.
 
-    Fires only the DeepAnalysisSchema against Gemini and returns the result.
-    Called by run_deep_pipeline() which receives pre-extracted resume_text
-    from the core stage (skips all parsing overhead).
+    Accepts a pre-parsed structured profile (skill_matrix + resume_sections)
+    to dramatically reduce input token count vs. sending raw resume_text.
+    Falls back to raw resume_text if structured data is not provided.
 
     Returns a fully populated dict (or _DEEP_FALLBACK on any failure):
-        targeted_questions, dsa_bridge, micro_project_suggestion
+        targeted_questions (list of {question, expected_answer} objects),
+        dsa_bridge, micro_project_suggestion
     """
     if not _LLM_API_KEY:
         logger.info("LLM_API_KEY not configured. Returning deep fallback.")
         return _DEEP_FALLBACK
 
-    user_text = _USER_PROMPT_TEMPLATE.format(
-        resume_text=resume_text[:8000],
-        jd_text=jd_text[:2000],
-    )
+    # Build a compact structured profile if pre-parsed data is available
+    if skill_matrix is not None and resume_sections is not None:
+        # Only send the sections that have dense project/experience content
+        key_sections = {k: v[:600] for k, v in resume_sections.items()
+                        if k in ("experience", "projects", "education", "summary") and v}
+        structured_profile = json.dumps({
+            "skill_matrix": skill_matrix,       # LLM-parsed skills with YoE + context_proof
+            "project_sections": key_sections,   # structured resume sections (truncated)
+        }, indent=None, separators=(',', ':'))  # compact JSON = fewer tokens
+        user_text = _DEEP_USER_PROMPT_TEMPLATE.format(
+            structured_profile=structured_profile[:6000],  # hard cap: ~1500 tokens
+            jd_text=jd_text[:1500],
+        )
+    else:
+        # Fallback: raw text path (legacy, higher token cost)
+        user_text = _USER_PROMPT_TEMPLATE.format(
+            resume_text=resume_text[:8000],
+            jd_text=jd_text[:2000],
+        )
 
     async with httpx.AsyncClient(timeout=120.0) as client:
         return await _call_gemini_async(

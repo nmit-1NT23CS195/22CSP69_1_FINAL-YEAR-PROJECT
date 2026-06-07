@@ -464,18 +464,30 @@ async def run_core_pipeline(
     }
 
 
-async def run_deep_pipeline(resume_text: str, jd_text: str) -> Dict[str, Any]:
+async def run_deep_pipeline(
+    resume_text: str,
+    jd_text: str,
+    skill_matrix: list = None,
+    resume_sections: dict = None,
+) -> Dict[str, Any]:
     """
-    Stage 2 pipeline: receives pre-extracted text strings (no file parsing),
-    calls only DeepAnalysisSchema LLM call, and returns the deep analysis dict.
+    Stage 2 pipeline: receives pre-extracted text + optional structured data.
 
-    This is intentionally lightweight — no TF-IDF, no pgvector, no NLP.
-    The heavy deterministic work already happened in run_core_pipeline().
+    When skill_matrix and resume_sections are supplied (from /score/core response),
+    they are forwarded directly to run_deep_analysis to build a compact JSON prompt
+    instead of sending raw resume_text — significantly reducing input token cost.
+
+    Fallback: if structured data is not provided, raw resume_text is used.
     """
     deep_analysis: Dict[str, Any] = {}
     try:
         from app.services.llm_service import run_deep_analysis
-        deep_analysis = await run_deep_analysis(resume_text, jd_text)
+        deep_analysis = await run_deep_analysis(
+            resume_text=resume_text,
+            jd_text=jd_text,
+            skill_matrix=skill_matrix,
+            resume_sections=resume_sections,
+        )
         logger.info("[DeepPipeline] Deep LLM analysis complete.")
     except Exception as exc:
         logger.error("[DeepPipeline] Deep LLM failed: %s", exc)
