@@ -1,9 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-<<<<<<< HEAD
-import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
-=======
-import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Download, History, Trash2, Clock } from 'lucide-react';
->>>>>>> 559a8018271b39a0cd1afe901da4d31b2135a8b7
+import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Eye, EyeOff, Download, History, Trash2, Clock } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import jsPDF from 'jspdf';
 const API_BASE_URL = "http://127.0.0.1:8080";
@@ -26,12 +22,12 @@ export default function PlaceBuddyDashboard() {
   const [coreResult, setCoreResult] = useState(null);
   const [deepResult, setDeepResult] = useState(null);
   const [isDeepLoading, setIsDeepLoading] = useState(false);
-<<<<<<< HEAD
   const [revealedAnswers, setRevealedAnswers] = useState({});
 
   const toggleAnswer = (index) => {
     setRevealedAnswers(prev => ({ ...prev, [index]: !prev[index] }));
-=======
+  };
+
   const [recentAnalyses, setRecentAnalyses] = useState(() => {
     try {
       const stored = localStorage.getItem('placebuddy_recent');
@@ -91,7 +87,6 @@ export default function PlaceBuddyDashboard() {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
->>>>>>> 559a8018271b39a0cd1afe901da4d31b2135a8b7
   };
 
   const resetResults = () => {
@@ -425,20 +420,20 @@ export default function PlaceBuddyDashboard() {
 
     // -- Pre-compute shared data --
     const cog = coreResult.cognitive_analysis || {};
-    const sm  = cog.skill_matrix;
+    const sm = cog.skill_matrix;
     const exp = coreResult.estimated_experience || {};
-    const km  = coreResult.keyword_metrics || {};
+    const km = coreResult.keyword_metrics || {};
 
     const allSkills = sm
       ? (Array.isArray(sm)
-          ? sm.map(s => ({ skill: s.skill_name, proficiency: s.proficiency_score || 0, yoe: s.estimated_yoe || 0 }))
-          : Object.entries(sm).map(([k, v]) => ({ skill: k, proficiency: v.proficiency_score || 0, yoe: v.estimated_yoe || 0 })))
-          .sort((a, b) => b.proficiency - a.proficiency)
+        ? sm.map(s => ({ skill: s.skill_name, proficiency: s.proficiency_score || 0, yoe: s.estimated_yoe || 0 }))
+        : Object.entries(sm).map(([k, v]) => ({ skill: k, proficiency: v.proficiency_score || 0, yoe: v.estimated_yoe || 0 })))
+        .sort((a, b) => b.proficiency - a.proficiency)
       : [];
 
     const verifiedSkills = allSkills.filter(s => s.proficiency >= 50).map(s => formatSkillName(s.skill));
-    const missingSkills  = (coreResult.missing_skills || []).map(formatSkillName);
-    const bestRole       = (cog.best_fit_roles || [])[0];
+    const missingSkills = (coreResult.missing_skills || []).map(formatSkillName);
+    const bestRole = (cog.best_fit_roles || [])[0];
 
     // -- 1. EXECUTIVE SUMMARY --
     drawSectionHeader('Executive Summary', 99, 102, 241);
@@ -538,10 +533,10 @@ export default function PlaceBuddyDashboard() {
     // -- 7. ML SIGNAL BREAKDOWN --
     drawSectionHeader('ML Signal Breakdown', 79, 70, 229);
     drawKeyValue('Semantic Similarity', ((km.semantic_similarity || 0) * 100).toFixed(0) + '%');
-    drawKeyValue('TF-IDF Match',        ((km.tfidf_score || 0) * 100).toFixed(0) + '%');
-    drawKeyValue('Keyword Match',       Number(km.keyword_match || 0).toFixed(0) + '%');
-    drawKeyValue('Action Verbs Found',  (coreResult.action_verbs_found || []).length + ' verbs');
-    drawKeyValue('Soft Skills Found',   (coreResult.soft_skills_found || []).length + ' attributes');
+    drawKeyValue('TF-IDF Match', ((km.tfidf_score || 0) * 100).toFixed(0) + '%');
+    drawKeyValue('Keyword Match', Number(km.keyword_match || 0).toFixed(0) + '%');
+    drawKeyValue('Action Verbs Found', (coreResult.action_verbs_found || []).length + ' verbs');
+    drawKeyValue('Soft Skills Found', (coreResult.soft_skills_found || []).length + ' attributes');
     y += 8;
 
     // -- 8. TOP 3 INTERVIEW QUESTIONS --
@@ -702,11 +697,10 @@ export default function PlaceBuddyDashboard() {
             <button
               type="button"
               onClick={() => jdFileInputRef.current?.click()}
-              className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-300 text-sm font-medium ${
-                jdFile
-                  ? 'border-emerald-500/50 bg-emerald-900/20 text-emerald-300 hover:bg-emerald-900/30'
-                  : 'border-zinc-700/50 bg-zinc-900/40 text-zinc-400 hover:border-indigo-500/50 hover:text-indigo-300 hover:bg-zinc-800/60'
-              }`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-300 text-sm font-medium ${jdFile
+                ? 'border-emerald-500/50 bg-emerald-900/20 text-emerald-300 hover:bg-emerald-900/30'
+                : 'border-zinc-700/50 bg-zinc-900/40 text-zinc-400 hover:border-indigo-500/50 hover:text-indigo-300 hover:bg-zinc-800/60'
+                }`}
             >
               <UploadCloud className={`w-4 h-4 flex-shrink-0 ${jdFile ? 'text-emerald-400' : 'text-zinc-500'}`} />
               <span className="truncate">
@@ -825,68 +819,67 @@ export default function PlaceBuddyDashboard() {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-          {recentAnalyses.map((entry) => {
-            const date = new Date(entry.timestamp);
-            const isToday = date.toDateString() === new Date().toDateString();
-            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dateStr = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-            const displayTime = isToday ? `Today, ${timeStr}` : `${dateStr}, ${timeStr}`;
+            {recentAnalyses.map((entry) => {
+              const date = new Date(entry.timestamp);
+              const isToday = date.toDateString() === new Date().toDateString();
+              const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              const dateStr = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+              const displayTime = isToday ? `Today, ${timeStr}` : `${dateStr}, ${timeStr}`;
 
-            return (
-              <div
-                key={entry.id}
-                className="flex items-center justify-between p-4 rounded-2xl bg-zinc-900/40 border border-white/5 backdrop-blur-md hover:border-white/10 transition-all duration-300"
-              >
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 text-indigo-400">
-                    <FileText className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-zinc-200 truncate">{entry.resumeFilename}</h4>
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5 text-xs text-zinc-500">
-                      <span>{entry.bestFitRole}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {displayTime}</span>
+              return (
+                <div
+                  key={entry.id}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-zinc-900/40 border border-white/5 backdrop-blur-md hover:border-white/10 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 text-indigo-400">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-semibold text-zinc-200 truncate">{entry.resumeFilename}</h4>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5 text-xs text-zinc-500">
+                        <span>{entry.bestFitRole}</span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {displayTime}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-4 flex-shrink-0">
-                  <div className="bg-zinc-800/60 px-3 py-1.5 rounded-xl border border-white/5 flex items-center gap-1.5">
-                    <span className={`text-sm font-black ${
-                      entry.atsScore >= 70 ? 'text-emerald-400' : entry.atsScore >= 45 ? 'text-amber-400' : 'text-red-400'
-                    }`}>
-                      {entry.atsScore}
-                    </span>
-                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">ATS</span>
-                  </div>
+                  <div className="flex items-center gap-4 flex-shrink-0">
+                    <div className="bg-zinc-800/60 px-3 py-1.5 rounded-xl border border-white/5 flex items-center gap-1.5">
+                      <span className={`text-sm font-black ${entry.atsScore >= 70 ? 'text-emerald-400' : entry.atsScore >= 45 ? 'text-amber-400' : 'text-red-400'
+                        }`}>
+                        {entry.atsScore}
+                      </span>
+                      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">ATS</span>
+                    </div>
 
-                  {entry.pdfDataUri ? (
+                    {entry.pdfDataUri ? (
+                      <button
+                        onClick={() => downloadPdfDataUri(entry.pdfDataUri, `PlaceBuddy_Report_${entry.resumeFilename.replace(/\.[^/.]+$/, "")}.pdf`)}
+                        className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-600/10 transition-all flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.3)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]"
+                        title="Download PDF report"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                    ) : (
+                      <span className="text-[10px] text-zinc-500 font-semibold italic border border-dashed border-zinc-800 px-2 py-1.5 rounded-xl bg-zinc-900/20 select-none">
+                        Report not downloaded yet
+                      </span>
+                    )}
+
                     <button
-                      onClick={() => downloadPdfDataUri(entry.pdfDataUri, `PlaceBuddy_Report_${entry.resumeFilename.replace(/\.[^/.]+$/, "")}.pdf`)}
-                      className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-600/10 transition-all flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.3)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]"
-                      title="Download PDF report"
+                      onClick={() => deleteRecentEntry(entry.id)}
+                      className="p-2 rounded-xl bg-white/5 border border-white/5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all"
+                      title="Delete entry"
                     >
-                      <Download className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
-                  ) : (
-                    <span className="text-[10px] text-zinc-500 font-semibold italic border border-dashed border-zinc-800 px-2 py-1.5 rounded-xl bg-zinc-900/20 select-none">
-                      Report not downloaded yet
-                    </span>
-                  )}
-
-                  <button
-                    onClick={() => deleteRecentEntry(entry.id)}
-                    className="p-2 rounded-xl bg-white/5 border border-white/5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all"
-                    title="Delete entry"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
         )}
       </div>
     );
@@ -914,9 +907,8 @@ export default function PlaceBuddyDashboard() {
           return (
             <div
               key={idx}
-              className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-300 ${
-                isActive ? 'bg-indigo-500/5 border border-indigo-500/20 animate-pulse' : 'border border-transparent'
-              }`}
+              className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-indigo-500/5 border border-indigo-500/20 animate-pulse' : 'border border-transparent'
+                }`}
             >
               <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
                 {isCompleted ? (
@@ -929,13 +921,12 @@ export default function PlaceBuddyDashboard() {
               </div>
 
               <span
-                className={`text-sm font-medium transition-colors duration-300 ${
-                  isActive
-                    ? 'text-indigo-400 font-semibold'
-                    : isCompleted
+                className={`text-sm font-medium transition-colors duration-300 ${isActive
+                  ? 'text-indigo-400 font-semibold'
+                  : isCompleted
                     ? 'text-zinc-300'
                     : 'text-zinc-600'
-                }`}
+                  }`}
               >
                 {stage}
               </span>
@@ -947,14 +938,19 @@ export default function PlaceBuddyDashboard() {
   );
 
   const renderExecutiveSummary = () => {
-    const score = Math.round(coreResult.ats_score || 0);
-    const cog = coreResult.cognitive_analysis || {};
+    if (!coreResult) return (
+      <div className="flex items-center justify-center p-16 text-zinc-500 italic text-sm">
+        No analysis data available.
+      </div>
+    );
+    const score = Math.round(coreResult?.ats_score || 0);
+    const cog = coreResult?.cognitive_analysis || {};
     const bestRole = (cog.best_fit_roles || [])[0];
 
-    const matched = coreResult.technical_skills?.matched || coreResult.matched_skills || [];
-    const missing = coreResult.technical_skills?.missing || coreResult.missing_skills || [];
-    const km = coreResult.keyword_metrics || {};
-    const verbs = coreResult.action_verbs_found || [];
+    const matched = coreResult?.technical_skills?.matched || coreResult?.matched_skills || [];
+    const missing = coreResult?.technical_skills?.missing || coreResult?.missing_skills || [];
+    const km = coreResult?.keyword_metrics || {};
+    const verbs = coreResult?.action_verbs_found || [];
 
     // Compute dynamic strengths list (max 3 items)
     const strengths = [];
@@ -1058,6 +1054,11 @@ export default function PlaceBuddyDashboard() {
   };
 
   const renderSkillsAssessment = () => {
+    if (!coreResult) return (
+      <div className="flex items-center justify-center p-16 text-zinc-500 italic text-sm">
+        No skill data available.
+      </div>
+    );
     let radarData = [];
     let bsDetector = [];
 
@@ -1173,8 +1174,14 @@ export default function PlaceBuddyDashboard() {
   };
 
   const renderCareerAndInterviewPrep = () => {
+    if (!coreResult) return (
+      <div className="flex items-center justify-center p-16 text-zinc-500 italic text-sm">
+        No analysis data. Upload a resume above to begin.
+      </div>
+    );
     const cog = coreResult?.cognitive_analysis || {};
     const roles = cog.best_fit_roles || [];
+    const dsaBridge = deepResult?.dsa_bridge || [];
     const questions = deepResult?.targeted_questions || [];
 
     return (
@@ -1214,49 +1221,49 @@ export default function PlaceBuddyDashboard() {
               The "Brutal Interviewer" Simulator
             </h3>
 
-<<<<<<< HEAD
-              <div className="grid grid-cols-1 gap-4 relative z-10">
-                {isDeepLoading ? (
-                  <div className="text-zinc-400 italic animate-pulse">Loading deep analysis questions...</div>
-                ) : questions.length > 0 ? questions.map((item, index) => {
-                  const questionText = typeof item === 'object' ? item.question : item;
-                  const expectedAnswer = typeof item === 'object' ? item.expected_answer : null;
-                  return (
-                    <div key={index} className="bg-rose-500/5 border-l-4 border-rose-500/50 rounded-r-xl text-zinc-300 text-sm font-medium transition-all relative">
-                      <div className="group/q cursor-pointer hover:bg-rose-500/10 transition-all p-4">
-                        <div className="flex justify-between items-center">
-                          <span className="text-rose-400 font-bold whitespace-nowrap">Question {index + 1}</span>
-                          <ChevronDown className="w-4 h-4 opacity-50 group-hover/q:rotate-180 transition-transform" />
-                        </div>
-                        <div className="max-h-0 opacity-0 overflow-hidden group-hover/q:max-h-[500px] group-hover/q:opacity-100 group-hover/q:mt-3 transition-all duration-500 ease-in-out">
-                          <p className="text-zinc-300 leading-relaxed text-sm">{questionText}</p>
-                        </div>
+            <div className="grid grid-cols-1 gap-4 relative z-10">
+              {isDeepLoading ? (
+                <div className="text-zinc-400 italic animate-pulse">Loading deep analysis questions...</div>
+              ) : questions.length > 0 ? questions.map((item, index) => {
+                const questionText = typeof item === 'object' ? item.question : item;
+                const expectedAnswer = typeof item === 'object' ? item.expected_answer : null;
+                return (
+                  <div key={index} className="bg-rose-500/5 border-l-4 border-rose-500/50 rounded-r-xl text-zinc-300 text-sm font-medium transition-all relative">
+                    <div className="group/q cursor-pointer hover:bg-rose-500/10 transition-all p-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-rose-400 font-bold whitespace-nowrap">Question {index + 1}</span>
+                        <ChevronDown className="w-4 h-4 opacity-50 group-hover/q:rotate-180 transition-transform" />
                       </div>
-
-                      {expectedAnswer && (
-                        <div className="px-4 pb-4">
-                          <button
-                            onClick={() => toggleAnswer(index)}
-                            className="mt-4 px-3 py-1.5 text-xs font-mono text-emerald-400 hover:text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-800/50 rounded transition-colors flex items-center gap-2 w-fit"
-                          >
-                            {revealedAnswers[index] ? '[-] Hide Expected Answer' : '[+] Reveal Expected Answer'}
-                          </button>
-                          {revealedAnswers[index] && (
-                            <div className="mt-3 p-4 bg-slate-950/80 rounded-md border-l-2 border-emerald-500 text-slate-300 text-sm font-mono whitespace-pre-wrap animate-in fade-in slide-in-from-top-2 duration-200">
-                              <span className="text-emerald-500 block text-xs uppercase tracking-wider mb-2">// EXPECTED CRITERIA:</span>
-                              {expectedAnswer}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      <div className="max-h-0 opacity-0 overflow-hidden group-hover/q:max-h-[500px] group-hover/q:opacity-100 group-hover/q:mt-3 transition-all duration-500 ease-in-out">
+                        <p className="text-zinc-300 leading-relaxed text-sm">{questionText}</p>
+                      </div>
                     </div>
-                  );
-                }) : (
-                  <div className="text-zinc-500 italic text-sm">No targeted questions available.</div>
-                )}
-              </div>
 
-              {dsaBridge.length > 0 && (
+                    {expectedAnswer && (
+                      <div className="px-4 pb-4">
+                        <button
+                          onClick={() => toggleAnswer(index)}
+                          className="mt-4 px-3 py-1.5 text-xs font-mono text-emerald-400 hover:text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-800/50 rounded transition-colors flex items-center gap-2 w-fit"
+                        >
+                          {revealedAnswers[index] ? '[-] Hide Expected Answer' : '[+] Reveal Expected Answer'}
+                        </button>
+                        {revealedAnswers[index] && (
+                          <div className="mt-3 p-4 bg-slate-950/80 rounded-md border-l-2 border-emerald-500 text-slate-300 text-sm font-mono whitespace-pre-wrap animate-in fade-in slide-in-from-top-2 duration-200">
+                            <span className="text-emerald-500 block text-xs uppercase tracking-wider mb-2">// EXPECTED CRITERIA:</span>
+                            {expectedAnswer}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              }) : (
+                <div className="text-zinc-500 italic text-sm">No targeted questions available.</div>
+              )}
+            </div>
+
+            {
+              dsaBridge.length > 0 && (
                 <div className="mt-6 relative z-10 bg-zinc-950/50 rounded-xl p-5 border border-white/5">
                   <h4 className="text-sm font-bold text-rose-300 mb-3 flex items-center gap-2">
                     <Briefcase className="w-4 h-4" /> Real-World DSA Bridge
@@ -1284,25 +1291,10 @@ export default function PlaceBuddyDashboard() {
                         </div>
                       </div>
                     ))}
-=======
-            <div className="grid grid-cols-1 gap-4 relative z-10">
-              {isDeepLoading ? (
-                <div className="text-zinc-400 italic animate-pulse">Loading deep analysis questions...</div>
-              ) : questions.length > 0 ? questions.map((q, i) => (
-                <div key={i} className="bg-rose-500/5 border-l-4 border-rose-500/50 p-4 rounded-r-xl text-zinc-300 text-sm font-medium group/q cursor-pointer hover:bg-rose-500/10 transition-all relative">
-                  <div className="flex justify-between items-center">
-                    <span className="text-rose-400 font-bold whitespace-nowrap">Question {i + 1}</span>
-                    <ChevronDown className="w-4 h-4 opacity-50 group-hover/q:rotate-180 transition-transform" />
-                  </div>
-                  <div className="max-h-0 opacity-0 overflow-hidden group-hover/q:max-h-[500px] group-hover/q:opacity-100 group-hover/q:mt-3 transition-all duration-500 ease-in-out">
-                    <p className="text-zinc-300 leading-relaxed text-sm">{q}</p>
->>>>>>> 559a8018271b39a0cd1afe901da4d31b2135a8b7
                   </div>
                 </div>
-              )) : (
-                <div className="text-zinc-500 italic text-sm">No targeted questions available.</div>
-              )}
-            </div>
+              )
+            }
           </div>
         </div>
       </div>
@@ -1310,6 +1302,7 @@ export default function PlaceBuddyDashboard() {
   };
 
   const renderAdvancedAnalytics = () => {
+    if (!coreResult) return null;
     const km = coreResult?.keyword_metrics || {};
     const signals = coreResult ? [
       { name: "Semantic Similarity", value: `${(km.semantic_similarity * 100 || 0).toFixed(0)}%`, desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" },
