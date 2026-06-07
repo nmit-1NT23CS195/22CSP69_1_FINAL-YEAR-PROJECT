@@ -1,8 +1,25 @@
+import json
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import roles
 from app.api.routes import resume, skills, ats
+
+# ---------------------------------------------------------------------------
+# Global ROLES_DB — loaded ONCE at startup from the enriched dictionary.
+# ats_service.py imports this to avoid per-request disk I/O.
+# ---------------------------------------------------------------------------
+_DATA_DIR = Path(__file__).resolve().parent / "data"
+_ROLES_DB_PATH = _DATA_DIR / "enriched_roles_dictionary.json"
+
+try:
+    with open(_ROLES_DB_PATH, "r", encoding="utf-8") as _fh:
+        ROLES_DB: dict = json.load(_fh)
+except Exception as _e:
+    import logging
+    logging.getLogger(__name__).error("Failed to load ROLES_DB: %s", _e)
+    ROLES_DB: dict = {}
 
 app = FastAPI(
     title="PlaceBuddy ATS System",

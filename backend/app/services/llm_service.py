@@ -144,6 +144,10 @@ _CORE_SCHEMA: Dict[str, Any] = {
             },
             "required": ["original_bullet", "rewritten_bullet"],
         },
+        "matched_certifications": {
+            "type": "array",
+            "items": {"type": "string"},
+        },
     },
     "required": [
         "skill_matrix",
@@ -153,6 +157,7 @@ _CORE_SCHEMA: Dict[str, Any] = {
         "pivot_opportunities",
         "llm_diagnosis_score",
         "star_bullet_rewrite",
+        "matched_certifications",
     ],
 }
 
@@ -268,6 +273,7 @@ _CORE_FALLBACK: Dict[str, Any] = {
     "pivot_opportunities": [],
     "llm_diagnosis_score": 0.0,
     "star_bullet_rewrite": None,
+    "matched_certifications": [],
 }
 
 _DEEP_FALLBACK: Dict[str, Any] = {
@@ -436,21 +442,44 @@ def run_cognitive_analysis(resume_text: str, jd_text: str) -> Dict[str, Any]:
 # Each function owns its own AsyncClient — no shared state between stages.
 # ---------------------------------------------------------------------------
 
-async def run_core_analysis(resume_text: str, jd_text: str) -> Dict[str, Any]:
+async def run_core_analysis(
+    resume_text: str,
+    jd_text: str,
+    role_mode_context: str = "",
+) -> Dict[str, Any]:
     """
     Stage 1 — Core Scoring Call.
 
     Fires only the CoreScoringSchema against Gemini and returns the result.
     Called by run_core_pipeline() which also runs all deterministic stages.
 
+    Args:
+        resume_text:        Raw resume text.
+        jd_text:            Job description or synthetic JD text.
+        role_mode_context:  If non-empty, injected as a CRITICAL RULE to shift
+                            the LLM's scoring weight toward role-specific certs.
+
     Returns a fully populated dict (or _CORE_FALLBACK on any failure):
         skill_matrix, bullshit_detector, implicit_ghost_skills,
         best_fit_roles, pivot_opportunities, llm_diagnosis_score,
-        star_bullet_rewrite
+        star_bullet_rewrite, matched_certifications
     """
     if not _LLM_API_KEY:
         logger.info("LLM_API_KEY not configured. Returning core fallback.")
         return _CORE_FALLBACK
+
+    # Build the system prompt — inject role-mode rule if supplied
+    system_prompt = _CORE_SYSTEM_PROMPT
+    if role_mode_context:
+        system_prompt = (
+            _CORE_SYSTEM_PROMPT.rstrip()
+            + "\n\nCRITICAL RULE (ROLE MODE ACTIVE): You have been provided structured "
+            "Role Data instead of a raw JD. You MUST heavily weight the "
+            "llm_diagnosis_score based on the explicit mathematical overlap of skills "
+            "and the presence of matched_certifications listed below. Give massive "
+            "bonus points to candidates possessing these semantically matched certs.\n"
+            + role_mode_context
+        )
 
     user_text = _USER_PROMPT_TEMPLATE.format(
         resume_text=resume_text[:8000],
@@ -459,7 +488,7 @@ async def run_core_analysis(resume_text: str, jd_text: str) -> Dict[str, Any]:
 
     async with httpx.AsyncClient(timeout=120.0) as client:
         return await _call_gemini_async(
-            client, _CORE_SYSTEM_PROMPT, _CORE_SCHEMA,
+            client, system_prompt, _CORE_SCHEMA,
             user_text, "CoreScoring", fallback=_CORE_FALLBACK,
         )
 

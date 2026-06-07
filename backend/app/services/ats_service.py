@@ -42,6 +42,58 @@ from app.services.scoring_service import compute_smart_ats_score
 logger = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# Role Pipeline — Semantic Certification Matching
+# ---------------------------------------------------------------------------
+
+def _compute_cert_matches(
+    role_certs: List[str],
+    resume_text: str,
+    threshold: float = 0.55,
+) -> List[str]:
+    """
+    Use the shared all-MiniLM-L6-v2 model to find which role certifications
+    have a strong semantic match inside the resume text.
+
+    Args:
+        role_certs:   List of certification names from the enriched dictionary.
+        resume_text:  Full resume text to search within.
+        threshold:    Cosine similarity threshold (default 0.55).
+
+    Returns:
+        List of certification strings that semantically appear in the resume.
+    """
+    if not role_certs:
+        return []
+    try:
+        from app.services.semantic_service import _get_model
+        import numpy as np
+        model = _get_model()
+        if model is None:
+            return []
+        cert_embeddings = model.encode(
+            role_certs, normalize_embeddings=True, show_progress_bar=False
+        )
+        # Encode the full resume as a single query vector
+        resume_vec = model.encode(
+            resume_text[:5000], normalize_embeddings=True, show_progress_bar=False
+        ).reshape(1, -1)
+        sims = (resume_vec @ cert_embeddings.T)[0]  # shape: (n_certs,)
+        matched = [
+            role_certs[i]
+            for i, score in enumerate(sims)
+            if float(score) >= threshold
+        ]
+        logger.info(
+            "[RolePipeline] Cert matching: %d/%d certs matched (threshold=%.2f)",
+            len(matched), len(role_certs), threshold,
+        )
+        return matched
+    except Exception as exc:
+        logger.error("[RolePipeline] Cert matching failed: %s", exc)
+        return []
+
+
 async def run_pipeline(
     resume_bytes: bytes,
     resume_filename: str = "",
@@ -395,9 +447,41 @@ async def run_core_pipeline(
 
     # ── Core LLM call ─────────────────────────────────────────────────
     core_analysis: Dict[str, Any] = {}
+    role_mode_context = ""
+    matched_certs: List[str] = []
+
+    # Role Mode: compute semantic cert matches and pass them as context to LLM
+    if role and role.strip():
+        from app.main import ROLES_DB
+        role_key = role.strip().lower()
+        # Fuzzy match: try exact key, then scan for closest match
+        role_entry = ROLES_DB.get(role_key)
+        if role_entry is None:
+            for k, v in ROLES_DB.items():
+                if v.get("display_name", "").lower() == role_key:
+                    role_entry = v
+                    break
+        if role_entry:
+            role_certs: List[str] = role_entry.get("certifications", [])
+            matched_certs = _compute_cert_matches(role_certs, resume_text)
+            if matched_certs or role_certs:
+                role_mode_context = (
+                    f"Role: {role_entry.get('display_name', role)}\n"
+                    f"Required certifications: {', '.join(role_certs) or 'None'}\n"
+                    f"Semantically matched certifications in resume: "
+                    f"{', '.join(matched_certs) or 'None'}"
+                )
+
     try:
         from app.services.llm_service import run_core_analysis
-        core_analysis = await run_core_analysis(resume_text, final_jd_text)
+        core_analysis = await run_core_analysis(
+            resume_text, final_jd_text,
+            role_mode_context=role_mode_context,
+        )
+        # Inject the deterministically matched certs so the response always
+        # contains them, regardless of whether the LLM chose to surface them.
+        if matched_certs:
+            core_analysis["matched_certifications"] = matched_certs
         logger.info("[CorePipeline] Core LLM analysis complete.")
     except Exception as exc:
         logger.error("[CorePipeline] Core LLM failed: %s", exc)
@@ -455,9 +539,12 @@ async def run_core_pipeline(
         "contextual_skill_weights": contextual_weights,
         "llm_enriched_skills":     llm_skills,
         "cognitive_analysis":      core_analysis,
+        "matched_certifications":  core_analysis.get("matched_certifications", []),
         # ── Passed to /score/deep to skip re-parsing ──────────────────
         "extracted_resume_text":   resume_text,
         "extracted_jd_text":       final_jd_text,
+        # ── Mode flag so frontend knows which card to show ─────────────
+        "analysis_mode":           "role" if (role and role.strip()) else "jd",
         # Legacy schema keys
         "matched_skills":  matched_skills,
         "missing_skills":  missing_skills,
@@ -467,24 +554,60 @@ async def run_core_pipeline(
 async def run_deep_pipeline(
     resume_text: str,
     jd_text: str,
+    job_role: Optional[str] = None,
     skill_matrix: list = None,
     resume_sections: dict = None,
 ) -> Dict[str, Any]:
     """
     Stage 2 pipeline: receives pre-extracted text + optional structured data.
 
-    When skill_matrix and resume_sections are supplied (from /score/core response),
-    they are forwarded directly to run_deep_analysis to build a compact JSON prompt
-    instead of sending raw resume_text — significantly reducing input token cost.
+    Role Mode: when job_role is supplied, synthesizes a JD string from ROLES_DB
+    (skills + certifications) and passes it as jd_text so the Deep LLM generates
+    role-specific interview questions without any prompt-schema changes.
 
-    Fallback: if structured data is not provided, raw resume_text is used.
+    JD Mode: when jd_text is provided directly, uses it as-is (original behaviour).
     """
+    # ── Role Mode: synthesize a JD from the enriched dictionary ──────────
+    effective_jd = jd_text
+    if job_role and job_role.strip():
+        try:
+            from app.main import ROLES_DB
+            role_key = job_role.strip().lower()
+            role_entry = ROLES_DB.get(role_key)
+            if role_entry is None:
+                # Fuzzy fallback: match by display_name
+                for v in ROLES_DB.values():
+                    if v.get("display_name", "").lower() == role_key:
+                        role_entry = v
+                        break
+            if role_entry:
+                skills_str = ", ".join(role_entry.get("skills", [])[:30]) or "N/A"
+                certs_str  = ", ".join(role_entry.get("certifications", [])) or "None"
+                display    = role_entry.get("display_name", job_role)
+                effective_jd = (
+                    f"Job Role: {display}. "
+                    f"Required Skills: {skills_str}. "
+                    f"Required Certifications: {certs_str}."
+                )
+                logger.info(
+                    "[DeepPipeline] Role Mode — synthesized JD for '%s' (%d chars)",
+                    display, len(effective_jd),
+                )
+            else:
+                logger.warning("[DeepPipeline] Role key '%s' not found in ROLES_DB", job_role)
+        except Exception as exc:
+            logger.error("[DeepPipeline] JD synthesis failed: %s", exc)
+
+    if not effective_jd.strip():
+        effective_jd = f"Role: {job_role or 'Software Engineer'}"
+
+    # ── Fire the Deep LLM with whichever JD we resolved ──────────────────
     deep_analysis: Dict[str, Any] = {}
     try:
         from app.services.llm_service import run_deep_analysis
         deep_analysis = await run_deep_analysis(
             resume_text=resume_text,
-            jd_text=jd_text,
+            jd_text=effective_jd,
             skill_matrix=skill_matrix,
             resume_sections=resume_sections,
         )

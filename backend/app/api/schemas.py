@@ -45,6 +45,8 @@ class ATSAnalysisResponse(BaseModel):
     action_verbs_found: List[str]
     llm_enriched_skills: Dict[str, float]
     cognitive_analysis: Optional[CognitiveAnalysis] = None
+    matched_certifications: List[str] = Field(default_factory=list)
+    analysis_mode: str = "jd"  # "jd" | "role"
 
 class ResumeUploadResponse(BaseModel):
     resume_text: str

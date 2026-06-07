@@ -228,7 +228,7 @@ def _cached_priority_skills(data_dir: str) -> Set[str]:
 @lru_cache(maxsize=1)
 def _cached_roles_dictionary(data_dir: str) -> Dict[str, Dict[str, Any]]:
     """Load and cache roles_dictionary.json."""
-    filepath = os.path.join(data_dir, "roles_dictionary.json")
+    filepath = os.path.join(data_dir, "enriched_roles_dictionary.json")
     try:
         with open(filepath, "r", encoding="utf-8") as fh:
             data: Dict[str, Dict[str, Any]] = json.load(fh)

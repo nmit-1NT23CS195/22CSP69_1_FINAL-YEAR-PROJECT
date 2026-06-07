@@ -27,7 +27,8 @@ _SENTINEL_VALUES = {"", "string", "null", "none", "undefined"}
 class DeepAnalysisRequest(BaseModel):
     """JSON payload for the /score/deep endpoint."""
     resume_text: str
-    jd_text: str
+    jd_text: str = ""          # Optional when job_role is provided
+    job_role: Optional[str] = None
     skill_matrix: Optional[List[Dict[str, Any]]] = None
     resume_sections: Optional[Dict[str, str]] = None
 
@@ -185,12 +186,13 @@ async def score_resume_deep(payload: DeepAnalysisRequest) -> Dict[str, Any]:
     """
     if not payload.resume_text or not payload.resume_text.strip():
         raise HTTPException(status_code=422, detail="resume_text must not be empty.")
-    if not payload.jd_text or not payload.jd_text.strip():
-        raise HTTPException(status_code=422, detail="jd_text must not be empty.")
+    if not payload.jd_text.strip() and not payload.job_role:
+        raise HTTPException(status_code=422, detail="Provide either jd_text or job_role.")
 
     return await run_deep_pipeline(
         resume_text=payload.resume_text,
         jd_text=payload.jd_text,
+        job_role=payload.job_role,
         skill_matrix=payload.skill_matrix,
         resume_sections=payload.resume_sections,
     )

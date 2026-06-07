@@ -23,6 +23,7 @@ export default function PlaceBuddyDashboard() {
   const [deepResult, setDeepResult] = useState(null);
   const [isDeepLoading, setIsDeepLoading] = useState(false);
   const [revealedAnswers, setRevealedAnswers] = useState({});
+  const [analysisMode, setAnalysisMode] = useState('jd'); // 'jd' | 'role'
 
   const toggleAnswer = (index) => {
     setRevealedAnswers(prev => ({ ...prev, [index]: !prev[index] }));
@@ -94,6 +95,7 @@ export default function PlaceBuddyDashboard() {
     setDeepResult(null);
     setIsDeepLoading(false);
     setIsAdvancedOpen(false);
+    setAnalysisMode('jd');
   };
 
   const deleteRecentEntry = (id) => {
@@ -230,6 +232,9 @@ export default function PlaceBuddyDashboard() {
       } else {
         const data = await coreRes.json();
 
+        // Capture which mode the backend used so the UI can swap the right card
+        setAnalysisMode(data.analysis_mode || (selectedRole ? 'role' : 'jd'));
+
         const newId = Date.now().toString();
         setCurrentAnalysisId(newId);
 
@@ -249,12 +254,15 @@ export default function PlaceBuddyDashboard() {
 
         const extractedResumeText = data.extracted_resume_text || "";
         const extractedJdText = data.extracted_jd_text || jdText || "";
+        const hasContext = extractedResumeText && (extractedJdText || selectedRole);
 
-        if (extractedResumeText && extractedJdText) {
+        if (hasContext) {
           setIsDeepLoading(true);
           const deepPayload = {
             resume_text: extractedResumeText,
             jd_text: extractedJdText,
+            // Role Mode: pass the role so the backend synthesizes the JD
+            ...(selectedRole && !extractedJdText && { job_role: selectedRole }),
             // Pass pre-parsed structured data to enable the compact JSON prompt path
             skill_matrix: data.cognitive_analysis?.skill_matrix || null,
             resume_sections: data.resume_sections || null,
@@ -624,7 +632,7 @@ export default function PlaceBuddyDashboard() {
   );
 
   const renderInputZone = () => (
-    <div id="dashboard-section" className="scroll-mt-24 max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 px-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div id="dashboard-section" className="scroll-mt-24 max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 px-8 relative z-50 animate-in fade-in slide-in-from-bottom-8 duration-700">
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
           <FileText className="w-6 h-6 text-indigo-400 drop-shadow-[0_0_5px_rgba(99,102,241,0.8)]" /> Resume
@@ -720,7 +728,7 @@ export default function PlaceBuddyDashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 relative mt-2" ref={dropdownRef}>
+        <div className="flex flex-col gap-2 relative z-50 mt-2" ref={dropdownRef}>
           <label className="text-xs font-semibold text-zinc-400 ml-1 uppercase tracking-wider">Target Role</label>
           <div
             className="relative"
@@ -741,7 +749,7 @@ export default function PlaceBuddyDashboard() {
           </div>
 
           {isDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto rounded-2xl bg-zinc-800/90 backdrop-blur-xl border border-zinc-700 shadow-2xl z-20 p-2 scrollbar-thin scrollbar-thumb-zinc-600">
+            <div className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto rounded-2xl bg-zinc-900 backdrop-blur-xl border border-zinc-700 shadow-2xl z-[9999] p-2 scrollbar-thin scrollbar-thumb-zinc-600">
               {filteredRoles.length > 0 ? filteredRoles.map((role, idx) => (
                 <div
                   key={idx}
@@ -781,7 +789,7 @@ export default function PlaceBuddyDashboard() {
 
       <button
         onClick={() => handleAnalyze('results_detailed')}
-        className="flex-1 relative group overflow-hidden rounded-2xl p-[2px] transition-transform hover:-translate-y-1"
+        className="flex-1 relative z-0 group overflow-hidden rounded-2xl p-[2px]"
       >
         <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl opacity-70 group-hover:opacity-100 blur-sm transition-opacity duration-500"></span>
         <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl"></span>
@@ -1091,7 +1099,7 @@ export default function PlaceBuddyDashboard() {
           </h3>
 
           {radarData.length > 0 ? (
-            <div className="h-[350px] w-full relative z-10">
+            <div className="w-full h-[350px] min-h-[288px] relative z-10">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
                   <PolarGrid stroke="rgba(255,255,255,0.1)" />
@@ -1304,8 +1312,26 @@ export default function PlaceBuddyDashboard() {
   const renderAdvancedAnalytics = () => {
     if (!coreResult) return null;
     const km = coreResult?.keyword_metrics || {};
+    const isRoleMode = coreResult?.analysis_mode === 'role' || analysisMode === 'role';
+    const matchedCerts = coreResult?.matched_certifications || [];
+
+    // First card swaps based on mode
+    const firstCard = isRoleMode
+      ? {
+          name: "Matched Certs",
+          value: `${matchedCerts.length}`,
+          desc: matchedCerts.length > 0
+            ? matchedCerts.join(' · ')
+            : "No certifications matched",
+          color: "text-violet-400",
+          bg: "bg-violet-500/5",
+          border: "border-violet-500/30",
+          glow: "group-hover:shadow-[0_0_30px_rgba(139,92,246,0.2)]",
+        }
+      : { name: "Semantic Similarity", value: `${(km.semantic_similarity * 100 || 0).toFixed(0)}%`, desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" };
+
     const signals = coreResult ? [
-      { name: "Semantic Similarity", value: `${(km.semantic_similarity * 100 || 0).toFixed(0)}%`, desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" },
+      firstCard,
       { name: "TF-IDF Match", value: `${(km.tfidf_score * 100 || 0).toFixed(0)}%`, desc: "Keyword frequency alignment", color: "text-blue-400", bg: "bg-blue-500/5", border: "border-blue-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]" },
       { name: "Skill Alignment", value: `${Object.values(coreResult.contextual_skill_weights || {}).reduce((acc, w) => acc + (w > 1 ? 1 : 0), 0)}`, desc: "Skills verified in context", color: "text-emerald-400", bg: "bg-emerald-500/5", border: "border-emerald-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(52,211,153,0.2)]" },
       { name: "Action Verbs", value: `${coreResult.action_verbs_found?.length || 0}`, desc: "Impact-driven action verbs used", color: "text-pink-400", bg: "bg-pink-500/5", border: "border-pink-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]" },
