@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 _LLM_API_URL: str = os.environ.get(
     "LLM_API_URL",
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
 )
 
 
@@ -92,6 +92,10 @@ Your job is to forensically analyse the resume and output ONLY a valid JSON obje
    Pick the weakest bullet point. Return star_bullet_rewrite with original_bullet and
    rewritten_bullet (high-impact STAR format).
 
+SCHEMA COMPLIANCE — NON-NEGOTIABLE:
+You MUST output ONLY a valid JSON object that exactly matches the provided response schema.
+Do NOT output any text, markdown, code fences, or explanation outside the JSON object.
+Every required field in the schema MUST be present. Never skip a field.
 Return ONLY valid JSON. No markdown. No explanation.
 """
 
@@ -162,58 +166,97 @@ _CORE_SCHEMA: Dict[str, Any] = {
 }
 
 # ---------------------------------------------------------------------------
-# CALL 2: DeepAnalysisSchema
-# Fields: targeted_questions, dsa_bridge, micro_project_suggestion
+# CALL 2: ForensicAnalysisSchema
+# Fields: skill_matrix (3-tier), brutal_questions (3), dsa_bridges (3)
 #
-# These are long-form prose fields — the heaviest output token consumers.
-# Running them concurrently with Call 1 means we no longer wait serially.
+# These are forensic deep-dive fields. Running concurrently with CORE call.
 # ---------------------------------------------------------------------------
 _DEEP_SYSTEM_PROMPT = """\
-You are a ruthless Senior Engineer conducting a focused technical interview.
-You are evaluating a candidate based on a pre-parsed JSON profile below.
+You are a ruthless Senior Staff Engineer and Principal Architect conducting a forensic
+technical evaluation. You receive a candidate profile and a target JD.
 Output ONLY a valid JSON object. No markdown. No explanation.
 
-CRITICAL OUTPUT LIMITS — STRICTLY ENFORCED:
-- targeted_questions: Generate EXACTLY 2 questions. Each must be hostile and highly
-  specific, targeting a concrete weakness or unverified claim in the candidate's
-  skill_matrix or project_sections. Reference a specific skill or project by name.
-  For each question, provide an expected_answer that is EXACTLY 1-2 concise sentences
-  summarising the key criteria that would constitute a strong answer.
-- dsa_bridge: For each project in the candidate's project sections, identify the
-  underlying DSA concept. Each dsa_concept MUST be specific (e.g. "sliding window",
-  not just "array"). The project_logic explanation must be under 3 sentences.
-- micro_project_suggestion: EXACTLY 2 sentences bridging the candidate's exact skill
-  gap to the JD requirements.
+FOURTH-WALL DIRECTIVE: Every item you produce must be hyper-specific to actual
+technologies, frameworks, and system constraints in the candidate's resume and the JD.
+Banned: vague terms like "backend", "programming", "web development".
+Required: specific names like "FastAPI middleware", "Redis Sorted Sets", "LangGraph", "pgvector".
+
+TASK 1 — FORENSIC SKILL CLASSIFICATION:
+Classify every technical skill mentioned in the resume OR demanded by the JD into exactly
+one of three tiers. Do NOT group into broad categories.
+- verified_competencies: Skills with explicit proof (specific project/experience + outcome in resume).
+- unverified_skills: Skills listed in skills section but with ZERO project-level validation.
+- missing_skills: Skills demanded by the JD but completely absent from the resume.
+
+TASK 2 — BRUTAL ARCHITECTURAL QUESTIONS (EXACTLY 3):
+Generate 3 hostile, production-grade questions. Each must:
+  - Target a SPECIFIC verified or unverified skill with a known production failure mode.
+  - Focus on: concurrency bugs, state management edge cases, scale limitations,
+    async bottlenecks, failure cascades, or security attack surfaces.
+  - Provide a target_vulnerability: the exact gap in the candidate's resume exposed.
+  - Provide an ideal_response_framework: 3-5 precise technical tokens/concepts
+    that constitute an elite-level answer (e.g. "distributed locks, optimistic locking, CAS").
+
+TASK 3 — DSA ALGORITHMIC BRIDGE (EXACTLY 3):
+For 3 real engineering challenges in the target stack:
+  - Define a problem_statement: a concrete, real-world engineering problem
+    the candidate will face in this role (e.g., "Deduplicate 10M events/sec from Kafka topics").
+  - Provide engineering_context: exactly WHY this algorithmic pattern is the correct
+    production-grade solution for this specific system architecture.
+  - State optimal_complexity: precise Big-O for time AND space (e.g., "O(N) time, O(K) space").
+
+SCHEMA COMPLIANCE — NON-NEGOTIABLE:
+You MUST output ONLY a valid JSON object matching the provided response schema exactly.
+Every required field MUST be present. Never skip a field. No markdown. No fences.
 """
 
 _DEEP_SCHEMA: Dict[str, Any] = {
     "type": "object",
     "properties": {
-        "targeted_questions": {
+        "skill_matrix": {
+            "type": "object",
+            "properties": {
+                "verified_competencies": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                },
+                "unverified_skills": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                },
+                "missing_skills": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                },
+            },
+            "required": ["verified_competencies", "unverified_skills", "missing_skills"],
+        },
+        "brutal_questions": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
                     "question": {"type": "string"},
-                    "expected_answer": {"type": "string"},
+                    "target_vulnerability": {"type": "string"},
+                    "ideal_response_framework": {"type": "string"},
                 },
-                "required": ["question", "expected_answer"],
+                "required": ["question", "target_vulnerability", "ideal_response_framework"],
             },
         },
-        "dsa_bridge": {
+        "dsa_bridges": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "project_logic": {"type": "string"},
-                    "dsa_concept": {"type": "string"},
+                    "problem_statement": {"type": "string"},
+                    "engineering_context": {"type": "string"},
+                    "optimal_complexity": {"type": "string"},
                 },
-                "required": ["project_logic", "dsa_concept"],
+                "required": ["problem_statement", "engineering_context", "optimal_complexity"],
             },
         },
-        "micro_project_suggestion": {"type": "string"},
     },
-    "required": ["targeted_questions", "dsa_bridge", "micro_project_suggestion"],
+    "required": ["skill_matrix", "brutal_questions", "dsa_bridges"],
 }
 
 # Shared user prompt template for CORE call (raw text)
@@ -277,9 +320,13 @@ _CORE_FALLBACK: Dict[str, Any] = {
 }
 
 _DEEP_FALLBACK: Dict[str, Any] = {
-    "targeted_questions": [],
-    "dsa_bridge": [],
-    "micro_project_suggestion": "",
+    "skill_matrix": {
+        "verified_competencies": [],
+        "unverified_skills": [],
+        "missing_skills": [],
+    },
+    "brutal_questions": [],
+    "dsa_bridges": [],
 }
 
 

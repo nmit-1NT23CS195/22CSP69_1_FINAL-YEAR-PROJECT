@@ -616,7 +616,11 @@ async def run_deep_pipeline(
         logger.error("[DeepPipeline] Deep LLM failed: %s", exc)
 
     return {
-        "targeted_questions":       deep_analysis.get("targeted_questions", []),
-        "dsa_bridge":               deep_analysis.get("dsa_bridge", []),
-        "micro_project_suggestion": deep_analysis.get("micro_project_suggestion", ""),
+        "skill_matrix":    deep_analysis.get("skill_matrix", {
+            "verified_competencies": [],
+            "unverified_skills": [],
+            "missing_skills": [],
+        }),
+        "brutal_questions": deep_analysis.get("brutal_questions", []),
+        "dsa_bridges":      deep_analysis.get("dsa_bridges", []),
     }

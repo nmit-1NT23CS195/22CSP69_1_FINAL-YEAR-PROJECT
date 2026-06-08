@@ -490,30 +490,34 @@ export default function PlaceBuddyDashboard() {
       y += 6;
     }
 
-    // -- 3. VERIFIED COMPETENCIES --
-    if (verifiedSkills.length) {
+    // -- 3. FORENSIC SKILL TIERS (from deepResult) --
+    const deepSM = deepResult?.skill_matrix || {};
+    const pdfVerified  = (deepSM.verified_competencies || []).map(formatSkillName);
+    const pdfUnverified = (deepSM.unverified_skills || []).map(formatSkillName);
+    const pdfMissing   = (deepSM.missing_skills || []).map(formatSkillName);
+
+    if (pdfVerified.length) {
       drawSectionHeader('Verified Competencies', 16, 160, 100);
-      drawSkillGrid(verifiedSkills, 16, 150, 90);
+      drawSkillGrid(pdfVerified, 16, 150, 90);
     }
 
-    // -- 4. CRITICAL SKILL GAPS --
-    if (missingSkills.length) {
-      drawSectionHeader('Critical Skill Gaps', 210, 50, 50);
+    // -- 4. CRITICAL DEFICITS --
+    if (pdfMissing.length) {
+      drawSectionHeader('Critical Deficits (Missing Skills)', 210, 50, 50);
       checkPage(32);
       doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(140, 60, 60);
-      doc.text('The following skills are required but insufficient or absent in the resume:', margin, y);
+      doc.text('Required by the JD but completely absent from the resume:', margin, y);
       y += 16;
-      drawTags(missingSkills, 200, 55, 55);
+      drawTags(pdfMissing, 200, 55, 55);
     }
 
-    // -- 5. UNVERIFIED SKILLS --
-    const bsDetector = cog.bullshit_detector || [];
-    if (bsDetector.length) {
-      drawSectionHeader('Unverified Skills (Stated Only)', 180, 100, 10);
+    // -- 5. UNVERIFIED ASSUMPTIONS --
+    if (pdfUnverified.length) {
+      drawSectionHeader('Unverified Assumptions (Stated Only)', 180, 100, 10);
       doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(140, 90, 20);
-      doc.text('No concrete project evidence found for these skills:', margin, y);
+      doc.text('Listed in resume but without concrete project-level evidence:', margin, y);
       y += 16;
-      drawTags(bsDetector.map(formatSkillName), 200, 120, 20);
+      drawTags(pdfUnverified, 200, 120, 20);
     }
 
     // -- 6. ROLE MATCH ANALYSIS --
@@ -547,23 +551,68 @@ export default function PlaceBuddyDashboard() {
     drawKeyValue('Soft Skills Found', (coreResult.soft_skills_found || []).length + ' attributes');
     y += 8;
 
-    // -- 8. TOP 3 INTERVIEW QUESTIONS --
-    const questions = (deepResult && deepResult.targeted_questions ? deepResult.targeted_questions : []).slice(0, 3);
-    if (questions.length) {
-      drawSectionHeader('Top Interview Questions', 200, 50, 80);
-      questions.forEach((q, i) => {
-        checkPage(50);
-        const lines = doc.splitTextToSize(String(q), contentW - 32);
-        const blockH = lines.length * 13 + 24;
+    // -- 8. FORENSIC INTERVIEW QUESTIONS (brutal_questions) --
+    const brutalQs = (deepResult?.brutal_questions || []).slice(0, 3);
+    if (brutalQs.length) {
+      drawSectionHeader('Forensic Interview Preparation', 200, 50, 80);
+      brutalQs.forEach((q, i) => {
+        checkPage(60);
+        const questionLines = doc.splitTextToSize(String(q.question || ''), contentW - 32);
+        const blockH = questionLines.length * 13 + 42;
         doc.setFillColor(255, 245, 248);
         doc.roundedRect(margin, y, contentW, blockH, 4, 4, 'F');
         doc.setDrawColor(220, 130, 150);
         doc.roundedRect(margin, y, contentW, blockH, 4, 4, 'S');
+        // Question number
         doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(180, 50, 80);
         doc.text('Q' + (i + 1), margin + 10, y + 15);
+        // Question text
         doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(50, 30, 40);
-        lines.forEach((line, li) => { doc.text(line, margin + 30, y + 15 + li * 13); });
+        questionLines.forEach((line, li) => { doc.text(line, margin + 30, y + 15 + li * 13); });
+        // Vulnerability badge
+        if (q.target_vulnerability) {
+          const vuln = 'Vulnerability: ' + String(q.target_vulnerability);
+          const vulnLines = doc.splitTextToSize(vuln, contentW - 40);
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(180, 50, 80);
+          const vulnY = y + 15 + questionLines.length * 13 + 6;
+          vulnLines.forEach((line, li) => { doc.text(line, margin + 30, vulnY + li * 11); });
+        }
         y += blockH + 8;
+      });
+    }
+
+    // -- 9. DSA ALGORITHMIC BRIDGES --
+    const dsaBridgesPdf = (deepResult?.dsa_bridges || []).slice(0, 3);
+    if (dsaBridgesPdf.length) {
+      drawSectionHeader('Algorithmic Engineering Bridges', 100, 60, 210);
+      dsaBridgesPdf.forEach((bridge, i) => {
+        checkPage(72);
+        // Problem statement
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(80, 40, 180);
+        doc.text('Bridge ' + (i + 1) + ':', margin, y); y += 16;
+        if (bridge.problem_statement) {
+          drawWrappedText(bridge.problem_statement, 10, 9);
+        }
+        // Engineering context
+        if (bridge.engineering_context) {
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(100, 60, 200);
+          checkPage(14); doc.text('Engineering Context:', margin + 10, y); y += 12;
+          drawWrappedText(bridge.engineering_context, 20, 8);
+        }
+        // Complexity badge
+        if (bridge.optimal_complexity) {
+          checkPage(20);
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(80, 40, 180);
+          doc.text('Optimal Complexity:', margin + 10, y);
+          const cxLabel = String(bridge.optimal_complexity);
+          const cxW = doc.getTextWidth(cxLabel) + 14;
+          doc.setFillColor(120, 80, 230);
+          doc.roundedRect(margin + 130, y - 11, cxW, 14, 3, 3, 'F');
+          doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+          doc.text(cxLabel, margin + 137, y - 1);
+          y += 20;
+        }
+        y += 6;
       });
     }
 
@@ -1062,124 +1111,110 @@ export default function PlaceBuddyDashboard() {
   };
 
   const renderSkillsAssessment = () => {
-    if (!coreResult) return (
-      <div className="flex items-center justify-center p-16 text-zinc-500 italic text-sm">
-        No skill data available.
-      </div>
-    );
-    let radarData = [];
-    let bsDetector = [];
+    // Build 15-axis radar from deepResult.skill_matrix if available, fallback to coreResult
+    const deepSkillMatrix = deepResult?.skill_matrix || null;
+    const verified   = deepSkillMatrix?.verified_competencies || [];
+    const unverified = deepSkillMatrix?.unverified_skills || [];
+    const missing    = deepSkillMatrix?.missing_skills || [];
 
-    if (coreResult?.cognitive_analysis) {
+    let radarData = [];
+    if (deepSkillMatrix) {
+      // Assign mathematical scores: verified=100, unverified=40, missing=0
+      const seen = new Set();
+      const addSkills = (arr, score) => arr.forEach(s => {
+        const key = s.toLowerCase();
+        if (!seen.has(key)) { seen.add(key); radarData.push({ skill: formatSkillName(s), proficiency: score }); }
+      });
+      addSkills(verified, 100);
+      addSkills(unverified, 40);
+      addSkills(missing, 0);
+      radarData = radarData.slice(0, 15);
+    } else if (coreResult?.cognitive_analysis) {
+      // Legacy fallback: LLM scored skill matrix
       const { skill_matrix, bullshit_detector } = coreResult.cognitive_analysis;
-      bsDetector = bullshit_detector || [];
-      if (skill_matrix) {
-        if (Array.isArray(skill_matrix)) {
-          radarData = skill_matrix.map((data) => ({
-            skill: formatSkillName(data.skill_name),
-            proficiency: data.proficiency_score || 0
-          }));
-        } else {
-          radarData = Object.entries(skill_matrix).map(([skill, data]) => ({
-            skill: formatSkillName(skill),
-            proficiency: data.proficiency_score || 0
-          }));
-        }
-        radarData = radarData.sort((a, b) => b.proficiency - a.proficiency).slice(0, 15);
+      if (Array.isArray(skill_matrix)) {
+        radarData = skill_matrix.map(d => ({ skill: formatSkillName(d.skill_name), proficiency: d.proficiency_score || 0 }))
+          .sort((a, b) => b.proficiency - a.proficiency).slice(0, 15);
       }
     }
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl shadow-lg relative overflow-hidden group h-fit lg:col-span-1">
+      <div className="flex flex-col gap-8 mb-12">
+        {/* 3-Tier Heatmap — equal columns — rendered FIRST */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* VERIFIED — Green */}
+          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
+            <h4 className="text-sm font-bold text-zinc-300 mb-4 flex items-center gap-2 relative z-10 uppercase tracking-wider">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              Verified Base <span className="text-emerald-500 font-black ml-1">{verified.length}</span>
+            </h4>
+            <div className="flex flex-wrap gap-2 relative z-10 max-h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-600">
+              {verified.length > 0 ? verified.map((s, idx) => (
+                <div key={idx} className="inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-700/50 text-emerald-300 font-semibold text-xs hover:bg-emerald-900/50 transition-colors">{formatSkillName(s)}</div>
+              )) : <span className="text-xs text-zinc-500 italic">{isDeepLoading ? 'Analysing...' : 'None detected'}</span>}
+            </div>
+          </div>
+
+          {/* UNVERIFIED — Amber */}
+          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent"></div>
+            <h4 className="text-sm font-bold text-zinc-300 mb-1 flex items-center gap-2 relative z-10 uppercase tracking-wider">
+              <AlertCircle className="w-5 h-5 text-amber-400" />
+              Unverified Assumptions <span className="text-amber-500 font-black ml-1">{unverified.length}</span>
+            </h4>
+            <p className="text-xs text-zinc-500 mb-3 relative z-10">Listed but lacking direct project proof.</p>
+            <div className="flex flex-wrap gap-2 relative z-10 max-h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-600">
+              {unverified.length > 0 ? unverified.map((s, idx) => (
+                <div key={idx} className="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-950/40 border border-amber-700/50 text-amber-300 font-semibold text-xs hover:bg-amber-900/50 transition-colors">{formatSkillName(s)}</div>
+              )) : <div className="text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg font-semibold text-xs"><CheckCircle2 className="w-4 h-4" /> All stated skills verified!</div>}
+            </div>
+          </div>
+
+          {/* MISSING — Red */}
+          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent"></div>
+            <h4 className="text-sm font-bold text-zinc-300 mb-4 flex items-center gap-2 relative z-10 uppercase tracking-wider">
+              <AlertCircle className="w-5 h-5 text-red-400" />
+              Critical Deficits <span className="text-red-500 font-black ml-1">{missing.length}</span>
+            </h4>
+            <div className="flex flex-wrap gap-2 relative z-10 max-h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-600">
+              {missing.length > 0 ? missing.map((s, idx) => (
+                <div key={idx} className="inline-flex items-center px-3 py-1.5 rounded-lg bg-red-950/40 border border-red-800/50 text-red-300 font-semibold text-xs hover:bg-red-900/50 transition-colors">{formatSkillName(s)}</div>
+              )) : (
+                <div className="text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg font-semibold text-xs"><CheckCircle2 className="w-4 h-4" /> No critical gaps detected!</div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Full-width Radar Chart — rendered BELOW heatmap */}
+        <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl shadow-lg relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent"></div>
           <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
             <Activity className="w-6 h-6 text-indigo-400" />
-            Forensic Skill Matrix
+            Forensic Skill Matrix — 15-Axis Proficiency Radar
           </h3>
 
           {radarData.length > 0 ? (
-            <div className="w-full h-[350px] min-h-[288px] relative z-10">
+            <div className="w-full h-[400px] min-h-[320px] relative z-10">
               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
                   <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                  <PolarAngleAxis dataKey="skill" tick={{ fill: '#a1a1aa', fontSize: 10, fontWeight: 'bold' }} />
+                  <PolarAngleAxis dataKey="skill" tick={{ fill: '#a1a1aa', fontSize: radarData.length > 10 ? 8 : 10, fontWeight: 'bold' }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#52525b', fontSize: 9 }} />
                   <Radar name="Proficiency" dataKey="proficiency" stroke="#8b5cf6" strokeWidth={2} fill="#8b5cf6" fillOpacity={0.35} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="flex items-center justify-center h-[350px] text-zinc-500 italic">No skill matrix data available.</div>
+            <div className="flex items-center justify-center h-[350px] text-zinc-500 italic">{isDeepLoading ? 'Building skill matrix...' : 'No skill matrix data available.'}</div>
           )}
-        </div>
-
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
-            <h4 className="text-sm font-bold text-zinc-300 mb-4 flex items-center gap-2 relative z-10 uppercase tracking-wider">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              Verified Competencies
-            </h4>
-            <div className="flex flex-wrap gap-2 relative z-10">
-              {radarData.filter(r => r.proficiency >= 50).length > 0 ? (
-                radarData.filter(r => r.proficiency >= 50).map((r, idx) => (
-                  <div key={idx} className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-emerald-950/20 border border-emerald-800/40 text-emerald-400 font-semibold text-xs transition-colors hover:bg-emerald-900/25">
-                    {r.skill}
-                  </div>
-                ))
-              ) : (
-                <span className="text-xs text-zinc-500 italic">No verified competencies found</span>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent"></div>
-            <h4 className="text-sm font-bold text-zinc-300 mb-4 flex items-center gap-2 relative z-10 uppercase tracking-wider">
-              <AlertCircle className="w-5 h-5 text-red-400" />
-              Missing Skills (Critical Gaps)
-            </h4>
-            <div className="flex flex-wrap gap-2 relative z-10">
-              {coreResult?.missing_skills?.length > 0 ? (
-                coreResult.missing_skills.map((skill, idx) => (
-                  <div key={idx} className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-red-950/20 border border-red-900/40 text-red-400 font-semibold text-xs">
-                    {formatSkillName(skill)}
-                  </div>
-                ))
-              ) : (
-                <div className="text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg font-semibold text-xs">
-                  <CheckCircle2 className="w-4 h-4" /> No critical missing skills!
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl shadow-md relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent"></div>
-            <h4 className="text-sm font-bold text-zinc-300 mb-2 flex items-center gap-2 relative z-10 uppercase tracking-wider">
-              <AlertCircle className="w-5 h-5 text-amber-400" />
-              Unverified Stated Skills
-            </h4>
-            <p className="text-xs text-zinc-400 mb-4 relative z-10">
-              No project evidence found. Be ready to defend these in interviews.
-            </p>
-            <div className="flex flex-wrap gap-2 relative z-10">
-              {bsDetector.length > 0 ? bsDetector.map((skill, idx) => (
-                <div key={idx} className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-amber-950/20 border border-amber-900/40 text-amber-400 font-semibold text-xs">
-                  {formatSkillName(skill)}
-                </div>
-              )) : (
-                <div className="text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg font-semibold text-xs">
-                  <CheckCircle2 className="w-4 h-4" /> All stated skills verified!
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </div>
     );
   };
+
 
   const renderCareerAndInterviewPrep = () => {
     if (!coreResult) return (
@@ -1189,120 +1224,125 @@ export default function PlaceBuddyDashboard() {
     );
     const cog = coreResult?.cognitive_analysis || {};
     const roles = cog.best_fit_roles || [];
-    const dsaBridge = deepResult?.dsa_bridge || [];
-    const questions = deepResult?.targeted_questions || [];
+    const brutalQuestions = deepResult?.brutal_questions || [];
+    const dsaBridges = deepResult?.dsa_bridges || [];
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        <div className="lg:col-span-1 flex flex-col gap-6">
-          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl shadow-lg relative overflow-hidden group h-fit">
-            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent"></div>
-            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
-              <Compass className="w-6 h-6 text-teal-400" />
-              Career Constellation
-            </h3>
-
-            <div className="flex flex-col gap-4 relative z-10">
-              {roles.map((r, i) => (
-                <div key={i} className="bg-teal-500/5 border border-teal-500/20 rounded-xl p-4 transition-all hover:bg-teal-500/10 hover:border-teal-500/40 group/role cursor-pointer relative">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-teal-300 flex items-center gap-2">
-                      {r.role}
-                      <ChevronDown className="w-4 h-4 opacity-50 group-hover/role:rotate-180 transition-transform" />
-                    </span>
-                    <span className="text-teal-400 font-black text-sm bg-teal-500/20 px-2 py-1 rounded-md">{r.match_percentage}% Match</span>
-                  </div>
-                  <div className="max-h-0 opacity-0 overflow-hidden group-hover/role:max-h-[500px] group-hover/role:opacity-100 group-hover/role:mt-4 transition-all duration-500 ease-in-out">
-                    <p className="text-xs text-zinc-400 leading-relaxed border-t border-teal-500/10 pt-3">{r.rationale}</p>
-                  </div>
+      <div className="flex flex-col gap-8 mb-12">
+        {/* Career Constellation */}
+        <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl shadow-lg relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent"></div>
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
+            <Compass className="w-6 h-6 text-teal-400" />
+            Career Constellation
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 relative z-10">
+            {roles.map((r, i) => (
+              <div key={i} className="bg-teal-500/5 border border-teal-500/20 rounded-xl p-4 hover:bg-teal-500/10 hover:border-teal-500/40 group/role cursor-pointer transition-all">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-teal-300 text-sm flex items-center gap-2">{r.role}<ChevronDown className="w-4 h-4 opacity-50 group-hover/role:rotate-180 transition-transform" /></span>
+                  <span className="text-teal-400 font-black text-xs bg-teal-500/20 px-2 py-1 rounded-md whitespace-nowrap">{r.match_percentage}%</span>
                 </div>
-              ))}
-            </div>
+                <div className="max-h-0 overflow-hidden group-hover/role:max-h-[200px] group-hover/role:mt-3 transition-all duration-500">
+                  <p className="text-xs text-zinc-400 leading-relaxed border-t border-teal-500/10 pt-2">{r.rationale}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 backdrop-blur-xl shadow-lg relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent"></div>
-            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative z-10">
-              <Target className="w-6 h-6 text-rose-400" />
-              The "Brutal Interviewer" Simulator
-            </h3>
+        {/* Forensic Interview Preparation Engine */}
+        <div className="bg-zinc-900/20 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-xl">
+          <h3 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
+            <Target className="w-7 h-7 text-rose-400" />
+            Forensic Interview Preparation Engine
+          </h3>
 
-            <div className="grid grid-cols-1 gap-4 relative z-10">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            {/* Column A: Deep Vulnerability Questions */}
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-bold uppercase tracking-widest text-rose-400 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+                Deep Vulnerability Questions
+              </h4>
               {isDeepLoading ? (
-                <div className="text-zinc-400 italic animate-pulse">Loading deep analysis questions...</div>
-              ) : questions.length > 0 ? questions.map((item, index) => {
-                const questionText = typeof item === 'object' ? item.question : item;
-                const expectedAnswer = typeof item === 'object' ? item.expected_answer : null;
-                return (
-                  <div key={index} className="bg-rose-500/5 border-l-4 border-rose-500/50 rounded-r-xl text-zinc-300 text-sm font-medium transition-all relative">
-                    <div className="group/q cursor-pointer hover:bg-rose-500/10 transition-all p-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-rose-400 font-bold whitespace-nowrap">Question {index + 1}</span>
-                        <ChevronDown className="w-4 h-4 opacity-50 group-hover/q:rotate-180 transition-transform" />
-                      </div>
-                      <div className="max-h-0 opacity-0 overflow-hidden group-hover/q:max-h-[500px] group-hover/q:opacity-100 group-hover/q:mt-3 transition-all duration-500 ease-in-out">
-                        <p className="text-zinc-300 leading-relaxed text-sm">{questionText}</p>
-                      </div>
+                <div className="text-zinc-400 italic animate-pulse text-sm">Loading forensic questions...</div>
+              ) : brutalQuestions.length > 0 ? brutalQuestions.map((item, index) => (
+                <div key={index} className="bg-zinc-900/60 border border-rose-500/20 rounded-2xl overflow-hidden transition-all hover:border-rose-500/40">
+                  {/* Question header */}
+                  <div className="p-5 border-b border-rose-500/10">
+                    <div className="flex items-start gap-3 mb-3">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 font-black text-xs">{index + 1}</span>
+                      <p className="text-zinc-200 text-sm leading-relaxed font-medium">{item.question}</p>
                     </div>
-
-                    {expectedAnswer && (
-                      <div className="px-4 pb-4">
-                        <button
-                          onClick={() => toggleAnswer(index)}
-                          className="mt-4 px-3 py-1.5 text-xs font-mono text-emerald-400 hover:text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-800/50 rounded transition-colors flex items-center gap-2 w-fit"
-                        >
-                          {revealedAnswers[index] ? '[-] Hide Expected Answer' : '[+] Reveal Expected Answer'}
-                        </button>
-                        {revealedAnswers[index] && (
-                          <div className="mt-3 p-4 bg-slate-950/80 rounded-md border-l-2 border-emerald-500 text-slate-300 text-sm font-mono whitespace-pre-wrap animate-in fade-in slide-in-from-top-2 duration-200">
-                            <span className="text-emerald-500 block text-xs uppercase tracking-wider mb-2">// EXPECTED CRITERIA:</span>
-                            {expectedAnswer}
-                          </div>
-                        )}
+                    {item.target_vulnerability && (
+                      <div className="ml-9">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-950/50 border border-rose-800/50 text-rose-300 text-xs font-mono">
+                          <AlertCircle className="w-3 h-3" /> {item.target_vulnerability}
+                        </span>
                       </div>
                     )}
                   </div>
-                );
-              }) : (
-                <div className="text-zinc-500 italic text-sm">No targeted questions available.</div>
+                  {/* Ideal response framework — toggle */}
+                  {item.ideal_response_framework && (
+                    <div className="px-5 py-3">
+                      <button
+                        onClick={() => toggleAnswer(index)}
+                        className="text-xs font-mono text-emerald-400 hover:text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/40 border border-emerald-800/50 rounded px-3 py-1.5 flex items-center gap-2 transition-colors"
+                      >
+                        {revealedAnswers[index] ? '[-] Hide Ideal Framework' : '[+] Reveal Ideal Framework'}
+                      </button>
+                      {revealedAnswers[index] && (
+                        <div className="mt-3 p-4 bg-slate-950/80 rounded-xl border-l-2 border-emerald-500 animate-in fade-in slide-in-from-top-2 duration-200">
+                          <span className="block text-[10px] text-emerald-500 uppercase tracking-wider mb-2 font-mono">// ELITE RESPONSE TOKENS:</span>
+                          <p className="text-slate-300 text-sm font-mono">{item.ideal_response_framework}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )) : (
+                <div className="text-zinc-500 italic text-sm p-4 bg-zinc-900/40 rounded-2xl border border-dashed border-zinc-800">
+                  No forensic questions available. Run analysis to generate.
+                </div>
               )}
             </div>
 
-            {
-              dsaBridge.length > 0 && (
-                <div className="mt-6 relative z-10 bg-zinc-950/50 rounded-xl p-5 border border-white/5">
-                  <h4 className="text-sm font-bold text-rose-300 mb-3 flex items-center gap-2">
-                    <Briefcase className="w-4 h-4" /> Real-World DSA Bridge
-                  </h4>
-                  <div className="flex flex-col gap-3">
-                    {dsaBridge.map((bridge, i) => (
-                      <div key={i} className="bg-zinc-950/80 rounded-lg p-4 border border-zinc-800/50 group/dsa cursor-pointer transition-all hover:border-zinc-700">
-                        <div className="flex justify-between items-center">
-                          <span className="text-rose-400 font-bold text-xs uppercase tracking-wider">{bridge.dsa_concept}</span>
-                          <ChevronDown className="w-4 h-4 opacity-50 text-zinc-500 group-hover/dsa:rotate-180 transition-transform" />
-                        </div>
-                        <div className="max-h-0 opacity-0 overflow-hidden group-hover/dsa:max-h-[800px] group-hover/dsa:opacity-100 group-hover/dsa:mt-4 transition-all duration-500 ease-in-out">
-                          <div className="flex flex-col sm:flex-row gap-4 text-xs">
-                            <div className="flex-1 bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-zinc-400 relative">
-                              <span className="block text-[10px] text-zinc-500 uppercase tracking-wider mb-2">Project Logic</span>
-                              {bridge.project_logic}
-                              <div className="absolute top-1/2 -right-5 -translate-y-1/2 w-6 h-6 bg-zinc-800 rounded-full flex flex-col items-center justify-center border border-zinc-700 hidden sm:flex z-10 shadow-lg">
-                                <ArrowRight className="w-3 h-3 text-rose-400" />
-                              </div>
-                            </div>
-                            <div className="flex-1 bg-rose-500/10 p-4 rounded-xl border border-rose-500/20 text-rose-300 font-semibold flex items-center justify-center text-center">
-                              {bridge.dsa_concept}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+            {/* Column B: Algorithmic Engineering Bridges */}
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-bold uppercase tracking-widest text-violet-400 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span>
+                Algorithmic Engineering Bridges
+              </h4>
+              {isDeepLoading ? (
+                <div className="text-zinc-400 italic animate-pulse text-sm">Building DSA bridges...</div>
+              ) : dsaBridges.length > 0 ? dsaBridges.map((bridge, i) => (
+                <div key={i} className="bg-zinc-900/60 border border-violet-500/20 rounded-2xl p-5 hover:border-violet-500/40 transition-all">
+                  {/* Problem statement */}
+                  <p className="text-zinc-200 text-sm font-semibold leading-relaxed mb-4">{bridge.problem_statement}</p>
+
+                  {/* Engineering context */}
+                  <div className="bg-violet-950/20 border border-violet-800/30 rounded-xl p-4 mb-3">
+                    <span className="block text-[10px] text-violet-400 uppercase tracking-widest mb-1.5 font-bold">Engineering Context</span>
+                    <p className="text-xs text-zinc-400 leading-relaxed">{bridge.engineering_context}</p>
                   </div>
+
+                  {/* Complexity badge */}
+                  {bridge.optimal_complexity && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Target Complexity:</span>
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-violet-500/10 border border-violet-500/30 text-violet-300 font-mono text-xs font-bold">
+                        {bridge.optimal_complexity}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )
-            }
+              )) : (
+                <div className="text-zinc-500 italic text-sm p-4 bg-zinc-900/40 rounded-2xl border border-dashed border-zinc-800">
+                  No DSA bridges available. Run analysis to generate.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
