@@ -492,9 +492,9 @@ export default function PlaceBuddyDashboard() {
 
     // -- 3. FORENSIC SKILL TIERS (from deepResult) --
     const deepSM = deepResult?.skill_matrix || {};
-    const pdfVerified  = (deepSM.verified_competencies || []).map(formatSkillName);
+    const pdfVerified = (deepSM.verified_competencies || []).map(formatSkillName);
     const pdfUnverified = (deepSM.unverified_skills || []).map(formatSkillName);
-    const pdfMissing   = (deepSM.missing_skills || []).map(formatSkillName);
+    const pdfMissing = (deepSM.missing_skills || []).map(formatSkillName);
 
     if (pdfVerified.length) {
       drawSectionHeader('Verified Competencies', 16, 160, 100);
@@ -1113,9 +1113,9 @@ export default function PlaceBuddyDashboard() {
   const renderSkillsAssessment = () => {
     // Build 15-axis radar from deepResult.skill_matrix if available, fallback to coreResult
     const deepSkillMatrix = deepResult?.skill_matrix || null;
-    const verified   = deepSkillMatrix?.verified_competencies || [];
+    const verified = deepSkillMatrix?.verified_competencies || [];
     const unverified = deepSkillMatrix?.unverified_skills || [];
-    const missing    = deepSkillMatrix?.missing_skills || [];
+    const missing = deepSkillMatrix?.missing_skills || [];
 
     let radarData = [];
     if (deepSkillMatrix) {
@@ -1358,16 +1358,16 @@ export default function PlaceBuddyDashboard() {
     // First card swaps based on mode
     const firstCard = isRoleMode
       ? {
-          name: "Matched Certs",
-          value: `${matchedCerts.length}`,
-          desc: matchedCerts.length > 0
-            ? matchedCerts.join(' · ')
-            : "No certifications matched",
-          color: "text-violet-400",
-          bg: "bg-violet-500/5",
-          border: "border-violet-500/30",
-          glow: "group-hover:shadow-[0_0_30px_rgba(139,92,246,0.2)]",
-        }
+        name: "Matched Certs",
+        value: `${matchedCerts.length}`,
+        desc: matchedCerts.length > 0
+          ? matchedCerts.join(' · ')
+          : "No certifications matched",
+        color: "text-violet-400",
+        bg: "bg-violet-500/5",
+        border: "border-violet-500/30",
+        glow: "group-hover:shadow-[0_0_30px_rgba(139,92,246,0.2)]",
+      }
       : { name: "Semantic Similarity", value: `${(km.semantic_similarity * 100 || 0).toFixed(0)}%`, desc: "Cosine similarity between profile and JD", color: "text-indigo-400", bg: "bg-indigo-500/5", border: "border-indigo-500/30", glow: "group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]" };
 
     const signals = coreResult ? [
