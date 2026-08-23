@@ -5,6 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import roles
 from app.api.routes import resume, skills, ats
+from app.api.routes import mcq_router
+from app.db.database import engine
+from app.db import models  # noqa: F401 — ensures ORM models are registered before create_all
 
 # ---------------------------------------------------------------------------
 # Global ROLES_DB — loaded ONCE at startup from the enriched dictionary.
@@ -51,9 +54,15 @@ app.add_middleware(
 )
 
 # ---------------------------------------------------------------------------
+# Database — create all tables on startup (idempotent: skipped if they exist)
+# ---------------------------------------------------------------------------
+models.Base.metadata.create_all(bind=engine)
+
+# ---------------------------------------------------------------------------
 # Routers
 # ---------------------------------------------------------------------------
 app.include_router(resume.router, prefix="/resume", tags=["Resume"])
 app.include_router(skills.router, prefix="/skills", tags=["Skills"])
 app.include_router(ats.router, prefix="/ats", tags=["ATS Score"])
 app.include_router(roles.router)
+app.include_router(mcq_router.router, prefix="/api/mcq", tags=["MCQ Engine"])
