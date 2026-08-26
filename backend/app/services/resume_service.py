@@ -17,9 +17,13 @@ import io
 import logging
 import re
 from typing import Dict
+from zipfile import ZipFile, BadZipFile
+from xml.etree import ElementTree as ET
 
-import docx
 import fitz  # PyMuPDF
+
+# WordprocessingML namespace used in word/document.xml
+_W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 # ---------------------------------------------------------------------------
 # Logger
@@ -104,9 +108,27 @@ def extract_text(file_bytes: bytes, filename: str = "") -> str:
         if filename.endswith(".docx") or filename.endswith(".doc"):
             # ----------------------------------------------------------
             # Handle Microsoft Word documents
+            # stdlib-only: ZipFile + xml.etree.ElementTree
+            # (replaces python-docx / lxml to avoid blocked native DLLs)
             # ----------------------------------------------------------
-            doc = docx.Document(io.BytesIO(file_bytes))
-            text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+            try:
+                with ZipFile(io.BytesIO(file_bytes)) as zf:
+                    xml_data = zf.read("word/document.xml")
+            except (BadZipFile, KeyError) as exc:
+                raise ValueError(
+                    f"Could not read word/document.xml from '{filename}': {exc}"
+                ) from exc
+
+            root = ET.fromstring(xml_data)
+            paragraphs = []
+            for para in root.iter(f"{{{_W_NS}}}p"):
+                para_text = "".join(
+                    node.text or ""
+                    for node in para.iter(f"{{{_W_NS}}}t")
+                )
+                if para_text.strip():
+                    paragraphs.append(para_text)
+            text = "\n".join(paragraphs)
             logger.info("DOCX extraction: %d characters from '%s'", len(text), filename)
 
         elif filename.endswith(".txt"):
