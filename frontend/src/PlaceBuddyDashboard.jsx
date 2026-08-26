@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Eye, EyeOff, Download, History, Trash2, Clock } from 'lucide-react';
+import { UserCircle, UploadCloud, FileText, ChevronDown, CheckCircle2, AlertCircle, XCircle, Target, Compass, BrainCircuit, Rocket, Activity, Briefcase, Lightbulb, ArrowLeft, ArrowRight, Eye, EyeOff, Download, History, Trash2, Clock, ShieldCheck } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import jsPDF from 'jspdf';
+import { useApp } from './context/AppContext';
 const API_BASE_URL = "http://127.0.0.1:8080";
 
 const formatSkillName = (skill) => {
@@ -17,6 +18,10 @@ const formatSkillName = (skill) => {
 };
 
 export default function PlaceBuddyDashboard() {
+  // ── Global State Vault ────────────────────────────────────────────────────
+  // resumeFile and initialTargetRole are captured at onboarding — no re-upload needed
+  const { resumeFile, initialTargetRole } = useApp();
+
   const [appState, setAppState] = useState('idle'); // idle, analyzing, results_heatmap, results_detailed
   const [loadingText, setLoadingText] = useState('Processing Analysis...');
   const [coreResult, setCoreResult] = useState(null);
@@ -129,7 +134,7 @@ export default function PlaceBuddyDashboard() {
   // Input State
   const [jdText, setJdText] = useState('');
   const [jdFile, setJdFile] = useState(null);
-  const [resumeFile, setResumeFile] = useState(null);
+  // resumeFile now comes from AppContext — no local state needed
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
   const jdFileInputRef = useRef(null);
@@ -137,7 +142,8 @@ export default function PlaceBuddyDashboard() {
   // Dropdown State
   const [roles, setRoles] = useState([]);
   const [searchRole, setSearchRole] = useState('');
-  const [selectedRole, setSelectedRole] = useState('');
+  // Pre-seed selectedRole from the globally stored initialTargetRole
+  const [selectedRole, setSelectedRole] = useState(initialTargetRole || '');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -199,7 +205,7 @@ export default function PlaceBuddyDashboard() {
 
   const handleAnalyze = async (type) => {
     if (!resumeFile) {
-      alert("Please upload a resume first.");
+      alert("Resume not found. Please re-onboard from the Dashboard.");
       return;
     }
 
@@ -682,40 +688,24 @@ export default function PlaceBuddyDashboard() {
 
   const renderInputZone = () => (
     <div id="dashboard-section" className="scroll-mt-24 max-w-6xl mx-auto mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 px-8 relative z-50 animate-in fade-in slide-in-from-bottom-8 duration-700">
+      {/* Resume — sourced from global vault, no re-upload */}
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
           <FileText className="w-6 h-6 text-indigo-400 drop-shadow-[0_0_5px_rgba(99,102,241,0.8)]" /> Resume
         </h2>
-        <div
-          onClick={() => fileInputRef.current?.click()}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className={`relative group cursor-pointer h-[340px] rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center overflow-hidden ${isDragging ? 'border-indigo-500 bg-zinc-800/80' : 'border-zinc-700 hover:border-indigo-500 bg-zinc-900/40 hover:bg-zinc-800/60'
-            } backdrop-blur-md`}
-        >
-          <input
-            type="file"
-            accept=".pdf,.docx,.txt"
-            ref={fileInputRef}
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-          {resumeFile ? (
-            <div className="flex flex-col items-center z-10 px-6 text-center">
-              <FileText className="w-16 h-16 text-emerald-400 mb-6 drop-shadow-lg" />
-              <p className="text-emerald-300 font-bold text-xl break-all">{resumeFile.name}</p>
-              <p className="text-zinc-400 text-sm mt-3">Click or drag to replace</p>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center z-10">
-              <UploadCloud className="w-16 h-16 text-zinc-500 group-hover:text-indigo-400 group-hover:scale-110 transition-all duration-500 mb-6 drop-shadow-lg" />
-              <p className="text-zinc-200 font-semibold text-lg">Drag & drop your Resume PDF</p>
-              <p className="text-zinc-500 text-sm mt-2">or click to browse local files</p>
-            </div>
-          )}
+        <div className="relative flex flex-col items-center justify-center gap-4 h-[200px] rounded-3xl border border-emerald-500/25 bg-emerald-500/5 backdrop-blur-md">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+            <ShieldCheck className="w-7 h-7 text-emerald-400" />
+          </div>
+          <div className="text-center px-6">
+            <p className="text-emerald-300 font-bold text-base truncate max-w-xs">{resumeFile?.name}</p>
+            <p className="text-xs text-zinc-500 font-mono mt-1">
+              {resumeFile ? `${(resumeFile.size / 1024).toFixed(1)} KB` : ''} · Secured in vault · Text extracted
+            </p>
+          </div>
+          <span className="absolute top-3 right-4 text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+            ✓ Ready
+          </span>
         </div>
       </div>
 

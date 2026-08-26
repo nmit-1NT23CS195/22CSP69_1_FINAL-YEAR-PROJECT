@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Activity, BrainCircuit, ChevronRight, Rocket, Target, Zap,
-  BarChart2, Shield, Clock, TrendingUp, Star, Terminal, Cpu, Code2
+  BarChart2, Shield, Clock, TrendingUp, Star, Terminal, Cpu, Code2, RotateCcw
 } from 'lucide-react';
 import { useQuiz } from '../context/QuizContext';
+import { useApp } from '../context/AppContext';
 
 // -- Animated gradient orb background --
 function GlowOrb({ color, size, top, left, blur }) {
@@ -54,6 +55,7 @@ function StatChip({ icon: Icon, label, value, color }) {
 
 export default function Dashboard({ onViewChange }) {
   const { q10Score } = useQuiz();
+  const { initialTargetRole, resetOnboarding } = useApp();
   const [mounted, setMounted] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [prsValue, setPrsValue] = useState(0);
@@ -164,7 +166,14 @@ export default function Dashboard({ onViewChange }) {
             Systems Online
           </span>
           <div className="w-px h-4 bg-white/10" />
-          <span className="text-zinc-600">v2.0 Build</span>
+          <button
+            onClick={resetOnboarding}
+            title="Change resume or target role"
+            className="flex items-center gap-1.5 text-zinc-600 hover:text-zinc-300 transition-colors text-xs font-semibold"
+          >
+            <RotateCcw className="w-3 h-3" />
+            Re-onboard
+          </button>
         </div>
       </nav>
 
@@ -185,6 +194,13 @@ export default function Dashboard({ onViewChange }) {
           <br />
           <span className="text-zinc-500 text-sm">Powered by ML signal analysis + cognitive diagnostics.</span>
         </p>
+        {/* Target role pill — populated from AppContext */}
+        {initialTargetRole && (
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-4 py-1.5 mt-5 text-xs font-semibold text-emerald-300 backdrop-blur-sm">
+            <Target className="w-3 h-3" />
+            Targeting: {initialTargetRole}
+          </div>
+        )}
       </div>
 
       {/* BENTO GRID */}
@@ -224,6 +240,9 @@ export default function Dashboard({ onViewChange }) {
                   Module A
                 </span>
                 <span className="text-[10px] font-semibold text-zinc-600">· ML-Powered</span>
+                <span className="ml-auto text-[10px] font-bold text-amber-400/80 uppercase tracking-wide bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                  ⏸ Standby
+                </span>
               </div>
 
               <h2 className="text-2xl font-black text-white mb-2 tracking-tight group-hover:text-indigo-100 transition-colors">
@@ -284,6 +303,9 @@ export default function Dashboard({ onViewChange }) {
                   Module B
                 </span>
                 <span className="text-[10px] font-semibold text-zinc-600">· Adaptive Diagnostic</span>
+                <span className="ml-auto text-[10px] font-bold text-amber-400/80 uppercase tracking-wide bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                  ⏸ Standby
+                </span>
               </div>
 
               <h2 className="text-2xl font-black text-white mb-2 tracking-tight group-hover:text-purple-100 transition-colors">

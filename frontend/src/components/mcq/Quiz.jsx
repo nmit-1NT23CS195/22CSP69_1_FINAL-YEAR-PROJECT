@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { generateQuiz, saveQuizResult, QUESTION_BANK } from "../../api/mcqService";
 import QuizResult from "./QuizResult";
 import { useQuiz } from "../../context/QuizContext";
+import { useApp } from "../../context/AppContext";
 import {
   BrainCircuit, ChevronRight, Zap, Terminal, Clock,
-  CheckCircle2, XCircle, ArrowLeft, RotateCcw, BookOpen
+  CheckCircle2, XCircle, ArrowLeft, RotateCcw, BookOpen,
+  Target, ShieldCheck, Cpu
 } from "lucide-react";
 
 const TOPICS = ["Mixed (All Topics)", ...Object.keys(QUESTION_BANK)];
@@ -39,10 +41,11 @@ function TimerDisplay({ seconds, isWarning }) {
   );
 }
 
-// ── LANDING SCREEN ──────────────────────────────────────────────────────────
-function QuizLanding({ onStart, loading }) {
-  const [selectedTopic, setSelectedTopic] = useState(TOPICS[0]);
-  const [hovered, setHovered] = useState(null);
+const API_BASE_URL = "http://127.0.0.1:8080";
+
+// ── PRS STANDBY SCREEN (replaces QuizLanding) ─────────────────────────────
+function PrsStandby({ onLaunch, loading, loadingStage, error }) {
+  const { initialTargetRole, resumeFile } = useApp();
 
   return (
     <div className="min-h-screen bg-[#050508] flex items-center justify-center p-6">
@@ -57,51 +60,44 @@ function QuizLanding({ onStart, loading }) {
           </div>
           <div className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-1 mb-4 text-xs font-semibold text-purple-300">
             <Terminal className="w-3 h-3" />
-            PlaceBuddy · Module B · Technical Diagnostic
+            PlaceBuddy · Module B · PRS Diagnostic
           </div>
+
+          {/* Target role standby pill */}
+          {initialTargetRole && (
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-4 py-1.5 mb-5 text-xs font-semibold text-emerald-300">
+              <Target className="w-3 h-3" />
+              Ready to Assess: {initialTargetRole}
+            </div>
+          )}
+
           <h1 className="text-4xl font-black text-white tracking-tighter mb-3">
-            10-MCQ Technical{" "}
+            PRS Diagnostic{" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
               Assessment
             </span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-lg mx-auto leading-relaxed">
-            Curated questions spanning DSA, Operating Systems, Computer Networks, and Web Development.
-            Your score feeds directly into your <span className="text-purple-300 font-semibold">Placement Readiness Score (PRS)</span>.
+            AI-generates 10 personalised questions calibrated to your resume skill profile and target role.
+            Your score feeds directly into your{" "}
+            <span className="text-purple-300 font-semibold">Placement Readiness Score (PRS)</span>.
           </p>
         </div>
 
-        {/* Topic selector */}
-        <div className="mb-6">
-          <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-            <BookOpen className="w-3 h-3" /> Select Topic Domain
-          </p>
-          <div className="grid grid-cols-2 gap-2.5">
-            {TOPICS.map(topic => (
-              <button
-                key={topic}
-                onClick={() => setSelectedTopic(topic)}
-                onMouseEnter={() => setHovered(topic)}
-                onMouseLeave={() => setHovered(null)}
-                className={`relative p-4 rounded-2xl border text-left text-sm font-semibold transition-all duration-300 focus:outline-none ${selectedTopic === topic
-                  ? 'border-purple-500/60 bg-purple-500/10 text-purple-200 shadow-[0_0_20px_rgba(168,85,247,0.1)]'
-                  : 'border-white/6 bg-white/[0.03] text-zinc-400 hover:border-white/10 hover:text-zinc-300'
-                  }`}
-              >
-                {selectedTopic === topic && (
-                  <div className="absolute top-2 right-2">
-                    <CheckCircle2 className="w-4 h-4 text-purple-400" />
-                  </div>
-                )}
-                <span className="block">{topic}</span>
-                <span className="text-[10px] font-normal text-zinc-600 mt-0.5 block">
-                  {topic === TOPICS[0]
-                    ? `${Object.values(QUESTION_BANK).flat().length} questions · Random 10`
-                    : `${QUESTION_BANK[topic]?.length || 10} questions`}
-                </span>
-              </button>
-            ))}
+        {/* Resume vault status */}
+        <div className="bg-white/[0.03] border border-white/6 rounded-2xl p-4 mb-6 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+            <ShieldCheck className="w-4.5 h-4.5 text-emerald-400" />
           </div>
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Resume Vault</p>
+            <p className="text-sm font-semibold text-emerald-300 truncate">
+              {resumeFile?.name || 'Resume secured'}
+            </p>
+          </div>
+          <span className="ml-auto text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex-shrink-0">
+            ✓ Ready
+          </span>
         </div>
 
         {/* Rules */}
@@ -109,7 +105,7 @@ function QuizLanding({ onStart, loading }) {
           <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">Assessment Rules</p>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { icon: '🎯', label: '10 Questions', sub: 'MCQ format' },
+              { icon: '🎯', label: '10 Questions', sub: 'AI-personalised' },
               { icon: '⏱️', label: '12 Minutes', sub: 'Time limit' },
               { icon: '📊', label: 'PRS Tracked', sub: 'Auto-saved' },
             ].map(r => (
@@ -122,30 +118,43 @@ function QuizLanding({ onStart, loading }) {
           </div>
         </div>
 
+        {/* Error */}
+        {error && (
+          <div className="mb-5 flex items-center gap-2.5 bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0" />
+            <p className="text-xs font-medium text-red-300">{error}</p>
+          </div>
+        )}
+
         {/* CTA */}
         <button
-          onClick={() => onStart(selectedTopic === TOPICS[0] ? null : selectedTopic)}
+          onClick={onLaunch}
           disabled={loading}
           className="w-full relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black py-4 px-6 rounded-2xl transition-all duration-300 shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] disabled:opacity-50 disabled:cursor-not-allowed group"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-3">
               <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Initializing Assessment...
+              {loadingStage || 'Initializing Assessment...'}
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
               <Zap className="w-5 h-5" />
-              Launch Diagnostic Session
+              Take PRS Diagnostic Quiz
               <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </span>
           )}
           <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
+
+        <p className="text-center text-[10px] text-zinc-700 font-mono mt-5">
+          Generates questions from your resume skills — completely independent of Module A
+        </p>
       </div>
     </div>
   );
 }
+
 
 // ── MAIN QUIZ COMPONENT ──────────────────────────────────────────────────────
 export default function Quiz({ onBackToDashboard }) {
@@ -154,6 +163,8 @@ export default function Quiz({ onBackToDashboard }) {
   const [answers, setAnswers] = useState([]);
   const [quizData, setQuizData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingStage, setLoadingStage] = useState('');
+  const [launchError, setLaunchError] = useState('');
   const [resultData, setResultData] = useState(null);
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -161,6 +172,7 @@ export default function Quiz({ onBackToDashboard }) {
   const timerRef = useRef(null);
 
   const { setQ10Score } = useQuiz();
+  const { resumeFile, initialTargetRole } = useApp();
 
   // Timer tick
   useEffect(() => {
@@ -178,6 +190,83 @@ export default function Quiz({ onBackToDashboard }) {
     return () => clearInterval(timerRef.current);
   }, [phase]);
 
+  /**
+   * On-demand PRS launch:
+   * 1. Call /ats/score/core with the globally stored resumeFile + initialTargetRole
+   *    to derive the forensic skill tier matrix (Green / Yellow / Red).
+   * 2. Immediately pipe the skill lists to /api/mcq/generate for personalised AI questions.
+   * Completely independent of the ATS Insights tab — running this does NOT affect Module A.
+   */
+  const handleLaunchPRS = async () => {
+    if (!resumeFile) {
+      setLaunchError('Resume not found in vault. Please re-onboard from the Dashboard.');
+      return;
+    }
+    setLaunchError('');
+    setLoading(true);
+
+    try {
+      // ── Stage 1: derive skill tiers from resume + role ─────────────────────
+      setLoadingStage('Analysing skill profile...');
+      const coreForm = new FormData();
+      coreForm.append('resume', resumeFile);
+      if (initialTargetRole) coreForm.append('role', initialTargetRole);
+
+      const coreRes = await fetch(`${API_BASE_URL}/ats/score/core`, {
+        method: 'POST',
+        body: coreForm,
+      });
+      if (!coreRes.ok) throw new Error('Skill analysis failed. Is the backend running?');
+      const coreData = await coreRes.json();
+
+      // Extract skill tiers from cognitive analysis
+      const cog = coreData.cognitive_analysis || {};
+      const sm = cog.skill_matrix || {};
+      const verifiedSkills = (sm.verified_competencies || []).map(s => typeof s === 'string' ? s : s.skill || '');
+      const unverifiedSkills = (sm.unverified_skills || []).map(s => typeof s === 'string' ? s : s.skill || '');
+      const missingSkills = (coreData.missing_skills || []);
+
+      // ── Stage 2: generate personalised quiz ────────────────────────────────
+      setLoadingStage('Generating personalised questions...');
+      const mcqRes = await fetch(`${API_BASE_URL}/api/mcq/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          verified_skills: verifiedSkills,
+          unverified_skills: unverifiedSkills,
+          missing_skills: missingSkills,
+        }),
+      });
+      if (!mcqRes.ok) throw new Error('Quiz generation failed.');
+      const mcqData = await mcqRes.json();
+
+      // Normalise response to the shape the quiz engine expects
+      const questions = (mcqData.questions || []).map(q => ({
+        question: q.question,
+        options: q.options,
+        correctAnswer: q.correct_answer,
+        explanation: q.explanation,
+      }));
+
+      if (!questions.length) throw new Error('No questions returned. Please try again.');
+
+      setQuizData(questions);
+      setAnswers(new Array(questions.length).fill(null));
+      setCurrentQuestion(0);
+      setTimeLeft(TOTAL_TIME);
+      setSelectedAnswer(null);
+      setAnswered(false);
+      setResultData(null);
+      setPhase('quiz');
+    } catch (err) {
+      setLaunchError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+      setLoadingStage('');
+    }
+  };
+
+  // Legacy static-bank quiz starter (kept for backward compat, not called from standby)
   const handleStartQuiz = async (topic) => {
     setLoading(true);
     try {
@@ -269,7 +358,14 @@ export default function Quiz({ onBackToDashboard }) {
 
   // ── LANDING ──
   if (phase === 'landing') {
-    return <QuizLanding onStart={handleStartQuiz} loading={loading} />;
+    return (
+      <PrsStandby
+        onLaunch={handleLaunchPRS}
+        loading={loading}
+        loadingStage={loadingStage}
+        error={launchError}
+      />
+    );
   }
 
   // ── RESULT ──

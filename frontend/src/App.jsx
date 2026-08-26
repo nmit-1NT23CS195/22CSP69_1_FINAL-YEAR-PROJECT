@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import PlaceBuddyDashboard from './PlaceBuddyDashboard';
 import Dashboard from './pages/Dashboard';
+import Onboarding from './pages/Onboarding';
 import Quiz from './components/mcq/Quiz';
 import { QuizProvider } from './context/QuizContext';
+import { AppProvider, useApp } from './context/AppContext';
 
-export default function App() {
+// ── Inner app — only rendered once onboarding is complete ────────────────────
+function AppInner() {
+  const { isOnboarded } = useApp();
   const [view, setView] = useState('dashboard');
+
+  // Gate: show onboarding until resume + role are captured
+  if (!isOnboarded) {
+    return <Onboarding />;
+  }
 
   const renderView = () => {
     switch (view) {
@@ -35,5 +44,16 @@ export default function App() {
     }
   };
 
-  return <QuizProvider>{renderView()}</QuizProvider>;
+  return renderView();
+}
+
+// ── Root — providers wrapping order: AppProvider (outer) > QuizProvider ───────
+export default function App() {
+  return (
+    <AppProvider>
+      <QuizProvider>
+        <AppInner />
+      </QuizProvider>
+    </AppProvider>
+  );
 }
