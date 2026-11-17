@@ -7,6 +7,7 @@ from app.api.routes import roles
 from app.api.routes import resume, skills, ats
 from app.api.routes import mcq_router
 from app.api.routes import assessment_router
+from app.api.routes import interview_router
 from app.db.database import engine
 from app.db import models  # noqa: F401 — ensures ORM models are registered before create_all
 
@@ -68,3 +69,4 @@ app.include_router(ats.router, prefix="/ats", tags=["ATS Score"])
 app.include_router(roles.router)
 app.include_router(mcq_router.router, prefix="/api/mcq", tags=["MCQ Engine"])
 app.include_router(assessment_router.router, prefix="/api/assessment", tags=["Assessment Stream"])
+app.include_router(interview_router.router, prefix="/api/interview", tags=["Mock Interview"])
