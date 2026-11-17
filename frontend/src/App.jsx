@@ -3,13 +3,14 @@ import PlaceBuddyDashboard from './PlaceBuddyDashboard';
 import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
 import Quiz from './components/mcq/Quiz';
+import VideoInterview from './components/interview/VideoInterview';
 import { QuizProvider } from './context/QuizContext';
 import { AppProvider, useApp } from './context/AppContext';
 import { AssessmentProvider } from './context/AssessmentContext';
 
 // ── Inner app — only rendered once onboarding is complete ────────────────────
 function AppInner() {
-  const { isOnboarded } = useApp();
+  const { isOnboarded, initialTargetRole } = useApp();
   const [view, setView] = useState('dashboard');
 
   // Gate: show onboarding until resume + role are captured
@@ -51,6 +52,15 @@ function AppInner() {
           <Quiz
             moduleType="aptitude"
             onBackToDashboard={() => setView('dashboard')}
+          />
+        );
+
+      case 'interview':
+        // Module D: Video Mock Interview
+        return (
+          <VideoInterview
+            targetRole={initialTargetRole || 'Software Engineer'}
+            onBack={() => setView('dashboard')}
           />
         );
 

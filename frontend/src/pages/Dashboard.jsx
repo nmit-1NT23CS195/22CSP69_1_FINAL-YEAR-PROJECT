@@ -3,7 +3,7 @@ import {
   Activity, BrainCircuit, ChevronRight, Rocket, Target, Zap,
   BarChart2, Shield, Clock, TrendingUp, Star, Terminal, Cpu,
   Code2, RotateCcw, BookOpen, Brain, Calculator, Lightbulb,
-  MessageSquare, Loader2, AlertCircle,
+  MessageSquare, Loader2, AlertCircle, Video,
 } from 'lucide-react';
 import { useQuiz } from '../context/QuizContext';
 import { useApp } from '../context/AppContext';
@@ -119,6 +119,12 @@ export default function Dashboard({ onViewChange }) {
   const [prsValue, setPrsValue] = useState(0);
   const [launchingModule, setLaunchingModule] = useState(null); // 'technical' | 'aptitude' | null
   const canvasRef = useRef(null);
+
+  // ── Handler: Module D ──────────────────────────────────────────────────────
+  const handleLaunchInterview = () => {
+    if (isLoadingActive || launchingModule) return;
+    onViewChange('interview');
+  };
 
   // ── Entry animation ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -306,9 +312,9 @@ export default function Dashboard({ onViewChange }) {
           </span>
         </h1>
         <p className="text-zinc-400 text-lg max-w-xl mx-auto leading-relaxed">
-          Three precision instruments. One unified readiness score.
+          Four precision instruments. One unified readiness score.
           <br />
-          <span className="text-zinc-500 text-sm">ML signal analysis · Technical diagnostics · Aptitude index.</span>
+          <span className="text-zinc-500 text-sm">ML signal analysis · Technical diagnostics · Aptitude index · Behavioral analytics.</span>
         </p>
         {initialTargetRole && (
           <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-4 py-1.5 mt-5 text-xs font-semibold text-emerald-300 backdrop-blur-sm">
@@ -321,8 +327,8 @@ export default function Dashboard({ onViewChange }) {
       {/* ── BENTO GRID ──────────────────────────────────────────────────── */}
       <div className={`relative z-10 flex-1 max-w-6xl mx-auto w-full px-6 pb-12 transition-all duration-1000 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
 
-        {/* Top row — 3 equal-width module cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+        {/* ── 2×2 MODULE GRID ─────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 
           {/* ── CARD A: Cognitive ATS Insights ────────────────────────────── */}
           <button
@@ -523,10 +529,72 @@ export default function Dashboard({ onViewChange }) {
               </div>
             </div>
           </button>
-        </div>
+
+          {/* ── CARD D: Video Mock Interview ───────────────────────────────── */}
+          <button
+            id="module-interview-btn"
+            onClick={handleLaunchInterview}
+            onMouseEnter={() => setHoveredCard('interview')}
+            onMouseLeave={() => setHoveredCard(null)}
+            disabled={isBusy}
+            className="group relative p-7 rounded-3xl text-left overflow-hidden transition-all duration-500 border focus:outline-none focus:ring-2 focus:ring-rose-500/50 disabled:cursor-not-allowed"
+            style={{
+              background: hoveredCard === 'interview'
+                ? 'linear-gradient(135deg, rgba(244,63,94,0.15) 0%, rgba(14,14,20,0.9) 60%)'
+                : 'rgba(14,14,20,0.8)',
+              borderColor: hoveredCard === 'interview' ? 'rgba(244,63,94,0.4)' : 'rgba(255,255,255,0.06)',
+              boxShadow: hoveredCard === 'interview' ? '0 0 40px rgba(244,63,94,0.15), 0 0 0 1px rgba(244,63,94,0.2)' : 'none',
+              backdropFilter: 'blur(20px)',
+            }}
+          >
+            <div className="absolute -top-20 -right-20 w-52 h-52 bg-rose-600/20 rounded-full blur-3xl group-hover:opacity-100 opacity-0 transition-opacity duration-500" />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-500/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5 bg-gradient-to-br from-rose-500/20 to-rose-900/40 border border-rose-500/20 group-hover:border-rose-400/40 transition-colors">
+                <Video className="w-7 h-7 text-rose-400 group-hover:text-rose-300 transition-colors" />
+              </div>
+
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-bold text-rose-400/80 uppercase tracking-[0.15em] bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+                  Module D
+                </span>
+                <span className="text-[10px] font-semibold text-zinc-600">· Behavioral Analytics</span>
+                <span className="ml-auto text-[10px] font-bold text-rose-400/80 uppercase tracking-wide bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+                  ● Live
+                </span>
+              </div>
+
+              <h2 className="text-xl font-black text-white mb-2 tracking-tight group-hover:text-rose-100 transition-colors">
+                Video Mock Interview
+              </h2>
+              <p className="text-zinc-400 text-sm leading-relaxed mb-6 group-hover:text-zinc-300 transition-colors">
+                5-question simulated technical and behavioral interview with AI-driven acoustic and semantic evaluation.
+              </p>
+
+              <div className="flex flex-wrap gap-2 mb-6">
+                {['5 Questions', 'WebRTC Capture', 'Whisper ASR', 'STAR Framework', 'PRS Tracked'].map(f => (
+                  <FeaturePill key={f} label={f} />
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-rose-400 font-bold text-sm group-hover:text-rose-300 transition-colors">
+                  Start Interview
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                </div>
+                <div className="flex items-center gap-1 text-zinc-600 text-xs font-mono">
+                  <Video className="w-3 h-3" />
+                  5 Questions
+                </div>
+              </div>
+            </div>
+          </button>
+
+        </div>{/* end 2×2 module grid */}
 
         {/* Bottom row — PRS Score card + System Status card */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* PRS Score Card */}
           <div
@@ -593,6 +661,7 @@ export default function Dashboard({ onViewChange }) {
                   { label: 'ATS Core Engine',       status: 'online',  icon: Activity,    color: 'text-indigo-400' },
                   { label: 'MCQ Diagnostic',         status: 'online',  icon: BrainCircuit,color: 'text-purple-400' },
                   { label: 'Aptitude Assessment',    status: 'online',  icon: Brain,       color: 'text-cyan-400'   },
+                  { label: 'Video Interview (D)',     status: 'online',  icon: Video,       color: 'text-rose-400'   },
                   { label: 'PDF Generator',          status: 'online',  icon: Code2,       color: 'text-emerald-400'},
                   { label: 'FastAPI Backend',        status: 'standby', icon: Rocket,      color: 'text-amber-400'  },
                 ].map(({ label, status, icon: Icon, color }) => (
