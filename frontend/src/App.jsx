@@ -5,6 +5,7 @@ import Onboarding from './pages/Onboarding';
 import Quiz from './components/mcq/Quiz';
 import { QuizProvider } from './context/QuizContext';
 import { AppProvider, useApp } from './context/AppContext';
+import { AssessmentProvider } from './context/AssessmentContext';
 
 // ── Inner app — only rendered once onboarding is complete ────────────────────
 function AppInner() {
@@ -36,8 +37,22 @@ function AppInner() {
         );
 
       case 'mcq':
-        // Quiz manages its own full-screen layout — just pass onBackToDashboard
-        return <Quiz onBackToDashboard={() => setView('dashboard')} />;
+        // Technical diagnostic — Quiz manages its own full-screen layout
+        return (
+          <Quiz
+            moduleType="technical"
+            onBackToDashboard={() => setView('dashboard')}
+          />
+        );
+
+      case 'aptitude':
+        // Aptitude assessment — reuses Quiz component with aptitude moduleType
+        return (
+          <Quiz
+            moduleType="aptitude"
+            onBackToDashboard={() => setView('dashboard')}
+          />
+        );
 
       default:
         return <Dashboard onViewChange={setView} />;
@@ -47,13 +62,15 @@ function AppInner() {
   return renderView();
 }
 
-// ── Root — providers wrapping order: AppProvider (outer) > QuizProvider ───────
+// ── Root — providers wrapping order: AppProvider > AssessmentProvider > QuizProvider ──
 export default function App() {
   return (
     <AppProvider>
-      <QuizProvider>
-        <AppInner />
-      </QuizProvider>
+      <AssessmentProvider>
+        <QuizProvider>
+          <AppInner />
+        </QuizProvider>
+      </AssessmentProvider>
     </AppProvider>
   );
 }

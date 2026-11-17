@@ -3,10 +3,11 @@ import { generateQuiz, saveQuizResult, QUESTION_BANK } from "../../api/mcqServic
 import QuizResult from "./QuizResult";
 import { useQuiz } from "../../context/QuizContext";
 import { useApp } from "../../context/AppContext";
+import { useAssessment } from "../../context/AssessmentContext";
 import {
   BrainCircuit, ChevronRight, Zap, Terminal, Clock,
   CheckCircle2, XCircle, ArrowLeft, RotateCcw, BookOpen,
-  Target, ShieldCheck, Cpu
+  Target, ShieldCheck, Cpu, Calculator, Brain
 } from "lucide-react";
 
 const TOPICS = ["Mixed (All Topics)", ...Object.keys(QUESTION_BANK)];
@@ -44,71 +45,136 @@ function TimerDisplay({ seconds, isWarning }) {
 const API_BASE_URL = "http://127.0.0.1:8080";
 
 // ── PRS STANDBY SCREEN (replaces QuizLanding) ─────────────────────────────
-function PrsStandby({ onLaunch, loading, loadingStage, error }) {
+function PrsStandby({ moduleType, onLaunch, loading, loadingStage, error }) {
   const { initialTargetRole, resumeFile } = useApp();
+
+  const isAptitude = moduleType === 'aptitude';
+
+  // ── Module-specific copy ──────────────────────────────────────────────────
+  const badge        = isAptitude
+    ? 'PlaceBuddy · Module C · Cognitive Index'
+    : 'PlaceBuddy · Module B · PRS Diagnostic';
+
+  const statusLabel  = isAptitude
+    ? 'Ready to Assess: Foundational Aptitude'
+    : (initialTargetRole ? `Ready to Assess: ${initialTargetRole}` : null);
+
+  const title        = isAptitude
+    ? (<>Cognitive Index{" "}<span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-teal-400">Assessment</span></>)
+    : (<>PRS Diagnostic{" "}<span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">Assessment</span></>);
+
+  const description  = isAptitude
+    ? '10 questions spanning quantitative aptitude, logical reasoning, and verbal ability. Completely independent of your resume.'
+    : 'AI-generates 10 personalised questions calibrated to your resume skill profile and target role. Your score feeds directly into your Placement Readiness Score (PRS).';
+
+  const ctaText      = isAptitude ? 'Take Aptitude Assessment' : 'Take PRS Diagnostic Quiz';
+
+  const glowColor    = isAptitude ? 'cyan-600/10' : 'purple-600/10';
+  const iconGradient = isAptitude
+    ? 'from-cyan-500/20 to-teal-900/40 border-cyan-500/20 shadow-[0_0_40px_rgba(6,182,212,0.2)]'
+    : 'from-purple-500/20 to-indigo-900/40 border-purple-500/20 shadow-[0_0_40px_rgba(168,85,247,0.2)]';
+  const iconColor    = isAptitude ? 'text-cyan-400' : 'text-purple-400';
+  const badgeClass   = isAptitude
+    ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300'
+    : 'bg-purple-500/10 border-purple-500/20 text-purple-300';
+  const ctaClass     = isAptitude
+    ? 'bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 shadow-[0_0_30px_rgba(6,182,212,0.3)] hover:shadow-[0_0_40px_rgba(6,182,212,0.5)]'
+    : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_40px_rgba(168,85,247,0.5)]';
+
+  const rules = isAptitude
+    ? [
+        { icon: '🔢', label: '10 Questions', sub: 'Mixed aptitude' },
+        { icon: '⏱️', label: '12 Minutes',   sub: 'Time limit' },
+        { icon: '📊', label: 'Independent',  sub: 'Resume-free' },
+      ]
+    : [
+        { icon: '🎯', label: '10 Questions', sub: 'AI-personalised' },
+        { icon: '⏱️', label: '12 Minutes',   sub: 'Time limit' },
+        { icon: '📊', label: 'PRS Tracked',  sub: 'Auto-saved' },
+      ];
+
+  const IconComp = isAptitude ? Calculator : BrainCircuit;
 
   return (
     <div className="min-h-screen bg-[#050508] flex items-center justify-center p-6">
       {/* Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div
+        className={`absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-${glowColor} rounded-full blur-[120px] pointer-events-none`}
+        style={{ background: isAptitude ? 'rgba(6,182,212,0.08)' : 'rgba(168,85,247,0.08)' }}
+      />
 
       <div className="relative w-full max-w-2xl animate-fade-up">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500/20 to-indigo-900/40 border border-purple-500/20 mb-6 shadow-[0_0_40px_rgba(168,85,247,0.2)]">
-            <BrainCircuit className="w-10 h-10 text-purple-400" />
-          </div>
-          <div className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-1 mb-4 text-xs font-semibold text-purple-300">
-            <Terminal className="w-3 h-3" />
-            PlaceBuddy · Module B · PRS Diagnostic
+          <div className={`inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br ${iconGradient} border mb-6`}>
+            <IconComp className={`w-10 h-10 ${iconColor}`} />
           </div>
 
-          {/* Target role standby pill */}
-          {initialTargetRole && (
-            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-4 py-1.5 mb-5 text-xs font-semibold text-emerald-300">
-              <Target className="w-3 h-3" />
-              Ready to Assess: {initialTargetRole}
+          {/* Module badge */}
+          <div className={`inline-flex items-center gap-2 border rounded-full px-4 py-1 mb-4 text-xs font-semibold ${badgeClass}`}>
+            <Terminal className="w-3 h-3" />
+            {badge}
+          </div>
+
+          {/* Status pill */}
+          {statusLabel && (
+            <div className="block mb-5">
+              <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-4 py-1.5 text-xs font-semibold text-emerald-300">
+                <Target className="w-3 h-3" />
+                {statusLabel}
+              </div>
             </div>
           )}
 
           <h1 className="text-4xl font-black text-white tracking-tighter mb-3">
-            PRS Diagnostic{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
-              Assessment
-            </span>
+            {title}
           </h1>
           <p className="text-zinc-400 text-sm max-w-lg mx-auto leading-relaxed">
-            AI-generates 10 personalised questions calibrated to your resume skill profile and target role.
-            Your score feeds directly into your{" "}
-            <span className="text-purple-300 font-semibold">Placement Readiness Score (PRS)</span>.
+            {description}
           </p>
         </div>
 
-        {/* Resume vault status */}
-        <div className="bg-white/[0.03] border border-white/6 rounded-2xl p-4 mb-6 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
-            <ShieldCheck className="w-4.5 h-4.5 text-emerald-400" />
+        {/* Resume vault — only for Technical */}
+        {!isAptitude && (
+          <div className="bg-white/[0.03] border border-white/6 rounded-2xl p-4 mb-6 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-4.5 h-4.5 text-emerald-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Resume Vault</p>
+              <p className="text-sm font-semibold text-emerald-300 truncate">
+                {resumeFile?.name || 'Resume secured'}
+              </p>
+            </div>
+            <span className="ml-auto text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex-shrink-0">
+              ✓ Ready
+            </span>
           </div>
-          <div className="min-w-0">
-            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Resume Vault</p>
-            <p className="text-sm font-semibold text-emerald-300 truncate">
-              {resumeFile?.name || 'Resume secured'}
-            </p>
+        )}
+
+        {/* Aptitude module note */}
+        {isAptitude && (
+          <div className="bg-white/[0.03] border border-white/6 rounded-2xl p-4 mb-6 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center flex-shrink-0">
+              <Brain className="w-4.5 h-4.5 text-cyan-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Module C</p>
+              <p className="text-sm font-semibold text-cyan-300">
+                Quantitative · Logical · Verbal
+              </p>
+            </div>
+            <span className="ml-auto text-[10px] font-bold text-cyan-400/70 uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-full flex-shrink-0">
+              Pre-loaded
+            </span>
           </div>
-          <span className="ml-auto text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex-shrink-0">
-            ✓ Ready
-          </span>
-        </div>
+        )}
 
         {/* Rules */}
         <div className="bg-white/[0.03] border border-white/6 rounded-2xl p-4 mb-6">
           <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">Assessment Rules</p>
           <div className="grid grid-cols-3 gap-3">
-            {[
-              { icon: '🎯', label: '10 Questions', sub: 'AI-personalised' },
-              { icon: '⏱️', label: '12 Minutes', sub: 'Time limit' },
-              { icon: '📊', label: 'PRS Tracked', sub: 'Auto-saved' },
-            ].map(r => (
+            {rules.map(r => (
               <div key={r.label} className="text-center">
                 <div className="text-xl mb-1">{r.icon}</div>
                 <p className="text-xs font-bold text-zinc-300">{r.label}</p>
@@ -130,7 +196,7 @@ function PrsStandby({ onLaunch, loading, loadingStage, error }) {
         <button
           onClick={onLaunch}
           disabled={loading}
-          className="w-full relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black py-4 px-6 rounded-2xl transition-all duration-300 shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] disabled:opacity-50 disabled:cursor-not-allowed group"
+          className={`w-full relative overflow-hidden ${ctaClass} text-white font-black py-4 px-6 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group`}
         >
           {loading ? (
             <span className="flex items-center justify-center gap-3">
@@ -140,7 +206,7 @@ function PrsStandby({ onLaunch, loading, loadingStage, error }) {
           ) : (
             <span className="flex items-center justify-center gap-2">
               <Zap className="w-5 h-5" />
-              Take PRS Diagnostic Quiz
+              {ctaText}
               <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </span>
           )}
@@ -148,7 +214,9 @@ function PrsStandby({ onLaunch, loading, loadingStage, error }) {
         </button>
 
         <p className="text-center text-[10px] text-zinc-700 font-mono mt-5">
-          Generates questions from your resume skills — completely independent of Module A
+          {isAptitude
+            ? 'Tests core reasoning ability — completely independent of your resume or target role'
+            : 'Generates questions from your resume skills — completely independent of Module A'}
         </p>
       </div>
     </div>
@@ -157,7 +225,9 @@ function PrsStandby({ onLaunch, loading, loadingStage, error }) {
 
 
 // ── MAIN QUIZ COMPONENT ──────────────────────────────────────────────────────
-export default function Quiz({ onBackToDashboard }) {
+export default function Quiz({ moduleType = 'technical', onBackToDashboard }) {
+  const isAptitude = moduleType === 'aptitude';
+
   const [phase, setPhase] = useState('landing'); // landing | quiz | result
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
@@ -173,6 +243,7 @@ export default function Quiz({ onBackToDashboard }) {
 
   const { setQ10Score } = useQuiz();
   const { resumeFile, initialTargetRole } = useApp();
+  const { aptitudeQuestions } = useAssessment();
 
   // Timer tick
   useEffect(() => {
@@ -191,11 +262,10 @@ export default function Quiz({ onBackToDashboard }) {
   }, [phase]);
 
   /**
-   * On-demand PRS launch:
-   * 1. Call /ats/score/core with the globally stored resumeFile + initialTargetRole
-   *    to derive the forensic skill tier matrix (Green / Yellow / Red).
-   * 2. Immediately pipe the skill lists to /api/mcq/generate for personalised AI questions.
-   * Completely independent of the ATS Insights tab — running this does NOT affect Module A.
+   * handleLaunchPRS  (Technical module)
+   * 1. Call /ats/score/core to derive the forensic skill tier matrix.
+   * 2. Pipe skill lists to /api/mcq/generate for personalised questions.
+   * Completely independent of the ATS Insights tab.
    */
   const handleLaunchPRS = async () => {
     if (!resumeFile) {
@@ -219,12 +289,11 @@ export default function Quiz({ onBackToDashboard }) {
       if (!coreRes.ok) throw new Error('Skill analysis failed. Is the backend running?');
       const coreData = await coreRes.json();
 
-      // Extract skill tiers from cognitive analysis
       const cog = coreData.cognitive_analysis || {};
       const sm = cog.skill_matrix || {};
-      const verifiedSkills = (sm.verified_competencies || []).map(s => typeof s === 'string' ? s : s.skill || '');
-      const unverifiedSkills = (sm.unverified_skills || []).map(s => typeof s === 'string' ? s : s.skill || '');
-      const missingSkills = (coreData.missing_skills || []);
+      const verifiedSkills   = (sm.verified_competencies || []).map(s => typeof s === 'string' ? s : s.skill || '');
+      const unverifiedSkills = (sm.unverified_skills    || []).map(s => typeof s === 'string' ? s : s.skill || '');
+      const missingSkills    = (coreData.missing_skills || []);
 
       // ── Stage 2: generate personalised quiz ────────────────────────────────
       setLoadingStage('Generating personalised questions...');
@@ -232,38 +301,63 @@ export default function Quiz({ onBackToDashboard }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          verified_skills: verifiedSkills,
+          verified_skills:   verifiedSkills,
           unverified_skills: unverifiedSkills,
-          missing_skills: missingSkills,
+          missing_skills:    missingSkills,
         }),
       });
       if (!mcqRes.ok) throw new Error('Quiz generation failed.');
       const mcqData = await mcqRes.json();
 
-      // Normalise response to the shape the quiz engine expects
       const questions = (mcqData.questions || []).map(q => ({
-        question: q.question,
-        options: q.options,
+        question:      q.question,
+        options:       q.options,
         correctAnswer: q.correct_answer,
-        explanation: q.explanation,
+        explanation:   q.explanation,
       }));
 
       if (!questions.length) throw new Error('No questions returned. Please try again.');
 
-      setQuizData(questions);
-      setAnswers(new Array(questions.length).fill(null));
-      setCurrentQuestion(0);
-      setTimeLeft(TOTAL_TIME);
-      setSelectedAnswer(null);
-      setAnswered(false);
-      setResultData(null);
-      setPhase('quiz');
+      _startQuiz(questions);
     } catch (err) {
       setLaunchError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
       setLoadingStage('');
     }
+  };
+
+  /**
+   * handleLaunchAptitude  (Aptitude module)
+   * Reads pre-fetched aptitudeQuestions from AssessmentContext —
+   * NO additional API calls made here.
+   */
+  const handleLaunchAptitude = () => {
+    setLaunchError('');
+    if (!aptitudeQuestions || aptitudeQuestions.length === 0) {
+      setLaunchError('Aptitude questions are not loaded yet. Please go back to the Dashboard and try again.');
+      return;
+    }
+    // Normalise AssessmentContext shape → Quiz engine shape
+    const questions = aptitudeQuestions.map(q => ({
+      question:      q.question  || q.question_text || '',
+      options:       Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]'),
+      correctAnswer: q.correct_answer,
+      explanation:   q.explanation || '',
+    }));
+    _startQuiz(questions);
+  };
+
+  /** Shared state reset + phase transition. */
+  const _startQuiz = (questions) => {
+    setQuizData(questions);
+    setAnswers(new Array(questions.length).fill(null));
+    setCurrentQuestion(0);
+    setTimeLeft(TOTAL_TIME);
+    setSelectedAnswer(null);
+    setAnswered(false);
+    setResultData(null);
+    setPhase('quiz');
   };
 
   // Legacy static-bank quiz starter (kept for backward compat, not called from standby)
@@ -360,7 +454,8 @@ export default function Quiz({ onBackToDashboard }) {
   if (phase === 'landing') {
     return (
       <PrsStandby
-        onLaunch={handleLaunchPRS}
+        moduleType={moduleType}
+        onLaunch={isAptitude ? handleLaunchAptitude : handleLaunchPRS}
         loading={loading}
         loadingStage={loadingStage}
         error={launchError}
